@@ -1,5 +1,5 @@
 // くうちゃんの空：オフラインでも ひらけるように、写真や音を スマホに しまっておく
-const CACHE = "qoo-202610300042";
+const CACHE = "qoo-202610300051";
 const ASSETS = ["./", "index.html", "manifest.webmanifest", "img/album.jpg", "img/baby.jpg", "img/cake.jpg", "img/face.jpg", "img/nap.jpg", "img/pink.jpg", "img/puppy.jpg", "img/room.jpg", "img/smile.jpg", "img/sunflower.jpg", "snd/LICENSE.txt", "snd/bark.mp3", "snd/barks.mp3", "snd/whine.mp3", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"];
 const CDN = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS).then(() => c.add(CDN).catch(() => {})))); self.skipWaiting(); });

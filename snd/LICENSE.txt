@@ -1,0 +1,3 @@
+Dog sounds: BigSoundBank (https://bigsoundbank.com) by Joseph Sardin, CC0 (public domain).
+- barks.mp3: from "Barking of a Spitz" (#0682), trimmed.
+- bark.mp3, whine.mp3: from "Dogs barking and crying #1" (#1544), trimmed and normalized.

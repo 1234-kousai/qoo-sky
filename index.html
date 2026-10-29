@@ -1188,8 +1188,11 @@
   // Claudeの リンクの中か、ひとりだち（GitHubの サイト・アプリ）かを 見分ける
   const ARTIFACT_URL = "https://claude.ai/artifact/M62iLaF31Eysm5uzuMtN22";
   const STANDALONE = !window.claude;
+  // Androidアプリの中か（アプリでは ページの住所が スマホの中なので、送るリンクは GitHub の サイトにする）
+  const IN_APP = !!window.Capacitor?.isNativePlatform?.();
+  const SITE_URL = "https://1234-kousai.github.io/qoo-sky/";
   if (STANDALONE) document.querySelectorAll(".claude-link").forEach((a) => { a.hidden = false; });
-  const SHARE_URL = STANDALONE ? location.origin + location.pathname + "?openExternalBrowser=1" : ARTIFACT_URL + "?openExternalBrowser=1";
+  const SHARE_URL = IN_APP ? SITE_URL + "?openExternalBrowser=1" : STANDALONE ? location.origin + location.pathname + "?openExternalBrowser=1" : ARTIFACT_URL + "?openExternalBrowser=1";
   const UA = navigator.userAgent || "";
   const inLine = / Line\//i.test(UA);
   const isIOS = /iPhone|iPad|iPod/.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -3504,8 +3507,10 @@ ${letter}
           : isIOS ? { text: "アプリは App Storeで「Claude」と検索" } : null,
       ].filter(Boolean) },
     { v: "tips", eyebrow: "Tips", title: "もっと 会いやすく",
-      body: homeTip + "\n\nアルバムの 画面の「まるごと ファイルに 保存」で、写真も 手紙も きろくも まとめて バックアップできます。\n\nLINEで ひらいたときは、写真の追加などが うまくいかないことがあります。右上（または右下）の「…」から「ブラウザで開く」を えらんでね。",
-      tries: [], cta: "はじめる", go: () => {}, share: true },
+      body: IN_APP
+        ? "くうからの おしらせは、おへやの 下の「くうからの おしらせ（通知）の せってい」で えらべます。\n\n壁紙と 思い出ムービーは、スマホの 写真に そのまま 保存されます。\n\nアルバムの 画面の「まるごと ファイルに 保存」で、写真も 手紙も きろくも まとめて バックアップできます。あたらしい スマホでは「ファイルから もどす」で 全部 もどせます。"
+        : homeTip + "\n\nアルバムの 画面の「まるごと ファイルに 保存」で、写真も 手紙も きろくも まとめて バックアップできます。\n\nLINEで ひらいたときは、写真の追加などが うまくいかないことがあります。右上（または右下）の「…」から「ブラウザで開く」を えらんでね。",
+      tries: [], cta: "はじめる", go: () => {}, share: !IN_APP },
   ];
 
   const GV = {
@@ -4153,7 +4158,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202610300107").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202610300222").catch(() => {});
 </script>
 </body>
 </html>

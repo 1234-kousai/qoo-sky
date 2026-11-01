@@ -141,6 +141,8 @@
   .game-ui .inner { display: grid; gap: 10px; justify-items: center; max-width: 380px; }
   .game-ui h2 { margin: 0; font-family: var(--f-hand); font-size: clamp(20px, 5vw, 28px); font-weight: 600; }
   .game-ui p { margin: 0; font-size: 13px; color: var(--cream); }
+  .course-sel { flex-wrap: wrap; justify-content: center; }
+  .course-sel button:disabled { opacity: .5; }
   .walk-got { margin: 0; font-size: 13px; color: var(--honey); }
   .game-ui .say { font-family: var(--f-hand); font-size: 16px; color: var(--cream); white-space: pre-line; }
   .stats { display: flex; gap: 14px; font-size: 13px; color: var(--mist); flex-wrap: wrap; }
@@ -464,6 +466,24 @@
   .recipe-h small { font-size: 12px; color: var(--mist); }
   .my-treats-h { margin: 14px 0 8px; font-family: var(--f-display); font-size: 13px; letter-spacing: .1em; color: var(--honey); }
   .treat .treat-n { font-size: 10px; color: var(--honey); }
+  .map-total { margin: 0 0 12px; display: grid; justify-items: center; font-size: 12px; color: var(--mist); }
+  .map-total b { font-family: var(--f-display); font-size: 40px; font-weight: 600; color: var(--honey); line-height: 1.2; }
+  .map-total small { font-size: 14px; margin-left: 4px; }
+  .map-list { list-style: none; margin: 0; padding: 0 0 0 6px; display: grid; gap: 0; max-height: 46vh; overflow-y: auto; }
+  .map-list li { position: relative; display: grid; grid-template-columns: 40px 1fr; gap: 10px; padding: 8px 0 14px; color: var(--mist); }
+  .map-list li::before { content: ""; position: absolute; left: 19px; top: 42px; bottom: -2px; width: 2px; background: rgba(214,181,122,.25); }
+  .map-list li:last-child::before { display: none; }
+  .map-list li i { font-style: normal; font-size: 24px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.06); }
+  .map-list li b { display: block; font-family: var(--f-hand); font-size: 15px; font-weight: 600; }
+  .map-list li small { display: block; font-size: 12px; line-height: 1.6; }
+  .map-list li.got { color: var(--cream); }
+  .map-list li.got i { background: rgba(214,181,122,.25); }
+  .map-list li.got small { font-family: var(--f-hand); color: #e9dcc6; }
+  .map-list li.next b { color: var(--honey); }
+  .map-bar { display: block; height: 6px; margin-top: 6px; border-radius: 3px; background: rgba(255,255,255,.12); position: relative; overflow: hidden; }
+  .map-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 100%); background: var(--honey); }
+  #mapAsk { display: block; margin: 4px auto 0; }
+  .map-note { margin-top: 10px; font-size: 11px; }
   .life-toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 60; transform: translateX(-50%);
     display: grid; gap: 2px; text-align: center; min-width: 220px; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 16px;
@@ -1095,7 +1115,7 @@
       <div class="wp-head"><h3>きょうの おねがい<small>Today's wishes</small></h3><span class="wp-bones" title="ためた ほね">🦴 <b id="boneCount">0</b></span></div>
       <ol class="wp-list" id="wishList"></ol>
       <p class="wp-note" id="wishNote"></p>
-      <div class="wp-links"><button class="btn ghost" id="openShop" type="button">🛍 ほねの おみせ</button><button class="btn ghost" id="openCook" type="button">🍳 おやつ作り</button><button class="btn ghost" id="openDiary" type="button">📖 くう日記</button><button class="btn ghost" id="openZukan" type="button">🔍 おさんぽ図鑑</button></div>
+      <div class="wp-links"><button class="btn ghost" id="openShop" type="button">🛍 ほねの おみせ</button><button class="btn ghost" id="openCook" type="button">🍳 おやつ作り</button><button class="btn ghost" id="openDiary" type="button">📖 くう日記</button><button class="btn ghost" id="openZukan" type="button">🔍 おさんぽ図鑑</button><button class="btn ghost" id="openMap" type="button">🗺 おさんぽマップ</button></div>
     </div>
     <div class="room">
       <div class="room-stage" id="roomStage">
@@ -1134,7 +1154,8 @@
         <div class="inner">
           <h2>くうと おさんぽ</h2>
           <p>はる・なつ・あき・ふゆ を 60びょうで かけぬけるよ。<br>がめんを タップで ジャンプ、2かいで 2だんジャンプ。<br>ほねとハートをあつめて、水たまりは よけてね。<br>みちに おちてる はなや どんぐりは、おうちに もってかえれるよ。</p>
-          <div class="outfit" role="group" aria-label="おようふく">
+          <div class="outfit course-sel" id="courseSel" role="group" aria-label="コース"></div>
+          <div class="outfit" role="group" aria-label="おようふく" hidden>
             <button type="button" id="outfitNone" aria-pressed="true">そのまま</button>
             <button type="button" id="outfitPink" aria-pressed="false">ピンクのふく</button>
           </div>
@@ -1309,6 +1330,20 @@
     <div class="zukan" id="recipeBook"></div>
   </div>
 </div>
+<div class="overlay" id="mapModal" hidden>
+  <div class="album-card" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+    <header>
+      <p class="eyebrow-l">Walk Map</p>
+      <h2 id="mapTitle">おさんぽマップ</h2>
+      <button class="album-x" id="mapClose" type="button" aria-label="とじる">×</button>
+    </header>
+    <p class="map-total">ママと くうが いっしょに あるいた きょり<b><span id="mapKm">0</span><small>km</small></b></p>
+    <ol class="map-list" id="mapList"></ol>
+    <p class="album-msg" id="mapSteps"></p>
+    <button class="btn" id="mapAsk" type="button" hidden>スマホの 歩数を つかう</button>
+    <p class="album-msg map-note">おさんぽゲームを さいごまで あるくと 0.2km すすむよ。</p>
+  </div>
+</div>
 <div class="overlay" id="diaryModal" hidden>
   <div class="album-card diary-card" role="dialog" aria-modal="true" aria-labelledby="diaryTitle">
     <header>
@@ -1461,6 +1496,8 @@
       { id: "yuki", icon: "⛄", name: "ちいさな ゆきだるま", season: 3, say: "ゆきだるま つくったよ！ ぼくに にてる？" },
       { id: "ishi", icon: "🪨", name: "きれいな いし", season: -1, say: "つるつるの いし。たからもの！" },
       { id: "hane", icon: "🪶", name: "とりの はね", season: -1, say: "ふわふわの はね、ひろったよ" },
+      { id: "nekojarashi", icon: "🌾", name: "ねこじゃらし", season: -1, course: "river", say: "ねこじゃらし ふりふり〜" },
+      { id: "kai", icon: "🐚", name: "かいがら", season: -1, course: "sea", say: "かいがら！ うみの おと きこえる？" },
     ];
     const item = (id) => ITEMS.find((i) => i.id === id);
 
@@ -1481,6 +1518,7 @@
       { id: "sunwater", cat: 0, icon: "🌻", text: "ひまわりに おみず あげて〜", ev: "sunwater", n: 1, bones: 3, hint: "おにわの はたけを タップ", need: () => ctx.needWater && ctx.needWater() },
       { id: "trick", cat: 1, icon: "🐕", text: "しつけの れんしゅう しよ！", ev: "trick", n: 3, bones: 3, hint: "おうちの 下の「しつけ」" },
       { id: "cook", cat: 2, icon: "🍳", text: "てづくり おやつ つくって！", ev: "cook", n: 1, bones: 4, hint: "「おやつ作り」から" },
+      { id: "steps", cat: 2, icon: "👟", text: "きょう 3000ぽ いっしょに あるこ！", ev: "steps", n: 3000, bones: 5, hint: "スマホを もって おでかけ", need: () => L.step && L.step.granted },
     ];
     const ALL_BONUS = 5;
     const MILES = [[3, 10, "スタンプ 3こ！ ママ、いつも きてくれて ありがと！"], [7, 15, "スタンプ 7こ！ いっしゅうかん ぶん、ぼくの たからもの！"], [14, 20, "スタンプ 14こ！ ママと すごす 毎日、だいすき！"],
@@ -1544,13 +1582,53 @@
     }
     function walkDone(bones, hearts) {
       L.walks++;
+      L.step.gameKm += .2;
       const got = Math.max(1, Math.round(bones / 5) + Math.round(hearts / 2));
       L.bones += got;
       const d = today(); d.log.walkBones = (d.log.walkBones || 0) + bones; d.log.hearts = (d.log.hearts || 0) + hearts;
       save();
       ev("walk");
+      checkMap();
       return got;
     }
+
+    // ほんとうの 歩数（アプリ 1.3）と、おさんぽマップ
+    const STEP_M = .65;
+    L.step = Object.assign({ raw: null, boot: 0, total: 0, granted: false, acc: 0, gameKm: 0 }, L.step || {});
+    L.mapGot = L.mapGot || [];
+    const MAP = [
+      { id: "home", icon: "🏠", name: "おうち", km: 0 },
+      { id: "park", icon: "🌳", name: "こうえん", km: 2, bones: 5, letter: "こうえん ついた！ ママと あるくの、やっぱり たのしいね。" },
+      { id: "river", icon: "🏞️", name: "かわぞい", km: 10, bones: 10, course: "river", letter: "かわの おと、きこえる？ ママの あしおとも ちゃんと きこえてるよ。" },
+      { id: "sunflower", icon: "🌻", name: "ひまわりばたけ", km: 30, bones: 20, course: "sunflower", letter: "ひまわりばたけ！ ママの すきな はな、こんなに いっぱい！" },
+      { id: "sea", icon: "🏖️", name: "うみ", km: 60, bones: 30, course: "sea", letter: "うみだ〜！ なみ、こわくないよ。ママが いっしょだもん。" },
+      { id: "rainbow", icon: "🌈", name: "にじの ふもと", km: 100, bones: 50, letter: "ママ、ここまで いっしょに あるいてくれて ありがとう。ぼくは ここから ずっと みてるよ。また いっしょに あるこうね。" },
+    ];
+    const km = () => L.step.total * STEP_M / 1000 + L.step.gameKm;
+    function checkMap() {
+      for (const p of MAP) if (p.km > 0 && km() >= p.km && !L.mapGot.includes(p.id)) {
+        L.mapGot.push(p.id); L.bones += p.bones; save();
+        const d = today(); (d.places = d.places || []).push(p.name);
+        toastFn && toastFn({ kind: "place", place: p });
+        emit();
+      }
+    }
+    function addSteps(r) {
+      const st = L.step;
+      let delta = 0;
+      if (st.raw != null) delta = Math.abs(r.boot - st.boot) > 120000 || r.steps < st.raw ? r.steps : r.steps - st.raw;
+      st.raw = r.steps; st.boot = r.boot; st.granted = true;
+      delta = Math.max(0, Math.min(40000, Math.round(delta)));
+      if (!delta) { save(); emit(); return; }
+      st.total += delta;
+      const d = today();
+      st.acc += delta;
+      while (st.acc >= 1000 && (d.stepBones || 0) < 10) { st.acc -= 1000; d.stepBones = (d.stepBones || 0) + 1; L.bones++; }
+      st.acc = Math.min(st.acc, 999);
+      ev("steps", delta);
+      checkMap();
+    }
+    function stepState(r) { L.step.granted = !!r.granted; L.step.available = r.available !== false; save(); emit(); }
 
     // くう日記（その日に あったことを、くうの ことばで）
     function diaryLines(k) {
@@ -1575,6 +1653,8 @@
         out.push(`${uniq.map((i) => i.name).join("と ")}を みつけた。おうちに かざったよ。`);
       }
       if (g.kuji) out.push("くうみくじ ひいた。");
+      if (g.steps) out.push(`ママと いっしょに ${g.steps.toLocaleString()}ぽ あるいた！`);
+      if (d.places) out.push(`おさんぽマップで ${d.places.join("と ")}に ついた！`);
       if (d.bought && d.bought.length) out.push(`ママが おみせで ${[...new Set(d.bought)].join("と ")}を かってくれた！`);
       if (d.planted) out.push("おにわに ひまわりの たねを まいた。");
       if (g.sunwater) out.push("ひまわりに おみずを あげた。おおきく なあれ。");
@@ -1588,13 +1668,16 @@
     }
 
     return {
-      ev, find, walkDone, today, diaryLines, ITEMS, item, wishDef, WISHES, dkey, ctx, save,
+      ev, find, walkDone, today, diaryLines, ITEMS, item, wishDef, WISHES, dkey, ctx, save, addSteps, stepState, MAP, km,
       get L() { return L; },
       on(f) { listeners.add(f); f(); }, onToast(f) { toastFn = f; },
-      pickFind(seasonIdx) {
-        // きせつの もの 7わり・いつでも ある もの 3わり。よつばは たまに
+      pickFind(seasonIdx, course = "park") {
+        // きせつの もの 7わり・いつでも ある もの 3わり。よつばは たまに。コースだけの ものも ある
         if (Math.random() < .05) return "clover";
-        const pool = ITEMS.filter((i) => !i.rare && (Math.random() < .7 ? i.season === seasonIdx : i.season === -1));
+        const special = ITEMS.find((i) => i.course === course);
+        if (special && Math.random() < .35) return special.id;
+        if (course === "sunflower" && Math.random() < .4) return "himawari";
+        const pool = ITEMS.filter((i) => !i.rare && !i.course && (Math.random() < .7 ? i.season === seasonIdx : i.season === -1));
         return pool.length ? pool[Math.floor(Math.random() * pool.length)].id : "ishi";
       },
     };
@@ -2412,8 +2495,25 @@
     if (Math.random() < .25) G.items.push({ k: "bone", x: GW + 120, y: GROUND - 30, w: 34, h: 18 });
   }
   // おさんぽで みつかる もの（はな・どんぐり など。おうちに もちかえる）
+  // コース（おさんぽマップで ついた ところが ふえる）
+  const COURSES = [{ id: "park", name: "こうえん" }, { id: "river", name: "かわぞい" }, { id: "sunflower", name: "ひまわりばたけ" }, { id: "sea", name: "うみ" }];
+  let course = life.L.course || "park";
+  function buildCourses() {
+    const box = $("courseSel"); box.replaceChildren();
+    for (const c of COURSES) {
+      const open = c.id === "park" || life.L.mapGot.includes(c.id);
+      if (!open && c.id === course) course = "park";
+      const b = document.createElement("button");
+      b.type = "button"; b.disabled = !open;
+      b.textContent = open ? c.name : `🔒 ${life.MAP.find((m) => m.id === c.id).km}km`;
+      b.setAttribute("aria-pressed", String(c.id === course));
+      b.addEventListener("click", () => { course = c.id; life.L.course = course; life.save(); buildCourses(); drawWalk(performance.now()); });
+      box.append(b);
+    }
+  }
+  life.on(buildCourses);
   function spawnFind(p) {
-    const id = life.pickFind(Math.min(3, Math.floor(p * 4)));
+    const id = life.pickFind(Math.min(3, Math.floor(p * 4)), course);
     G.items.push({ k: "find", id, x: GW + 60, y: GROUND - 34 - Math.random() * 80, w: 36, h: 36 });
   }
   function floatText(text, x, y, color) { G.floats.push({ text, x, y, life: 1, color }); }
@@ -2514,6 +2614,19 @@
   function drawKuu(x, y, t) {
     const run = G && G.running && G.onGround;
     const air = G && G.running && !G.onGround;
+    // 写真の くう（横むきで、ほんとうに 足を うごかして 走る）。写真が まだ なら 絵の くう
+    KuuSide.load();
+    if (KuuSide.ready) {
+      const blinkH = G && G.hurt > 0 && Math.floor(G.hurt * 10) % 2;
+      const lift = G ? (GROUND - y) : 0;
+      w.fillStyle = `rgba(60,40,20,${.18 - Math.min(.1, lift / 900)})`;
+      w.beginPath(); w.ellipse(x + 10 * KS(), GROUND + 3, (58 - Math.min(20, lift / 6)) * KS(), 8, 0, 0, Math.PI * 2); w.fill();
+      w.save(); w.translate(x + 12 * KS(), y);
+      if (air) w.rotate(G.vy < 0 ? -.1 : .06);
+      KuuSide.draw(w, 0, 0, 92 * KS(), 1, { uT: t, uPh: G ? G.scroll / 22 : t * 8, uWalk: run || !G || !G.running ? 1 : .25, uWag: 1, bob: run ? Math.abs(Math.sin(G.scroll / 22)) * .03 : 0 }, 1.5, blinkH ? .45 : 1);
+      w.restore();
+      return;
+    }
     const bob = run ? Math.abs(Math.sin(t * 11)) * -3 : Math.sin(t * 2) * .8;
     const blink = G && G.hurt > 0 && Math.floor(G.hurt * 10) % 2;
     const pink = outfit === "pink";
@@ -2607,11 +2720,36 @@
       const cx = ((i * 260 - scroll * .15) % (GW + 200) + GW + 200) % (GW + 200) - 100, cy = 50 + (i % 2) * 40;
       w.beginPath(); w.ellipse(cx, cy, 46, 16, 0, 0, Math.PI * 2); w.ellipse(cx + 26, cy - 8, 28, 14, 0, 0, Math.PI * 2); w.fill();
     }
-    // 丘
-    w.fillStyle = S.hill;
-    w.beginPath(); w.moveTo(0, GROUND);
-    for (let x = 0; x <= GW; x += 10) w.lineTo(x, GROUND - 60 - Math.sin((x + scroll * .3) / 120) * 26);
-    w.lineTo(GW, GROUND); w.fill();
+    // 丘（うみコースは うみ）
+    if (course === "sea") {
+      const sg = w.createLinearGradient(0, GROUND - 95, 0, GROUND);
+      sg.addColorStop(0, "#5aa9d8"); sg.addColorStop(1, "#9fd6ee");
+      w.fillStyle = sg; w.fillRect(0, GROUND - 95, GW, 95);
+      w.strokeStyle = "rgba(255,255,255,.7)"; w.lineWidth = 2;
+      for (let r = 0; r < 4; r++) { w.beginPath(); for (let x = 0; x <= GW; x += 12) { const y = GROUND - 80 + r * 20 + Math.sin((x + scroll * (.2 + r * .1) + t * 40) / 30) * 3; x ? w.lineTo(x, y) : w.moveTo(x, y); } w.stroke(); }
+    } else {
+      w.fillStyle = S.hill;
+      w.beginPath(); w.moveTo(0, GROUND);
+      for (let x = 0; x <= GW; x += 10) w.lineTo(x, GROUND - 60 - Math.sin((x + scroll * .3) / 120) * 26);
+      w.lineTo(GW, GROUND); w.fill();
+    }
+    // かわぞい：かわが ながれる
+    if (course === "river") {
+      w.fillStyle = "#7cc3e8"; w.fillRect(0, GROUND - 26, GW, 20);
+      w.strokeStyle = "rgba(255,255,255,.75)"; w.lineWidth = 2;
+      for (let i = 0; i < 12; i++) { const x = ((i * 90 - scroll * .6 - t * 30) % GW + GW) % GW; w.beginPath(); w.moveTo(x, GROUND - 16); w.lineTo(x + 22, GROUND - 16); w.stroke(); }
+      w.strokeStyle = "#5e9a4a"; w.lineWidth = 2;
+      for (let i = 0; i < 14; i++) { const x = ((i * 70 - scroll * .6) % GW + GW) % GW; w.beginPath(); w.moveTo(x, GROUND - 6); w.quadraticCurveTo(x + 3, GROUND - 22, x + 1, GROUND - 34); w.stroke(); }
+    }
+    // ひまわりばたけ：きせつに かかわらず ひまわりが いっぱい
+    if (course === "sunflower") {
+      for (let row = 0; row < 2; row++) for (let i = 0; i < 12; i++) {
+        const fx = ((i * 80 + row * 40 - scroll * (.35 + row * .2)) % (GW + 80) + GW + 80) % (GW + 80) - 40, hh = 60 + row * 18;
+        w.strokeStyle = "#4f9a46"; w.lineWidth = 3; w.beginPath(); w.moveTo(fx, GROUND); w.lineTo(fx, GROUND - hh); w.stroke();
+        w.fillStyle = "#ffd23f"; w.beginPath(); w.arc(fx, GROUND - hh - 4, 13 + row * 2, 0, Math.PI * 2); w.fill();
+        w.fillStyle = "#8a5a1f"; w.beginPath(); w.arc(fx, GROUND - hh - 4, 6, 0, Math.PI * 2); w.fill();
+      }
+    }
     // なつのひまわり
     if (S.fx === "sun") {
       for (let i = 0; i < 9; i++) {
@@ -2622,8 +2760,8 @@
       }
     }
     // 地面
-    w.fillStyle = S.ground; w.fillRect(0, GROUND, GW, GH - GROUND);
-    w.fillStyle = S.dirt; w.fillRect(0, GROUND + 22, GW, 30);
+    w.fillStyle = course === "sea" ? "#f0dca8" : S.ground; w.fillRect(0, GROUND, GW, GH - GROUND);
+    w.fillStyle = course === "sea" ? "#e4c98e" : S.dirt; w.fillRect(0, GROUND + 22, GW, 30);
     w.fillStyle = "rgba(0,0,0,.06)";
     for (let i = 0; i < 20; i++) { const x = ((i * 53 - scroll) % GW + GW) % GW; w.fillRect(x, GROUND + 34, 14, 3); }
 
@@ -2691,7 +2829,6 @@
     else if (G.bones >= 25) say = `ほね ${G.bones}こ！ ぼく、おなか ぱんぱん。また いっしょに いこうね、ママ！`;
     else if (G.bones >= 12) say = "たのしかったー！ くうは まだまだ はしれるよ！ もういっかい いこ！";
     else say = "ゆっくり おさんぽも すきだよ。ママと いっしょなら なんでも たのしいもん！";
-    if (outfit === "pink") say += "\nピンクのふく、きょうも ばっちりだったでしょ？";
     $("rSay").textContent = say;
     $("rPhoto").src = END_PHOTOS[Math.floor(Math.random() * END_PHOTOS.length)];
     $("walkEnd").hidden = false;
@@ -4753,6 +4890,7 @@ ${letter}
       if (e.kind === "wish") queue.push(`<b>おねがい かなえた！</b><span>${e.def.icon} ${e.def.text}　🦴+${e.def.bones}</span>`);
       else if (e.kind === "all") queue.push(`<b>🐾 スタンプ ゲット！</b><span>きょうの おねがい ぜんぶ！　🦴+5</span>`);
       else if (e.kind === "mile") queue.push(`<b>🎁 ${e.mile.msg}</b><span>ほね +${e.mile.b}</span>`);
+      else if (e.kind === "place") queue.push(`<b>${e.place.icon} ${e.place.name}に ついた！</b><span>${e.place.course ? "あたらしい おさんぽコースが ふえたよ　" : ""}🦴+${e.place.bones}</span>`);
       next();
       try { house.cheer(e); } catch {}
     });
@@ -4808,7 +4946,7 @@ ${letter}
         const n = life.L.found[it.id] || 0; if (n) got++;
         const c = document.createElement("div");
         c.className = "zk" + (n ? "" : " unknown");
-        const when = it.season < 0 ? (it.rare ? "めったに ない" : "いつでも") : SEASON[it.season];
+        const when = it.course ? ({ river: "かわぞい", sea: "うみ" })[it.course] + "コース" : it.season < 0 ? (it.rare ? "めったに ない" : "いつでも") : SEASON[it.season];
         c.innerHTML = `<i aria-hidden="true">${n ? it.icon : "？"}</i><b></b><small></small>`;
         c.querySelector("b").textContent = n ? it.name : "？？？";
         c.querySelector("small").textContent = n ? `${n}こ　${life.L.foundAt[it.id].split("-").slice(1).join("/")}に はじめて` : `${when}の おさんぽで`;
@@ -4821,6 +4959,47 @@ ${letter}
     $("zukanClose").addEventListener("click", () => { $("zukanModal").hidden = true; });
     for (const id of ["diaryModal", "zukanModal"]) $(id).addEventListener("click", (e) => { if (e.target.id === id) $(id).hidden = true; });
     window.QooZukan = openZukan;
+
+    /* ---------- おさんぽマップ（ほんとうの 歩数と おさんぽゲームで すすむ） ---------- */
+    function renderMap() {
+      const k = life.km(), st = life.L.step;
+      $("mapKm").textContent = k < 10 ? k.toFixed(1) : Math.floor(k).toString();
+      const list = $("mapList"); list.replaceChildren();
+      const next = life.MAP.find((p) => p.km > k);
+      life.MAP.forEach((p) => {
+        const got = p.km === 0 || life.L.mapGot.includes(p.id);
+        const li = document.createElement("li"); li.className = got ? "got" : p === next ? "next" : "";
+        const i = document.createElement("i"); i.textContent = got || p === next ? p.icon : "？";
+        const box = document.createElement("div");
+        const b = document.createElement("b"); b.textContent = got || p === next ? `${p.name}　${p.km}km` : `？？？　${p.km}km`;
+        const sm = document.createElement("small");
+        sm.textContent = p.km === 0 ? "ここから しゅっぱつ" : got ? p.letter : p === next ? `あと ${(p.km - k).toFixed(1)}km` : "";
+        box.append(b, sm);
+        if (p === next) { const bar = document.createElement("span"); bar.className = "map-bar"; const prev = [...life.MAP].reverse().find((q) => q.km <= k) || life.MAP[0]; bar.style.setProperty("--p", ((k - prev.km) / (p.km - prev.km)).toFixed(3)); box.append(bar); }
+        li.append(i, box); list.append(li);
+      });
+      const today = life.today().log.steps || 0;
+      const S2 = window.QooSteps;
+      const note = $("mapSteps"), btn = $("mapAsk");
+      btn.hidden = true;
+      if (S2 && S2.supported) {
+        if (st.granted) note.textContent = `スマホの 歩数と つながってるよ。きょう ${today.toLocaleString()}ぽ（1000ぽで ほね 1本、1日 10本まで）`;
+        else if (st.available === false) note.textContent = "このスマホには 歩数計が ないみたい。おさんぽゲームで すすめてね。";
+        else { note.textContent = "スマホの 歩数を つかうと、ママが ほんとうに あるいた ぶんだけ くうも いっしょに すすむよ。"; btn.hidden = false; }
+      } else if (S2 && S2.app) note.textContent = "アプリを あたらしく すると、ママが ほんとうに あるいた ぶんも たまるよ。";
+      else note.textContent = "アプリでは、ママが ほんとうに あるいた ぶんも たまるよ。";
+    }
+    $("mapAsk").addEventListener("click", async () => {
+      $("mapAsk").disabled = true;
+      const r = await window.QooSteps.read(true);
+      $("mapAsk").disabled = false;
+      if (r && r.granted) { window.QooToast && window.QooToast("<b>👟 歩数と つながったよ！</b><span>きょうから いっしょに かぞえるね</span>"); }
+      renderMap();
+    });
+    $("openMap").addEventListener("click", () => { renderMap(); $("mapModal").hidden = false; });
+    $("mapClose").addEventListener("click", () => { $("mapModal").hidden = true; });
+    $("mapModal").addEventListener("click", (e) => { if (e.target.id === "mapModal") $("mapModal").hidden = true; });
+    life.on(() => { if (!$("mapModal").hidden) renderMap(); });
     window.QooToast = (h) => { queue.push(h); next(); };
   })();
 
@@ -5432,6 +5611,9 @@ ${letter}
     { v: "today", eyebrow: "Every day", title: "きょうの おねがい", badge: "NEW", since: 5,
       body: "まいにち くうから、ちいさな おねがいが 3つ とどきます。\nかなえると ほねが たまって、ぜんぶ かなえると カレンダーに 🐾スタンプ。\nおさんぽで ひろった はなや どんぐりは、おうちに かざられるよ。",
       tries: ["おねがいを かなえる", "くう日記", "おさんぽ図鑑"], cta: "おねがいを みる", go: () => { goTab("room"); setTimeout(() => $("wishPanel").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500); } },
+    { v: "map", eyebrow: "Walk together", title: "ママと いっしょに あるく", badge: "NEW", since: 7,
+      body: "アプリでは、ママが ほんとうに あるいた 歩数で、くうとの おさんぽマップが すすみます。\nこうえん、かわぞい、ひまわりばたけ、うみ… ついた ところは、おさんぽゲームの コースにも なるよ。\n「おさんぽマップ」の「スマホの 歩数を つかう」から はじめてね。",
+      tries: ["おさんぽマップ", "あたらしい コース", "1000ぽで ほね"], cta: "マップを みる", go: () => { goTab("room"); setTimeout(() => $("openMap").click(), 600); } },
     { v: "play", eyebrow: "More to do", title: "そだてる・おぼえる・つくる", badge: "NEW", since: 6,
       body: "ためた ほねで、おへやの もようがえや くうの おしゃれが できます。\nおにわに ひまわりの たねを まいて、まいにち おみずを あげると さくよ。\nしつけを れんしゅうすると 芸を おぼえて、てづくり おやつの レシピも ふえていきます。",
       tries: ["ほねの おみせ", "ひまわり畑", "しつけ", "おやつ作り"], cta: "おうちへ", go: () => goTab("room") },
@@ -5481,6 +5663,7 @@ ${letter}
     dots: () => `<div class="gv gv-dots"><img src="img/face.jpg" alt=""></div>`,
     path: () => `<div class="gv gv-path"><img src="img/baby.jpg" alt=""><img src="img/cake.jpg" alt=""><img src="img/smile.jpg" alt=""></div>`,
     sky: () => `<div class="gv gv-sky"><img src="img/face.jpg" alt=""><b style="left:18%;top:62%"></b><b style="left:46%;top:74%"></b><b style="left:78%;top:58%"></b><b style="left:70%;top:24%"></b><em></em></div>`,
+    map: () => `<div class="gv gv-today gv-play"><div><span>🏠</span><span>🌳</span><span>🌻</span><span>🌈</span></div></div>`,
     play: () => `<div class="gv gv-today gv-play"><div><span>🛍</span><span>🌻</span><span>🐕</span><span>🍪</span></div></div>`,
     today: () => `<div class="gv gv-today"><ol><li class="ok">🔴 ボール 3かい なげて！<b>✓</b></li><li class="ok">💧 おみず かえて〜<b>✓</b></li><li>🌼 おはな みつけてきて<b>🦴4</b></li></ol><span>🐾</span></div>`,
     house: () => `<div class="gv gv-house"><img src="img/kuu-body.png" alt=""><q>ママ、おかえり！</q></div>`,
@@ -5553,7 +5736,7 @@ ${letter}
   $("guideSlide").addEventListener("pointerup", (e) => { if (sx == null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); });
   document.querySelectorAll(".open-guide").forEach((b) => b.addEventListener("click", () => openGuide(0)));
   // はじめて来た人には、粒のくうちゃんを見てもらってから、そっと ひらく
-  const GUIDE_VER = 6;
+  const GUIDE_VER = 7;
   const seenVer = store.get("qoo-guide-ver", store.get("qoo-guide-seen", 0) ? 1 : 0);
   if (seenVer < GUIDE_VER) {
     setTimeout(() => {
@@ -6125,7 +6308,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011433").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011510").catch(() => {});
 </script>
 </body>
 </html>

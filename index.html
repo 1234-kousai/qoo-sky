@@ -2121,6 +2121,7 @@
   }
   function setRoom(name) {
     show(name);
+    window.QooMusic?.song(name);
     worldEl.dataset.room = name;
     $("hudTitle").textContent = ROOM_NAMES[name];
     stageEl.scrollTo({ top: 0 });
@@ -2152,6 +2153,7 @@
     worldEl.hidden = true; worldEl.classList.remove("opening"); fxEl.classList.remove("on");
     document.documentElement.classList.remove("in-world");
     pauseWalk();
+    window.QooMusic?.song("sky");
     try { history.replaceState(null, "", location.pathname + location.search); } catch {}
     const last = $("worldLast"); last.textContent = `さっきまで：${ROOM_NAMES[current]}`; last.hidden = false;
     $("worldDoor").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
@@ -6052,16 +6054,68 @@ ${letter}
 <script>
 (() => {
   /* ================= オルゴール（音源ファイルなし、その場で合成） ================= */
-  // くうのための子守歌（オリジナル）: ハ長調・3拍子・16小節でループ
-  const BEAT = .62;
-  const CHORDS = { C: [48, 55, 64], Am: [45, 52, 60], F: [41, 48, 57], G: [43, 50, 59], Em: [40, 47, 55] };
-  const BARS = ["C", "Am", "F", "G", "C", "Em", "F", "G", "Am", "F", "C", "G", "F", "G", "C", "C"];
-  const MELODY = [ // [midi, 拍]
-    [[76, 1], [79, 1], [84, 1]], [[83, 1.5], [81, .5], [76, 1]], [[77, 1], [81, 1], [84, 1]], [[83, 2], [79, 1]],
-    [[79, 1], [76, 1], [72, 1]], [[71, 1], [76, 1], [79, 1]], [[81, 1.5], [79, .5], [77, 1]], [[74, 3]],
-    [[84, 1], [83, 1], [81, 1]], [[81, 1.5], [79, .5], [77, 1]], [[76, 1], [79, 1], [84, 1]], [[86, 2], [83, 1]],
-    [[84, 1], [81, 1], [77, 1]], [[79, 1], [83, 1], [86, 1]], [[84, 3]], [],
-  ];
+  // へやごとの 曲（ぜんぶ オリジナル。16小節で ループ）。[midi, 拍]
+  // sky＝くうのための子守歌（ハ長調・3拍子）／room＝おうちの ひるさがり（ヘ長調）／walk＝おさんぽ びより（ト長調・かるく）
+  // letter＝てがみの じかん（イ短調・ゆっくり）／kuji＝おみくじ まつり（にほんの 音階・たいこつき）
+  const CH = {
+    C: [48, 55, 64], Am: [45, 52, 60], F: [41, 48, 57], G: [43, 50, 59], Em: [40, 47, 55], Dm: [38, 45, 53], Bb: [46, 53, 62],
+    D: [50, 57, 66], E: [40, 47, 56], D5: [50, 57, 62], G5: [43, 50, 55], A5: [45, 52, 57],
+  };
+  const SONGS = {
+    sky: { beat: .62, meter: 3, vel: .16,
+      bars: ["C", "Am", "F", "G", "C", "Em", "F", "G", "Am", "F", "C", "G", "F", "G", "C", "C"],
+      mel: [
+        [[76, 1], [79, 1], [84, 1]], [[83, 1.5], [81, .5], [76, 1]], [[77, 1], [81, 1], [84, 1]], [[83, 2], [79, 1]],
+        [[79, 1], [76, 1], [72, 1]], [[71, 1], [76, 1], [79, 1]], [[81, 1.5], [79, .5], [77, 1]], [[74, 3]],
+        [[84, 1], [83, 1], [81, 1]], [[81, 1.5], [79, .5], [77, 1]], [[76, 1], [79, 1], [84, 1]], [[86, 2], [83, 1]],
+        [[84, 1], [81, 1], [77, 1]], [[79, 1], [83, 1], [86, 1]], [[84, 3]], [],
+      ] },
+    room: { beat: .5, meter: 4, vel: .15,
+      bars: ["F", "Dm", "Bb", "C", "F", "Am", "Bb", "C", "Dm", "Bb", "F", "C", "Bb", "C", "F", "F"],
+      mel: [
+        [[72, 1], [69, .5], [70, .5], [72, 1], [77, 1]], [[76, 1], [74, 1], [72, 2]], [[70, 1], [74, 1], [77, 1], [74, 1]], [[72, 2], [67, 1], [69, 1]],
+        [[72, 1], [69, .5], [70, .5], [72, 1], [77, 1]], [[76, 1.5], [74, .5], [72, 1], [69, 1]], [[70, 1], [72, 1], [74, 1], [70, 1]], [[72, 4]],
+        [[74, 1], [77, 1], [81, 1], [77, 1]], [[79, 1], [77, 1], [74, 2]], [[72, 1], [77, 1], [76, 1], [77, 1]], [[79, 2], [76, 2]],
+        [[77, 1], [74, 1], [70, 1], [74, 1]], [[72, 1], [76, 1], [79, 1], [76, 1]], [[77, 3], [72, 1]], [],
+      ] },
+    walk: { beat: .42, meter: 4, vel: .14,
+      bars: ["G", "C", "D", "G", "Em", "C", "D", "D", "G", "C", "G", "Em", "C", "D", "G", "G"],
+      mel: [
+        [[74, .5], [79, .5], [78, .5], [79, .5], [74, 1], [71, 1]], [[72, .5], [76, .5], [74, .5], [72, .5], [71, 1], [67, 1]],
+        [[69, .5], [71, .5], [72, .5], [74, .5], [76, 1], [78, 1]], [[79, 2], [74, 2]],
+        [[71, .5], [74, .5], [79, .5], [78, .5], [76, 1], [74, 1]], [[72, .5], [74, .5], [76, .5], [79, .5], [76, 1], [72, 1]],
+        [[74, 1], [78, 1], [81, 1], [78, 1]], [[74, 2], [69, 2]],
+        [[74, .5], [79, .5], [78, .5], [79, .5], [83, 1], [79, 1]], [[84, .5], [83, .5], [81, .5], [79, .5], [76, 1], [72, 1]],
+        [[74, 1], [79, 1], [83, 1], [79, 1]], [[76, 1.5], [74, .5], [71, 2]],
+        [[72, .5], [76, .5], [79, .5], [84, .5], [83, 1], [81, 1]], [[78, .5], [81, .5], [78, .5], [74, .5], [76, 1], [78, 1]],
+        [[79, 3], [74, 1]], [],
+      ] },
+    letter: { beat: .78, meter: 3, vel: .15,
+      bars: ["Am", "F", "C", "G", "Am", "F", "G", "E", "Am", "Dm", "G", "C", "F", "G", "C", "C"],
+      mel: [
+        [[76, 2], [72, 1]], [[74, 1], [72, 1], [69, 1]], [[67, 2], [72, 1]], [[71, 3]],
+        [[76, 1], [77, 1], [79, 1]], [[81, 2], [77, 1]], [[79, 1.5], [77, .5], [74, 1]], [[76, 3]],
+        [[72, 1], [76, 1], [81, 1]], [[77, 2], [74, 1]], [[74, 1], [79, 1], [77, 1]], [[76, 3]],
+        [[77, 1], [76, 1], [74, 1]], [[74, 1.5], [72, .5], [71, 1]], [[72, 3]], [],
+      ] },
+    kuji: { beat: .45, meter: 4, vel: .15, taiko: true,
+      bars: ["D5", "D5", "G5", "D5", "D5", "A5", "G5", "D5", "D5", "D5", "G5", "D5", "D5", "A5", "G5", "D5"],
+      mel: [
+        [[74, .5], [76, .5], [79, 1], [76, .5], [74, .5], [76, 1]], [[79, .5], [81, .5], [83, 1], [81, 1], [79, 1]],
+        [[83, .5], [86, .5], [83, .5], [81, .5], [79, 2]], [[76, 1], [74, 1], [76, 2]],
+        [[74, .5], [76, .5], [79, 1], [81, .5], [83, .5], [81, 1]], [[79, .5], [76, .5], [74, 1], [71, 1], [74, 1]],
+        [[76, 1], [79, 1], [76, .5], [74, .5], [71, 1]], [[74, 4]],
+        [[81, .5], [83, .5], [86, 1], [83, .5], [81, .5], [79, 1]], [[81, .5], [79, .5], [76, 1], [79, 1], [81, 1]],
+        [[83, .5], [86, .5], [88, .5], [86, .5], [83, 2]], [[81, 1], [79, 1], [76, 2]],
+        [[74, .5], [76, .5], [79, 1], [81, .5], [83, .5], [86, 1]], [[83, .5], [81, .5], [79, 1], [76, 1], [79, 1]],
+        [[76, 1], [79, 1], [81, .5], [79, .5], [76, 1]], [[74, 2], [86, 2]],
+      ] },
+  };
+  let song = "sky";
+  // よるは ゆっくり・しずかに
+  const night = () => { const h = new Date().getHours(); return h >= 21 || h < 5; };
+  const beatOf = (S) => S.beat * (night() ? 1.18 : 1);
+  const LEVEL = () => (night() ? .4 : .55);
   const hint = document.getElementById("soundHint");
   let ctx = null, master = null, wet = null, playing = false, timer = 0, bar = 0, nextBarAt = 0;
   const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
@@ -6096,27 +6150,55 @@ ${letter}
       o.start(at); o.stop(at + decay * dk + .05);
     }
   }
-  function scheduleBar(i, t0, c, out) {
-    const ch = CHORDS[BARS[i]];
-    [ch[0], ch[1], ch[2], ch[1], ch[2] + 12, ch[1]].forEach((m, k) => tine(m, t0 + k * BEAT / 2, k === 0 ? .1 : .055, c, out));
+  function taiko(at, vel, c, out) {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(110, at); o.frequency.exponentialRampToValueAtTime(48, at + .18);
+    g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(vel, at + .005); g.gain.exponentialRampToValueAtTime(.0001, at + .3);
+    o.connect(g); g.connect(out); o.start(at); o.stop(at + .35);
+  }
+  function scheduleBar(i, t0, c = ctx, out = master, S = SONGS[song]) {
+    const B = beatOf(S), ch = CH[S.bars[i]];
+    // 伴奏：8分音符の アルペジオ（3拍子は 6こ、4拍子は 8こ）
+    const arp = S.meter === 3 ? [ch[0], ch[1], ch[2], ch[1], ch[2] + 12, ch[1]] : [ch[0], ch[1], ch[2], ch[1], ch[0] + 12, ch[1], ch[2], ch[1]];
+    arp.forEach((m, k) => tine(m, t0 + k * B / 2, k === 0 ? .1 : .05, c, out));
+    if (S.taiko) for (let k = 0; k < S.meter; k += 2) taiko(t0 + k * B, k ? .12 : .18, c, out);
     let b = 0;
-    for (const [m, d] of MELODY[i]) { tine(m, t0 + b * BEAT, .16, c, out); b += d; }
-    if (i === BARS.length - 1) tine(96, t0 + 2 * BEAT, .05, c, out); // ループのつなぎに、きらっと
+    for (const [m, d] of S.mel[i]) { tine(m, t0 + b * B, S.vel, c, out); b += d; }
+    if (i === S.bars.length - 1) tine(96, t0 + (S.meter - 1) * B, .05, c, out); // ループのつなぎに、きらっと
   }
   // 思い出ムービー用：べつの音の出口へ、曲を まるごと流す／流れているオルゴールを いったん しずかにする
   window.QooMusic = {
-    render(c, out, t0, dur) { for (let i = 0, at = t0; at < t0 + dur; i++, at += BEAT * 3) scheduleBar(i % BARS.length, at, c, out); },
+    get current() { return song; },
+    // 曲を べつの 出口へ（テスト・ムービー用）
+    renderSong(name, c, out, t0, dur) { const S = SONGS[name]; for (let i = 0, at = t0; at < t0 + dur; i++, at += S.beat * S.meter) scheduleBar(i % S.bars.length, at, c, out, S); },
+    // 思い出ムービーは いつも 子守歌
+    render(c, out, t0, dur) { const S = SONGS.sky; for (let i = 0, at = t0; at < t0 + dur; i++, at += S.beat * 3) scheduleBar(i % S.bars.length, at, c, out, S); },
     mute(on) {
       if (!ctx || !playing) return;
+      const off = on || window.QooSfx?.enabled === false;
       master.gain.cancelScheduledValues(ctx.currentTime);
       master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
-      master.gain.linearRampToValueAtTime(on ? 0 : .55, ctx.currentTime + .6);
+      master.gain.linearRampToValueAtTime(off ? 0 : LEVEL(), ctx.currentTime + .6);
+    },
+    // へやを かえたら 曲を かえる（ふわっと 小さく → つぎの 曲の あたまから → ふわっと 大きく）
+    song(name) {
+      if (!SONGS[name] || name === song) return;
+      song = name;
+      if (!ctx || !playing) return;
+      const t = ctx.currentTime, on = window.QooSfx?.enabled !== false;
+      master.gain.cancelScheduledValues(t);
+      master.gain.setValueAtTime(master.gain.value, t);
+      master.gain.linearRampToValueAtTime(0, t + .45);
+      bar = 0; nextBarAt = t + .5;
+      master.gain.setValueAtTime(0, t + .5);
+      master.gain.linearRampToValueAtTime(on ? LEVEL() : 0, t + 1.6);
     },
   };
   function pump() {
     while (nextBarAt < ctx.currentTime + .5) {
+      const S = SONGS[song];
       scheduleBar(bar, nextBarAt);
-      nextBarAt += BEAT * 3; bar = (bar + 1) % BARS.length;
+      nextBarAt += beatOf(S) * S.meter; bar = (bar + 1) % S.bars.length;
     }
   }
   // ブラウザの決まりで、音は「画面に触れたあと」しか出せない。
@@ -6128,7 +6210,7 @@ ${letter}
     bar = 0; nextBarAt = ctx.currentTime + .15;
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setValueAtTime(0, ctx.currentTime);
-    master.gain.linearRampToValueAtTime(.55, ctx.currentTime + 2);
+    master.gain.linearRampToValueAtTime(window.QooSfx?.enabled === false ? 0 : LEVEL(), ctx.currentTime + 2);
     pump(); clearInterval(timer); timer = setInterval(pump, 120);
     for (const ev of KICK) removeEventListener(ev, kick, true);
   }
@@ -6139,6 +6221,8 @@ ${letter}
     if (ctx.state === "running") begin();
     else if (p) p.then(() => { if (ctx.state === "running") begin(); }).catch(() => {});
   }
+  // フル画面の へやから はじまったときは、その へやの 曲から
+  { const h0 = (location.hash || "").slice(1); if (SONGS[h0] && window.QooWorld?.isOpen) song = h0; }
   const KICK = ["pointerdown", "touchend", "click", "keydown"];
   for (const ev of KICK) addEventListener(ev, kick, { capture: true, passive: true });
   // 画面を閉じたら止めて、もどったら続きから
@@ -6536,7 +6620,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011610").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011619").catch(() => {});
 </script>
 </body>
 </html>

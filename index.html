@@ -381,6 +381,46 @@
   @media (prefers-reduced-motion: reduce) { .sound-hint { animation: none; } }
 
   /* ---------- おへや ---------- */
+  .home-switch { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 520px; width: 100%; margin: 0 auto 14px; }
+  .home-switch button {
+    font: inherit; color: var(--mist); cursor: pointer; text-align: left;
+    background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 14px; padding: 8px 10px;
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+  }
+  .home-switch button i { font-style: normal; font-size: 26px; line-height: 1; width: 40px; text-align: center; flex: none; }
+  .home-switch button img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; border: 1px solid rgba(214,181,122,.5); }
+  .home-switch button span { display: grid; min-width: 0; font-family: var(--f-display); font-size: 15px; letter-spacing: .04em; line-height: 1.35; white-space: nowrap; }
+  .home-switch button small { font-family: inherit; font-size: 11px; letter-spacing: 0; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .home-switch button[aria-pressed="true"] { background: rgba(214,181,122,.16); color: var(--honey); border-color: var(--honey); }
+  #room.is-dakko .house-box { display: none; }
+  #room:not(.is-dakko) .room-stage { display: none; }
+  #room:not(.is-dakko) .room { grid-template-columns: minmax(0, 1fr); margin-top: 22px; }
+  .house-box { width: 100%; max-width: 760px; margin: 0 auto; }
+  .house {
+    position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 72vh; border-radius: 3px; overflow: hidden; background: #f6ead6;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(214,181,122,.3);
+    touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 760px) { .house { aspect-ratio: 1 / 1.02; } }
+  #houseCV { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .house-status {
+    position: absolute; left: 10px; top: 10px; right: 10px; margin: 0; pointer-events: none; width: fit-content; max-width: calc(100% - 20px);
+    padding: 5px 12px; border-radius: 999px; background: rgba(7,8,13,.55); color: var(--cream); font-size: 12px; line-height: 1.5;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .3s;
+  }
+  .house-status.flash { background: rgba(214,181,122,.92); color: var(--night); }
+  .house-bubble { top: 0; transform: translate(-50%, -100%); width: max-content; max-width: min(80%, 300px); font-size: 15px; padding: 7px 14px; }
+  .house-bubble.pop { animation: houseBubblePop .38s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes houseBubblePop { from { transform: translate(-50%, -100%) scale(.6); opacity: 0; } to { transform: translate(-50%, -100%) scale(1); opacity: 1; } }
+  .house-hint { top: 46px; bottom: auto; font-size: 12px; }
+  .house-fly { position: absolute; font-size: 28px; transform: translate(-50%, -50%); pointer-events: none; }
+  .house-rooms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+  .house-room {
+    font: inherit; font-size: 13px; color: var(--cream); cursor: pointer; padding: 8px 2px; border-radius: 10px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--line); display: grid; justify-items: center; gap: 2px;
+  }
+  .house-room span { font-size: 20px; line-height: 1.1; }
+  .house-room[aria-pressed="true"] { border-color: var(--honey); background: rgba(214,181,122,.16); color: var(--honey); }
   .room { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
   @media (max-width: 760px) { .room { grid-template-columns: minmax(0, 1fr); } }
   .room-stage {
@@ -579,6 +619,9 @@
   .gv-sky em { position: absolute; left: 10%; top: 14%; width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, #fff); transform: rotate(-24deg); animation: shoot 3.2s ease-in infinite; }
   @keyframes twinkle { 50% { opacity: .3; transform: scale(.7); } }
   @keyframes shoot { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 60%, 100% { opacity: 0; translate: 160px 70px; } }
+  .gv-house { background: linear-gradient(#f6ead6 0 70%, #dea267 70%); }
+  .gv-house canvas { position: absolute; left: 50%; bottom: 8%; width: 62%; transform: translateX(-50%); }
+  .gv-house q { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); quotes: none; padding: 6px 14px; border-radius: 16px; background: var(--paper); color: var(--ink); font-family: var(--f-hand); font-size: 14px; white-space: nowrap; }
   .gv-room img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; }
   .gv-room span { position: absolute; color: #f2708c; font-size: 22px; bottom: 30%; animation: heartUp 2.6s ease-out infinite; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
   .gv-room span:nth-of-type(1) { left: 38%; } .gv-room span:nth-of-type(2) { left: 50%; animation-delay: -.9s; } .gv-room span:nth-of-type(3) { left: 60%; animation-delay: -1.7s; }
@@ -941,6 +984,19 @@
 
   <!-- おへや -->
   <section role="tabpanel" id="room" aria-labelledby="tab-room" hidden>
+    <div class="home-switch" role="group" aria-label="くうと すごす ばしょ">
+      <button type="button" id="modeHouse" aria-pressed="true"><i aria-hidden="true">🏡</i><span>おうち<small>くうが くらす</small></span></button>
+      <button type="button" id="modeDakko" aria-pressed="false"><img src="img/face.jpg" alt=""><span>写真の くう<small>なでなで</small></span></button>
+    </div>
+    <div class="house-box">
+      <div class="house" id="house">
+        <canvas id="houseCV" aria-label="くうの おうち。くうを タップしたり なでたり、おさらや ボールにも さわれます"></canvas>
+        <p class="house-status" id="houseStatus" aria-live="polite"></p>
+        <div class="bubble house-bubble" id="houseBubble" aria-live="polite" hidden></div>
+        <p class="room-hint house-hint" id="houseHint"><span class="nb">くうを タップ・なでなで</span>　<span class="nb">おさら・ボール・ライトも さわれるよ</span></p>
+      </div>
+      <div class="house-rooms" id="houseRooms" role="group" aria-label="へやを えらぶ"></div>
+    </div>
     <div class="room">
       <div class="room-stage" id="roomStage">
         <canvas id="roomGL" aria-label="くうちゃん。なでたり、タップしたりできます"></canvas>
@@ -1801,7 +1857,7 @@
     try { downloads = await window.claude?.use?.("downloads"); } catch { downloads = null; }
     $("albumExport").hidden = !downloads && !STANDALONE;
   })();
-  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits"];
+  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits", "kuu-house", "kuu-home-mode"];
   function backupData() { const o = {}; for (const k of BACKUP_KEYS) { const v = store.get(k, null); if (v != null) o[k] = v; } return o; }
   // もどすときは、いまの データと まぜる（同じものは 2重に しない、数字は 大きいほう）
   function mergeData(src) {
@@ -2809,6 +2865,12 @@ ${letter}
     });
     function feed(tr, btnEl) {
       if (eating) return;
+      // おうちに いるときは、おうちの くうが たべる
+      if (house.on) {
+        eating = true; loadSounds();
+        house.treat(tr, btnEl, (ok) => { eating = false; if (ok) { addPts(5); stats.bump("treats"); } });
+        return;
+      }
       eating = true; hideHint();
       if (K.sleepy > .5) wake();
       K.lastAct = performance.now();
@@ -2984,8 +3046,1059 @@ ${letter}
       K.lastAct = performance.now();
     }
     $("tab-room").addEventListener("click", enter);
-    return { enter };
+    return { enter, addPts, snd: { yip, bark, crunch, hmph, whine } };
   })();
+
+  // くうの 全身（2Dで 描く。写真の 毛色と 顔つきに よせた、ふちどりの ある やさしい 絵）
+  // KuuDog.draw(c, P, s)：足もとの まんなかが 原点、右むき（左むきは 呼ぶ側で scale(-1,1)）。s は 背の高さ 1 の ピクセル数
+  const KuuDog = (() => {
+    const C = {
+      base: "#dc8f43", light: "#f3c27d", shade: "#c0732f", deep: "#9c5524", cream: "#fbecd2", white: "#fffaf0",
+      line: "#6e3a1c", nose: "#231813", eye: "#24160f", tongue: "#f08394", mouth: "#6b2c26",
+      band: "#7aa6de", bandD: "#5583c0", far: "#c27634",
+    };
+    const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    let LW = 2;
+    function ink(c, fill) { c.fillStyle = fill; c.fill(); c.lineWidth = LW; c.strokeStyle = C.line; c.lineJoin = "round"; c.stroke(); }
+    function gradV(c, x, y, r, a, b) { const g = c.createRadialGradient(x - r * .3, y - r * .45, r * .05, x, y, r * 1.2); g.addColorStop(0, a); g.addColorStop(1, b); return g; }
+
+    // 毛の ある だ円：from〜to の 角度だけ、毛先が とがる
+    function furEllipse(c, cx, cy, rx, ry, rot, tufts = [], seed = 1) {
+      const N = 64;
+      c.save(); c.translate(cx, cy); c.rotate(rot);
+      c.beginPath();
+      const inFur = (a) => tufts.find(([f, t]) => { let x = a; while (x < f) x += Math.PI * 2; return x <= t; });
+      let first = true;
+      for (let i = 0; i <= N; i++) {
+        const a = i / N * Math.PI * 2;
+        const tf = inFur(a);
+        const px = Math.cos(a) * rx, py = Math.sin(a) * ry;
+        if (first) { c.moveTo(px, py); first = false; continue; }
+        if (tf && i % 2 === 0) {
+          const amp = tf[2] || .14, k = 1 + amp * (.6 + .4 * rnd(seed + i));
+          const am = a - Math.PI / N * .6;
+          c.quadraticCurveTo(Math.cos(am) * rx * .97, Math.sin(am) * ry * .97, Math.cos(a) * rx * k, Math.sin(a) * ry * k);
+        } else if (tf) {
+          c.lineTo(px * .97, py * .97);
+        } else c.lineTo(px, py);
+      }
+      c.closePath();
+      c.restore();
+    }
+    function strand(c, x0, y0, x1, y1, bend, col, w) {
+      c.strokeStyle = col; c.lineWidth = w; c.lineCap = "round";
+      c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo((x0 + x1) / 2 + bend, (y0 + y1) / 2, x1, y1); c.stroke();
+    }
+
+    // みじかい 足（白い 足先）
+    function leg(c, x, top, h, w, lift, swing, col) {
+      const fx = x + swing, fy = -lift;
+      c.beginPath();
+      c.moveTo(x - w / 2, top);
+      c.lineTo(fx - w / 2, fy - w * .35);
+      c.quadraticCurveTo(fx - w / 2, fy, fx, fy);
+      c.lineTo(fx + w * .2, fy);
+      c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4);
+      c.lineTo(x + w / 2, top);
+      c.closePath();
+      ink(c, col);
+      // 白い 足先
+      c.save(); c.beginPath(); c.rect(fx - w, fy - w * .55, w * 2.2, w); c.clip();
+      c.beginPath(); c.moveTo(fx - w / 2, fy - w * .35); c.quadraticCurveTo(fx - w / 2, fy, fx, fy); c.lineTo(fx + w * .2, fy);
+      c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4); c.lineTo(fx - w / 2, fy - w * .55); c.closePath();
+      c.fillStyle = C.white; c.fill(); c.restore();
+      c.lineWidth = LW; c.strokeStyle = C.line;
+      c.beginPath(); c.moveTo(fx - w / 2, fy - w * .35); c.quadraticCurveTo(fx - w / 2, fy, fx, fy); c.lineTo(fx + w * .2, fy); c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4); c.stroke();
+      c.lineWidth = LW * .6;
+      c.beginPath(); c.moveTo(fx + w * .08, fy - w * .02); c.lineTo(fx + w * .1, fy - w * .25); c.stroke();
+    }
+
+    // ふさふさの しっぽ（上に まいている）
+    function tail(c, x, y, ang, s) {
+      c.save(); c.translate(x, y); c.rotate(ang);
+      c.beginPath();
+      c.moveTo(0, .04 * s);
+      c.bezierCurveTo(-.12 * s, .02 * s, -.2 * s, -.1 * s, -.16 * s, -.24 * s);
+      // 毛先
+      const tip = [[-.2, -.3], [-.13, -.33], [-.06, -.36], [.0, -.31], [.04, -.25]];
+      let px = -.16, py = -.24;
+      for (const [tx, ty] of tip) { c.quadraticCurveTo((px + tx) / 2 * s - .02 * s, (py + ty) / 2 * s - .03 * s, tx * s, ty * s); px = tx; py = ty; }
+      c.bezierCurveTo(.0 * s, -.18 * s, -.06 * s, -.08 * s, .03 * s, -.03 * s);
+      c.closePath();
+      ink(c, gradV(c, -.08 * s, -.2 * s, .2 * s, C.light, C.base));
+      strand(c, -.1 * s, -.22 * s, -.03 * s, -.06 * s, -.02 * s, "rgba(255,240,215,.75)", LW * .8);
+      strand(c, -.04 * s, -.27 * s, .0, -.12 * s, -.015 * s, "rgba(255,240,215,.6)", LW * .7);
+      c.restore();
+    }
+
+    function eye(c, x, y, r, P) {
+      const shut = Math.max(P.blink || 0, P.sleep || 0);
+      c.strokeStyle = C.eye; c.lineCap = "round"; c.lineWidth = LW * 1.15;
+      if (P.sleep > .5 || shut > .7) { c.beginPath(); c.arc(x, y - r * .2, r * .8, Math.PI * .15, Math.PI * .85); c.stroke(); return; }
+      if (P.happy > .55) { c.beginPath(); c.arc(x, y + r * .45, r * .85, Math.PI * 1.15, Math.PI * 1.85); c.stroke(); return; }
+      c.fillStyle = C.eye;
+      c.beginPath(); c.ellipse(x, y, r * .9, r * (1.05 - shut), 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "#fff";
+      c.beginPath(); c.arc(x + r * .3, y - r * .38, r * .36, 0, Math.PI * 2); c.fill();
+      c.globalAlpha = .7; c.beginPath(); c.arc(x - r * .3, y + r * .35, r * .16, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+    }
+
+    // あたま（f：顔が 右へ 向く ぐあい 0=しょうめん 1=ななめ）
+    function head(c, P, s, f) {
+      const r = .25 * s, sh = f * .32 * r;
+      // みみ：どちらも あたまの うしろ。ななめの ときは、むこうの みみが かくれて、てまえの みみが 大きく 見える
+      const ear = (sd) => {
+        const vis = sd > 0 ? 1 - f * .55 : 1;
+        const ex = sd * r * (.84 - (sd > 0 ? f * .3 : 0)) + (sd < 0 ? -f * r * .06 : 0), ey = -r * .3;
+        c.save(); c.translate(ex, ey); c.rotate(sd * (.14 + (P.earSwing || 0)) - sd * (P.earUp || 0) * .6); c.scale(vis * 1.12, 1.18);
+        c.beginPath();
+        c.moveTo(-sd * r * .08, -r * .1);
+        c.bezierCurveTo(sd * r * .38, -r * .12, sd * r * .42, r * .5, sd * r * .3, r * .78);
+        c.quadraticCurveTo(sd * r * .25, r * .9, sd * r * .15, r * .82);
+        c.quadraticCurveTo(sd * r * .08, r * .95, -sd * r * .02, r * .8);
+        c.quadraticCurveTo(-sd * r * .1, r * .9, -sd * r * .16, r * .74);
+        c.bezierCurveTo(-sd * r * .22, r * .4, -sd * r * .25, r * .05, -sd * r * .08, -r * .1);
+        c.closePath();
+        ink(c, gradV(c, 0, r * .3, r * .6, C.base, C.deep));
+        strand(c, sd * r * .05, r * .2, sd * r * .1, r * .7, sd * r * .04, "rgba(90,40,15,.35)", LW * .7);
+        c.restore();
+      };
+      ear(1); ear(-1);
+      // あたま（ほっぺが ふさふさ）
+      furEllipse(c, 0, 0, r, r * .93, 0, [[Math.PI * .2, Math.PI * .8, .09], [Math.PI * 1.3, Math.PI * 1.5, .07]], 3);
+      ink(c, gradV(c, 0, 0, r, C.light, C.base));
+      // 白い かお（まんなか。あたまから はみださない）
+      c.save();
+      furEllipse(c, 0, 0, r * .985, r * .915, 0, [], 3); c.clip();
+      c.translate(sh, 0);
+      c.beginPath();
+      c.moveTo(0, -r * .82);
+      c.bezierCurveTo(r * .2, -r * .62, r * .16, -r * .3, r * .48, r * .02);
+      c.bezierCurveTo(r * .78, r * .32, r * .6, r * .86, 0, r * .9);
+      c.bezierCurveTo(-r * .6, r * .86, -r * .78, r * .32, -r * .48, r * .02);
+      c.bezierCurveTo(-r * .16, -r * .3, -r * .2, -r * .62, 0, -r * .82);
+      c.fillStyle = gradV(c, 0, r * .25, r * .8, C.white, C.cream); c.fill();
+      // まゆげの 白い 毛
+      c.fillStyle = "rgba(255,250,238,.9)";
+      for (const sd of [-1, 1]) { c.beginPath(); c.ellipse(sd * r * .4, -r * .36, r * .13, r * .065, sd * .3, 0, Math.PI * 2); c.fill(); }
+      // め
+      eye(c, -r * .38 + f * r * .04, -r * .1, r * .15, P);
+      eye(c, r * .38 + f * r * .02, -r * .1, r * .15, P);
+      // ほっぺの ピンク
+      c.fillStyle = "rgba(242,130,140,.22)";
+      for (const sd of [-1, 1]) { c.beginPath(); c.ellipse(sd * r * .56, r * .18, r * .13, r * .08, 0, 0, Math.PI * 2); c.fill(); }
+      // くち
+      const m = Math.max(P.mouth || 0, (P.happy || 0) * .55);
+      c.lineWidth = LW; c.strokeStyle = C.line; c.lineCap = "round";
+      if (m > .08) {
+        c.beginPath(); c.moveTo(-r * .26, r * .4); c.quadraticCurveTo(0, r * (.52 + m * .5), r * .26, r * .4); c.quadraticCurveTo(0, r * .5, -r * .26, r * .4);
+        c.fillStyle = C.mouth; c.fill();
+        c.save(); c.clip();
+        c.fillStyle = C.tongue; c.beginPath(); c.ellipse(0, r * (.6 + m * .32), r * .16, r * (.12 + m * .2), 0, 0, Math.PI * 2); c.fill();
+        c.restore();
+        c.fillStyle = C.tongue; c.beginPath(); c.ellipse(0, r * (.62 + m * .28), r * .13, r * (.06 + m * .16), 0, 0, Math.PI); c.fill();
+      }
+      c.beginPath(); c.moveTo(0, r * .3); c.lineTo(0, r * .42);
+      c.moveTo(-r * .27, r * .38); c.quadraticCurveTo(-r * .13, r * .5, 0, r * .42); c.quadraticCurveTo(r * .13, r * .5, r * .27, r * .38); c.stroke();
+      // はな
+      c.fillStyle = C.nose;
+      c.beginPath(); c.moveTo(-r * .15, r * .15); c.quadraticCurveTo(0, r * .07, r * .15, r * .15); c.quadraticCurveTo(r * .13, r * .31, 0, r * .33); c.quadraticCurveTo(-r * .13, r * .31, -r * .15, r * .15); c.fill();
+      c.fillStyle = "rgba(255,255,255,.55)"; c.beginPath(); c.ellipse(-r * .04, r * .15, r * .05, r * .025, 0, 0, Math.PI * 2); c.fill();
+      c.restore();
+      // ふちどりを もういちど（白い かおの 上から）
+      furEllipse(c, 0, 0, r, r * .93, 0, [[Math.PI * .2, Math.PI * .8, .09], [Math.PI * 1.3, Math.PI * 1.5, .07]], 3);
+      c.lineWidth = LW; c.strokeStyle = C.line; c.stroke();
+      // あたまの てっぺんの ふさ毛
+      strand(c, -r * .1, -r * .78, r * .05, -r * .98, r * .04, C.line, LW * .9);
+      strand(c, r * .05, -r * .8, r * .2, -r * .95, r * .03, C.line, LW * .9);
+    }
+
+    function bandana(c, x, y, ang, s) {
+      c.save(); c.translate(x, y); c.rotate(ang);
+      const w = .13 * s;
+      c.beginPath(); c.moveTo(-w, -w * .2); c.quadraticCurveTo(0, w * .15, w, -w * .2); c.lineTo(w * .05, w * .85); c.closePath();
+      ink(c, C.band);
+      c.save(); c.clip(); c.strokeStyle = "rgba(255,255,255,.55)"; c.lineWidth = LW * .8;
+      for (let i = -3; i <= 3; i++) { c.beginPath(); c.moveTo(i * w * .3, -w * .3); c.lineTo(i * w * .3 + w * .2, w); c.stroke(); c.beginPath(); c.moveTo(-w, i * w * .3); c.lineTo(w, i * w * .3 + w * .1); c.stroke(); }
+      c.restore();
+      c.restore();
+    }
+
+    // ねている くう（まるくなる）
+    function curled(c, P, s) {
+      const br = 1 + Math.sin(P.t * 1.5) * .02;
+      c.save(); c.scale(1, br);
+      // からだ
+      furEllipse(c, -.02 * s, -.17 * s, .36 * s, .17 * s, 0, [[Math.PI * 1.1, Math.PI * 1.9, .07]], 9);
+      ink(c, gradV(c, 0, -.2 * s, .36 * s, C.light, C.base));
+      strand(c, -.2 * s, -.25 * s, -.05 * s, -.29 * s, -.01 * s, "rgba(255,240,215,.7)", LW * .8);
+      // しっぽ（まえに まわす）
+      c.beginPath(); c.moveTo(-.3 * s, -.08 * s);
+      c.bezierCurveTo(-.2 * s, .02 * s, .1 * s, .02 * s, .16 * s, -.04 * s);
+      c.quadraticCurveTo(.08 * s, -.1 * s, -.05 * s, -.08 * s);
+      c.quadraticCurveTo(-.2 * s, -.07 * s, -.3 * s, -.08 * s);
+      ink(c, gradV(c, 0, -.04 * s, .2 * s, C.light, C.base));
+      c.restore();
+      // あたま（まえあしに のせて）
+      c.save(); c.translate(.26 * s, -.17 * s); c.rotate(.12); c.scale(.82, .82);
+      head(c, { ...P, sleep: 1, mouth: 0, happy: 0 }, s, .2);
+      c.restore();
+      // まえあし
+      c.fillStyle = C.white; c.lineWidth = LW; c.strokeStyle = C.line;
+      for (const dx of [.33, .44]) { c.beginPath(); c.ellipse(dx * s, -.03 * s, .065 * s, .035 * s, 0, 0, Math.PI * 2); c.fill(); c.stroke(); }
+    }
+
+    /* P = { t, walk, ph, sit, lie, down, look(1=しょうめん), wag(0-1), tailUp, blink, sleep, happy, mouth, squat, curl, earUp, hop, tilt } */
+    function draw(c, P, s) {
+      LW = Math.max(1.4, s * .012);
+      if (P.curl > .5) { curled(c, P, s); return; }
+      const sit = P.sit || 0, lie = P.lie || 0, sq = P.squat || 0, walk = P.walk || 0, ph = P.ph || 0, down = P.down || 0;
+      const bob = -walk * Math.abs(Math.sin(ph)) * .025 * s - (P.hop || 0) * s;
+      const S = (v) => v * s;
+      c.save(); c.translate(0, bob);
+      const bx = 0, by = S(-.27 + lie * .1 + sq * .04);
+      const bodyRot = -sit * .75 + sq * -.18;
+      const legH = .16, legW = S(.1);
+      const swing = (o) => Math.sin(ph + o) * .055 * walk * s;
+      const lift = (o) => Math.max(0, -Math.cos(ph + o)) * .045 * walk * s;
+      // おくの 足
+      if (sit < .5 && lie < .5) {
+        leg(c, S(.17), by + S(.06), 0, legW * .95, lift(Math.PI), swing(Math.PI), C.far);
+        leg(c, S(-.18 + sq * .04), by + S(.06), 0, legW * .95, lift(0), swing(0), C.far);
+      }
+      // しっぽ
+      const wag = Math.sin(P.t * (5 + (P.wag || 0) * 12)) * (.1 + (P.wag || 0) * .35);
+      const tx = sit > .5 ? S(-.17) : S(-.27), ty = sit > .5 ? S(-.06) : by - S(.06);
+      tail(c, tx, ty, -.2 + wag - (P.tailUp || 0) * .35 + lie * .5 + sit * .35, s);
+      // からだ
+      c.save(); c.translate(bx + (sit > .5 ? S(-.03) : 0), by + (sit > .5 ? S(.02) : 0)); c.rotate(bodyRot);
+      const rx = S(.34 - sit * .08), ry = S(.19 + sit * .02 + Math.sin(P.t * 2) * .004);
+      furEllipse(c, 0, 0, rx, ry, 0, [[Math.PI * .2, Math.PI * .8, .12], [Math.PI * 1.15, Math.PI * 1.45, .06]], 5);
+      ink(c, gradV(c, 0, 0, rx, C.light, C.base));
+      strand(c, -rx * .5, -ry * .55, -rx * .1, -ry * .75, -ry * .05, "rgba(255,240,215,.7)", LW * .8);
+      strand(c, -rx * .7, -ry * .1, -rx * .45, -ry * .55, 0, "rgba(255,240,215,.55)", LW * .7);
+      c.restore();
+      // てまえの 足
+      if (lie >= .5) {
+        for (const dx of [.3, .41]) { c.fillStyle = C.white; c.lineWidth = LW; c.strokeStyle = C.line; c.beginPath(); c.ellipse(S(dx), S(-.035), S(.07), S(.038), 0, 0, Math.PI * 2); c.fill(); c.stroke(); }
+        c.beginPath(); c.ellipse(S(-.2), S(-.06), S(.12), S(.07), 0, 0, Math.PI * 2); ink(c, C.base);
+      } else if (sit >= .5) {
+        // おしり と うしろあし
+        furEllipse(c, S(-.1), S(-.12), S(.15), S(.12), 0, [[Math.PI * .1, Math.PI * .9, .08]], 13);
+        ink(c, gradV(c, S(-.1), S(-.14), S(.15), C.light, C.base));
+        c.beginPath(); c.ellipse(S(.02), S(-.03), S(.075), S(.04), 0, 0, Math.PI * 2); ink(c, C.white);
+        leg(c, S(.12), S(-.3), 0, legW, 0, 0, C.base);
+        leg(c, S(.2), S(-.3), 0, legW, 0, 0, C.base);
+      } else {
+        leg(c, S(-.2 + sq * .05), by + S(.06), 0, legW, lift(Math.PI), swing(Math.PI) - S(sq * .02), C.base);
+        leg(c, S(.2), by + S(.06), 0, legW, lift(0), swing(0), C.base);
+      }
+      // むねの もふもふ
+      const hx0 = sit > .5 ? S(.1) : S(.24), hy0 = sit > .5 ? S(-.42) : by - S(.06);
+      furEllipse(c, hx0 - S(.02), hy0 + S(.06), S(.12), S(.12), 0, [[Math.PI * .1, Math.PI * .9, .2]], 21);
+      ink(c, gradV(c, hx0, hy0 + S(.05), S(.12), C.white, C.cream));
+      bandana(c, hx0 + S(.0), hy0 + S(.0), -.05, s);
+      // あたま
+      const look = P.look || 0;
+      const hx = hx0 + S(.04 + down * .1), hy = hy0 - S(.2) + S(down * .2) - S(lie * .02);
+      c.save(); c.translate(hx, hy); c.rotate((P.tilt || 0) + down * .25);
+      head(c, P, s, 1 - look);
+      c.restore();
+      c.restore();
+    }
+    return { draw, C };
+  })();
+
+  /* ================= くうの おうち（お庭・リビング・キッチン・しんしつを、くうが 自分で 歩いて くらす） ================= */
+  // 時計と いっしょに 時間が すすむ。夜は ねて、ごはんの 時間には おさらの まえで まつ。うんちも する。
+  // 放っておいても、くうが 弱ったり 病気に なったりは しない（まってたよ、と よろこぶだけ）。
+  const house = (() => {
+    const wrap = $("house"), cv = $("houseCV"), ctx = cv.getContext("2d");
+    const bubbleEl = $("houseBubble"), statusEl = $("houseStatus"), hintEl = $("houseHint");
+    const ROOMS = [
+      { id: "garden", name: "おにわ", icon: "🌻" }, { id: "living", name: "リビング", icon: "🛋️" },
+      { id: "kitchen", name: "キッチン", icon: "🍚" }, { id: "bed", name: "しんしつ", icon: "🛏️" },
+    ];
+    // 場所（へやの番号 + へやの中の よこ位置 0〜1）
+    const SPOT = { toilet: 1.11, rug: 1.42, window: 1.27, sofa: 1.72, bowl: 2.36, water: 2.53, bag: 2.12, kbed: 3.21, lamp: 3.43, sunflower: .8, tree: .2 };
+    const MEALS = [[7, 30], [18, 30]];
+    const now = () => Date.now();
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+    /* ---------- くらしの きろく（この端末に のこる） ---------- */
+    const H = Object.assign({
+      u: 1.45, bowl: 0, water: 1, waterAt: now(), lastMeal: now(), poops: [], poopAt: 0, ball: { u: 1.5 },
+      lightsOnUntil: 0, lightsOffUntil: 0, seen: now(), fed: 0, cleaned: 0,
+    }, store.get("kuu-house", {}));
+    let saveT = 0;
+    const save = () => { clearTimeout(saveT); saveT = setTimeout(() => { H.seen = now(); store.set("kuu-house", H); }, 400); };
+
+    const hourF = (d = new Date()) => window.__kuuHour ?? d.getHours() + d.getMinutes() / 60;
+    const at = (h, m, base = new Date()) => { const d = new Date(base); d.setHours(h, m, 0, 0); return +d; };
+    // スマホの おしらせと 同じ 計算で「きょう、くうが うんちした 時間」を 出す（おしらせで ひらいたら、ほんとに ある）
+    const jitter = (seed, spread) => { const x = Math.sin(seed * 9301 + 49297) * 233280; return Math.round((x - Math.floor(x)) * spread * 2 - spread); };
+    function lifePoopTime(day) {
+      const base = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+      const dayNo = Math.floor(base / 864e5);
+      if ((dayNo + 1) % 4 !== 0) return 0;
+      return at(10, 30 + jitter(dayNo + 1, 45), base);
+    }
+    const nightSleep = (h = hourF()) => h >= 22 || h < 7;
+    const napTime = (h = hourF()) => h >= 13 && h < 14.3;
+    const lightsOn = () => H.lightsOnUntil > now();
+    const sleepy = () => H.lightsOffUntil > now() || ((nightSleep() || napTime()) && !lightsOn());
+    const lastMealTime = () => {
+      const t = now(); let best = 0;
+      for (const [h, m] of MEALS) for (const back of [0, 1]) { const v = at(h, m, new Date(t - back * 864e5)); if (v <= t && v > best) best = v; }
+      return best;
+    };
+    const hungry = () => H.lastMeal < lastMealTime() && !H.bowl;
+    const addPoop = (u) => { if (H.poops.length >= 3) return; H.poops.push({ u, id: Math.random().toString(36).slice(2, 7) }); };
+    const toiletSpot = () => SPOT.toilet + (Math.random() < .8 ? rand(-.03, .03) : rand(.1, .14));
+
+    // ひらいていない あいだの できごと（ごはんを たべた・うんちした・おみずが へった）
+    function catchUp() {
+      const t = now(), away = t - (H.seen || t);
+      H.water = clamp(H.water - (t - (H.waterAt || t)) / 36e5 * .035, 0, 1); H.waterAt = t;
+      if (H.bowl && away > 10 * 6e4) { H.bowl = 0; H.lastMeal = H.seen + 5 * 6e4; H.poopAt = H.lastMeal + rand(50, 100) * 6e4; }
+      if (H.poopAt && t > H.poopAt) { addPoop(toiletSpot()); H.poopAt = 0; }
+      for (const back of [1, 0]) {
+        const lp = lifePoopTime(new Date(t - back * 864e5));
+        if (lp && lp > (H.seen || t) && lp <= t) addPoop(toiletSpot());
+      }
+      H.seen = t; save();
+    }
+    catchUp();
+
+    /* ---------- がめんの 大きさ ---------- */
+    let W = 0, Hh = 0, dpr = 1, FY = 0, S = 0;
+    const bg = [];
+    let bgKey = "";
+    function size() {
+      const r = wrap.getBoundingClientRect();
+      if (!r.width) return;
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = r.width; Hh = r.height;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr);
+      FY = Hh * .8; S = Math.min(Hh * .36, W * .4);
+      bgKey = "";
+    }
+    try { new ResizeObserver(() => size()).observe(wrap); } catch { addEventListener("resize", size); }
+    let visible = true;
+    try { new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(wrap); } catch {}
+
+    /* ---------- 空の いろ（ほんとうの 時間に あわせる） ---------- */
+    const SKY = [[0, "#0b1430", "#22325a"], [5, "#16224a", "#4a5b8a"], [6, "#f4b98e", "#a9c6e8"], [7.5, "#8cc4f0", "#d9eefb"],
+      [16, "#8cc4f0", "#e2f1fb"], [17.3, "#f0a26a", "#f8dcae"], [18.6, "#5a4a7c", "#e3967a"], [19.5, "#13204a", "#33406c"], [24, "#0b1430", "#22325a"]];
+    const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+    const mix = (a, b, k) => { const x = hex(a), y = hex(b); return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * k)).join(",")})`; };
+    function skyCols(h = hourF()) {
+      for (let i = 0; i < SKY.length - 1; i++) if (h >= SKY[i][0] && h < SKY[i + 1][0]) {
+        const k = (h - SKY[i][0]) / (SKY[i + 1][0] - SKY[i][0]);
+        return [mix(SKY[i][1], SKY[i + 1][1], k), mix(SKY[i][2], SKY[i + 1][2], k)];
+      }
+      return [SKY[0][1], SKY[0][2]];
+    }
+    const isNight = (h = hourF()) => h >= 19 || h < 5.5;
+
+    /* ---------- 絵の 道具 ---------- */
+    const OL = "rgba(92,58,34,.55)";
+    function rr(c, x, y, w, h, r) { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); }
+    function box(c, x, y, w, h, r, fill, line = OL, lw = 1.5) { rr(c, x, y, w, h, r); c.fillStyle = fill; c.fill(); if (line) { c.strokeStyle = line; c.lineWidth = lw; c.stroke(); } }
+    function lg(c, x0, y0, x1, y1, a, b) { const g = c.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; }
+    const photos = {};
+    function photo(src) {
+      if (photos[src]) return photos[src].complete ? photos[src] : null;
+      const im = new Image(); im.onload = () => { bgKey = ""; }; im.src = src; photos[src] = im; return null;
+    }
+    function framed(c, src, x, y, w, h) {
+      box(c, x - 5, y - 5, w + 10, h + 10, 3, "#b98a5a");
+      box(c, x, y, w, h, 1, "#efe4d2", null);
+      const im = photo(src);
+      if (im) {
+        const ar = im.width / im.height, tr = w / h;
+        let sw = im.width, sh = im.height, sx = 0, sy = 0;
+        if (ar > tr) { sw = im.height * tr; sx = (im.width - sw) / 2; } else { sh = im.width / tr; sy = (im.height - sh) * .25; }
+        c.drawImage(im, sx, sy, sw, sh, x, y, w, h);
+      }
+    }
+    function skyBox(c, x, y, w, h, stars) {
+      const [a, b] = skyCols();
+      c.fillStyle = lg(c, 0, y, 0, y + h, a, b); c.fillRect(x, y, w, h);
+      if (isNight()) {
+        c.fillStyle = "rgba(255,248,220,.85)";
+        for (let i = 0; i < stars; i++) { const sx = x + ((i * 97.13) % 1) * w + ((i * 37) % w), sy = y + ((i * 53.7) % h); c.beginPath(); c.arc(x + ((sx - x) % w), sy, (i % 3 ? .8 : 1.4), 0, Math.PI * 2); c.fill(); }
+        c.fillStyle = "#fbf1c7"; c.beginPath(); c.arc(x + w * .72, y + h * .3, Math.min(w, h) * .09, 0, Math.PI * 2); c.fill();
+        c.fillStyle = a; c.beginPath(); c.arc(x + w * .72 + Math.min(w, h) * .045, y + h * .3 - Math.min(w, h) * .03, Math.min(w, h) * .08, 0, Math.PI * 2); c.fill();
+      } else {
+        c.fillStyle = "rgba(255,255,255,.85)";
+        for (const [cx, cy, r] of [[.25, .3, .08], [.33, .27, .1], [.42, .31, .07], [.7, .5, .06], [.77, .47, .08]]) { c.beginPath(); c.arc(x + w * cx, y + h * cy, Math.min(w, h) * r, 0, Math.PI * 2); c.fill(); }
+      }
+    }
+    function woodFloor(c, x, w) {
+      c.fillStyle = lg(c, 0, FY, 0, Hh, "#dea267", "#c98a4f"); c.fillRect(x, FY, w, Hh - FY);
+      c.strokeStyle = "rgba(140,80,40,.28)"; c.lineWidth = 1;
+      const rows = 4, rh = (Hh - FY) / rows;
+      for (let i = 1; i <= rows; i++) { c.beginPath(); c.moveTo(x, FY + i * rh); c.lineTo(x + w, FY + i * rh); c.stroke(); }
+      for (let i = 0; i < rows; i++) for (let j = 0; j < 6; j++) { const px = x + ((j + (i % 2) * .5) / 5) * w; c.beginPath(); c.moveTo(px, FY + i * rh); c.lineTo(px, FY + (i + 1) * rh); c.stroke(); }
+      c.fillStyle = "rgba(255,255,255,.12)"; c.fillRect(x, FY, w, 3);
+    }
+    function wall(c, x, w, col, stripe) {
+      c.fillStyle = col; c.fillRect(x, 0, w, FY);
+      if (stripe) { c.fillStyle = stripe; for (let i = 0; i < 14; i++) c.fillRect(x + i * w / 14, 0, w / 28, FY); }
+      c.fillStyle = "#f8f1e4"; c.fillRect(x, FY - Hh * .035, w, Hh * .035);
+      c.fillStyle = "rgba(120,80,40,.25)"; c.fillRect(x, FY - 2, w, 2);
+    }
+    function doorway(c, x, side) {
+      // となりの へやへの 入り口（へやの はし）
+      const dw = W * .075, top = Hh * .26, xx = side < 0 ? x : x - dw;
+      c.fillStyle = "rgba(90,60,35,.18)"; c.fillRect(xx, top, dw, FY - top);
+      c.fillStyle = "#cfa77a"; c.fillRect(side < 0 ? xx + dw - 5 : xx, top, 5, FY - top); c.fillRect(xx, top - 5, dw, 5);
+    }
+
+    /* ---------- へやの 絵（うごかない ところ。時間が かわったら 描きなおす） ---------- */
+    function drawGarden(c, x) {
+      skyBox(c, x, 0, W, FY, 40);
+      // とおくの 丘
+      c.fillStyle = isNight() ? "#1f3a37" : "#9fcf8f";
+      c.beginPath(); c.moveTo(x, FY * .72); c.quadraticCurveTo(x + W * .3, FY * .55, x + W * .6, FY * .7); c.quadraticCurveTo(x + W * .85, FY * .6, x + W, FY * .68); c.lineTo(x + W, FY); c.lineTo(x, FY); c.fill();
+      // 木
+      c.fillStyle = "#8a5a35"; rr(c, x + W * .16, FY * .45, W * .05, FY * .56, 4); c.fill();
+      c.fillStyle = isNight() ? "#24493b" : "#6fb26a";
+      for (const [cx, cy, r] of [[.185, .38, .15], [.1, .45, .1], [.27, .45, .11], [.19, .26, .11]]) { c.beginPath(); c.arc(x + W * cx, FY * cy, W * r, 0, Math.PI * 2); c.fill(); }
+      // さく
+      c.fillStyle = isNight() ? "#6d5a4a" : "#e9d2ad";
+      for (let i = 0; i < 12; i++) { const px = x + W * (.02 + i * .085); rr(c, px, FY * .62, W * .05, FY * .38, [6, 6, 0, 0]); c.fill(); }
+      c.fillRect(x, FY * .72, W, FY * .04); c.fillRect(x, FY * .88, W, FY * .04);
+      // しばふ
+      c.fillStyle = lg(c, 0, FY, 0, Hh, isNight() ? "#2f5a3a" : "#8ccf6e", isNight() ? "#244a30" : "#6db456"); c.fillRect(x, FY, W, Hh - FY);
+      c.strokeStyle = isNight() ? "rgba(140,200,140,.25)" : "rgba(60,130,50,.45)"; c.lineWidth = 1.4;
+      for (let i = 0; i < 60; i++) { const gx = x + ((i * 61.7) % 100) / 100 * W, gy = FY + 6 + ((i * 37.3) % 100) / 100 * (Hh - FY - 10); c.beginPath(); c.moveTo(gx, gy); c.lineTo(gx - 2, gy - 7); c.moveTo(gx, gy); c.lineTo(gx + 3, gy - 6); c.stroke(); }
+      // ひまわり（くうの なつの 写真）
+      for (const [fx, hgt] of [[.66, .5], [.76, .58], [.86, .46], [.94, .54]]) {
+        const sx = x + W * fx, top = FY - Hh * hgt;
+        c.strokeStyle = "#4f8f3a"; c.lineWidth = 4; c.beginPath(); c.moveTo(sx, FY + 4); c.lineTo(sx, top); c.stroke();
+        c.fillStyle = "#5fa04a"; c.beginPath(); c.ellipse(sx + 10, top + Hh * .2, 12, 5, -.5, 0, Math.PI * 2); c.fill();
+        const r = W * .035;
+        c.fillStyle = isNight() ? "#b8a24a" : "#f6c935";
+        for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; c.beginPath(); c.ellipse(sx + Math.cos(a) * r, top + Math.sin(a) * r, r * .55, r * .22, a, 0, Math.PI * 2); c.fill(); }
+        c.fillStyle = "#7a4a22"; c.beginPath(); c.arc(sx, top, r * .62, 0, Math.PI * 2); c.fill();
+      }
+      // いえの かべと ガラス戸（リビングへ）
+      c.fillStyle = "#efe2cc"; c.fillRect(x + W * .965, 0, W * .035, FY);
+      c.fillStyle = "rgba(200,225,240,.6)"; c.fillRect(x + W * .97, Hh * .26, W * .03, FY - Hh * .26);
+    }
+    function drawLiving(c, x) {
+      wall(c, x, W, "#f6ead6", "rgba(214,190,150,.13)");
+      // まど
+      const wx = x + W * .16, wy = Hh * .13, ww = W * .28, wh = Hh * .36;
+      skyBox(c, wx, wy, ww, wh, 16);
+      c.strokeStyle = "#fffaf2"; c.lineWidth = 6; c.strokeRect(wx, wy, ww, wh);
+      c.lineWidth = 3; c.beginPath(); c.moveTo(wx + ww / 2, wy); c.lineTo(wx + ww / 2, wy + wh); c.stroke();
+      // カーテン（写真の 青い しましま）
+      for (const sd of [0, 1]) {
+        const cx = sd ? wx + ww - W * .02 : wx - W * .045;
+        c.fillStyle = "#cfe0f3"; rr(c, cx, wy - 10, W * .065, wh + 40, 6); c.fill();
+        c.fillStyle = "#9dbde3"; for (let i = 0; i < 4; i++) c.fillRect(cx + i * W * .017, wy - 10, W * .007, wh + 40);
+      }
+      c.fillStyle = "#c9a97c"; c.fillRect(wx - W * .06, wy - 14, ww + W * .12, 5);
+      // 写真（レースの えりの くう）
+      framed(c, "img/smile.jpg", x + W * .63, Hh * .12, W * .12, Hh * .2);
+      framed(c, "img/pink.jpg", x + W * .79, Hh * .16, W * .09, Hh * .14);
+      // ソファ
+      const sx = x + W * .52, sw = W * .44, sy = FY - Hh * .3;
+      box(c, sx, sy, sw, Hh * .2, 14, "#d9a5a0");
+      box(c, sx - W * .02, sy + Hh * .1, W * .06, Hh * .17, 10, "#cf9993");
+      box(c, sx + sw - W * .04, sy + Hh * .1, W * .06, Hh * .17, 10, "#cf9993");
+      box(c, sx + W * .03, sy + Hh * .15, sw - W * .06, Hh * .1, 10, "#e3b4ae");
+      box(c, sx + W * .07, sy + Hh * .06, W * .1, Hh * .1, 10, "#f3e3c9");
+      c.fillStyle = "#8a5a35"; c.fillRect(sx + W * .02, FY - Hh * .05, 6, Hh * .05); c.fillRect(sx + sw - W * .03, FY - Hh * .05, 6, Hh * .05);
+      // かんようしょくぶつ
+      box(c, x + W * .465, FY - Hh * .1, W * .05, Hh * .1, 4, "#c98a5a");
+      c.fillStyle = "#6aa35a";
+      for (const [dx, dy, r] of [[.49, .2, .035], [.47, .25, .03], [.51, .26, .03], [.49, .15, .025]]) { c.beginPath(); c.ellipse(x + W * dx, FY - Hh * dy + Hh * .05, W * r, Hh * .04, dx * 5, 0, Math.PI * 2); c.fill(); }
+      woodFloor(c, x, W);
+      // ラグ
+      c.fillStyle = "#c2d3ea"; c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .23, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = "#f3f6fb"; c.lineWidth = 3; c.setLineDash([6, 6]); c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .2, (Hh - FY) * .24, 0, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+      // トイレ（ペットシーツ）
+      const tx = x + W * (SPOT.toilet - 1) - W * .07;
+      box(c, tx, FY + (Hh - FY) * .25, W * .14, (Hh - FY) * .4, 6, "#f4f6f8");
+      box(c, tx + 5, FY + (Hh - FY) * .25 + 4, W * .14 - 10, (Hh - FY) * .4 - 8, 4, "#dbe9f5", null);
+      c.strokeStyle = "rgba(120,160,200,.4)"; c.lineWidth = 1;
+      for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(tx + i * W * .035, FY + (Hh - FY) * .27); c.lineTo(tx + i * W * .035, FY + (Hh - FY) * .63); c.stroke(); }
+      doorway(c, x + W, 1);
+      // おにわへの ガラス戸
+      c.fillStyle = "rgba(200,225,240,.55)"; c.fillRect(x, Hh * .26, W * .035, FY - Hh * .26);
+      c.fillStyle = "#cfa77a"; c.fillRect(x + W * .035, Hh * .26, 4, FY - Hh * .26);
+    }
+    function drawKitchen(c, x) {
+      wall(c, x, W, "#f3eee2");
+      // タイル
+      c.fillStyle = "#e6efe9"; c.fillRect(x, Hh * .3, W * .7, Hh * .2);
+      c.strokeStyle = "rgba(150,180,170,.35)"; c.lineWidth = 1;
+      for (let i = 0; i <= 14; i++) { c.beginPath(); c.moveTo(x + i * W * .05, Hh * .3); c.lineTo(x + i * W * .05, Hh * .5); c.stroke(); }
+      for (let j = 0; j <= 4; j++) { c.beginPath(); c.moveTo(x, Hh * .3 + j * Hh * .05); c.lineTo(x + W * .7, Hh * .3 + j * Hh * .05); c.stroke(); }
+      // うえの たな
+      box(c, x + W * .02, Hh * .06, W * .66, Hh * .2, 6, "#ead3b2");
+      for (let i = 0; i < 4; i++) { box(c, x + W * (.04 + i * .16), Hh * .08, W * .14, Hh * .16, 4, "#f1dfc4"); c.fillStyle = "#b98a5a"; c.fillRect(x + W * (.1 + i * .16), Hh * .2, W * .02, 3); }
+      // ながし台
+      box(c, x + W * .02, Hh * .5, W * .66, FY - Hh * .5, 4, "#e2c39b");
+      box(c, x, Hh * .48, W * .7, Hh * .035, 4, "#fbf6ee");
+      for (let i = 0; i < 4; i++) { box(c, x + W * (.04 + i * .16), Hh * .55, W * .14, FY - Hh * .58, 4, "#ecd2ad"); c.fillStyle = "#b98a5a"; c.fillRect(x + W * (.1 + i * .16), Hh * .58, W * .02, 3); }
+      // なべ と やかん
+      box(c, x + W * .12, Hh * .41, W * .1, Hh * .07, 6, "#e9806e");
+      c.fillStyle = "#c9c9c9"; c.beginPath(); c.arc(x + W * .48, Hh * .45, W * .04, Math.PI, 0); c.fill();
+      // れいぞうこ
+      box(c, x + W * .74, Hh * .1, W * .22, FY - Hh * .1, 10, "#f5f5f1");
+      c.strokeStyle = OL; c.beginPath(); c.moveTo(x + W * .74, Hh * .36); c.lineTo(x + W * .96, Hh * .36); c.stroke();
+      c.fillStyle = "#b9b9b2"; c.fillRect(x + W * .76, Hh * .2, 4, Hh * .1); c.fillRect(x + W * .76, Hh * .42, 4, Hh * .14);
+      // ごはんの じかんの メモ
+      box(c, x + W * .8, Hh * .14, W * .13, Hh * .15, 2, "#fff6c9");
+      c.fillStyle = "#f2708c"; c.beginPath(); c.arc(x + W * .865, Hh * .14, 4, 0, Math.PI * 2); c.fill();
+      c.fillStyle = "#6b4a2f"; c.font = `${Math.max(9, W * .022)}px "Klee One", sans-serif`; c.textAlign = "center";
+      c.fillText("くうの ごはん", x + W * .865, Hh * .185); c.fillText("あさ 7:30", x + W * .865, Hh * .225); c.fillText("よる 6:30", x + W * .865, Hh * .262);
+      // ゆか（タイル）
+      c.fillStyle = "#eadfcd"; c.fillRect(x, FY, W, Hh - FY);
+      c.fillStyle = "#e0d2bc";
+      for (let i = 0; i < 12; i++) for (let j = 0; j < 4; j++) if ((i + j) % 2) c.fillRect(x + i * W / 12, FY + j * (Hh - FY) / 4, W / 12, (Hh - FY) / 4);
+      // ごはんの マット
+      box(c, x + W * (SPOT.bowl - 2) - W * .1, FY + (Hh - FY) * .18, W * .36, (Hh - FY) * .5, 16, "#9cc0e6", null);
+      // ドッグフードの ふくろ
+      const bx = x + W * (SPOT.bag - 2);
+      c.fillStyle = "#e9c46a"; c.beginPath(); c.moveTo(bx - W * .05, FY + 4); c.lineTo(bx - W * .045, FY - Hh * .17); c.lineTo(bx + W * .045, FY - Hh * .17); c.lineTo(bx + W * .05, FY + 4); c.closePath(); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = "#b5652d"; c.beginPath(); c.arc(bx, FY - Hh * .09, W * .018, 0, Math.PI * 2); c.fill();
+      for (const [dx, dy] of [[-.022, -.03], [-.008, -.042], [.008, -.042], [.022, -.03]]) { c.beginPath(); c.arc(bx + W * dx, FY - Hh * .09 + Hh * dy * .9, W * .007, 0, Math.PI * 2); c.fill(); }
+      doorway(c, x, -1); doorway(c, x + W, 1);
+    }
+    function drawBed(c, x) {
+      wall(c, x, W, "#e4e6f2", "rgba(180,185,215,.12)");
+      // まど（月）
+      const wx = x + W * .07, wy = Hh * .12, ww = W * .24, wh = Hh * .32;
+      skyBox(c, wx, wy, ww, wh, 14);
+      c.strokeStyle = "#fffaf2"; c.lineWidth = 6; c.strokeRect(wx, wy, ww, wh);
+      c.lineWidth = 3; c.beginPath(); c.moveTo(wx, wy + wh / 2); c.lineTo(wx + ww, wy + wh / 2); c.stroke();
+      // ねる くうの 写真
+      framed(c, "img/nap.jpg", x + W * .39, Hh * .16, W * .1, Hh * .15);
+      // ママの ベッド
+      const bx = x + W * .55, bw = W * .45;
+      box(c, bx, FY - Hh * .44, W * .04, Hh * .44, 6, "#b98a5a");
+      box(c, bx, FY - Hh * .2, bw, Hh * .14, 8, "#fbf7f0");
+      box(c, bx + W * .05, FY - Hh * .25, W * .14, Hh * .07, 14, "#ffffff");
+      box(c, bx + W * .18, FY - Hh * .23, bw - W * .18, Hh * .17, 10, "#f1c6cf");
+      c.fillStyle = "rgba(255,255,255,.5)"; for (let i = 0; i < 5; i++) { c.beginPath(); c.arc(bx + W * (.24 + i * .05), FY - Hh * .15, 3, 0, Math.PI * 2); c.fill(); }
+      c.fillStyle = "#8a5a35"; c.fillRect(bx + W * .02, FY - Hh * .06, 6, Hh * .06);
+      // ナイトテーブル
+      box(c, x + W * .38, FY - Hh * .17, W * .12, Hh * .17, 4, "#d8b48a");
+      c.fillStyle = "#b98a5a"; c.fillRect(x + W * .425, FY - Hh * .1, W * .03, 3);
+      woodFloor(c, x, W);
+      c.fillStyle = "rgba(255,255,255,.35)"; c.beginPath(); c.ellipse(x + W * .3, FY + (Hh - FY) * .55, W * .22, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
+      // くうの ベッド（ヒョウがらの まるい クッション）
+      const kx = x + W * (SPOT.kbed - 3), ky = FY + (Hh - FY) * .35;
+      c.fillStyle = "#c79a68"; c.beginPath(); c.ellipse(kx, ky, W * .15, (Hh - FY) * .34, 0, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = "#5a3a22";
+      for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; c.beginPath(); c.ellipse(kx + Math.cos(a) * W * .125, ky + Math.sin(a) * (Hh - FY) * .27, 4, 2.5, a, 0, Math.PI * 2); c.fill(); }
+      c.fillStyle = "#f8f2e8"; c.beginPath(); c.ellipse(kx, ky, W * .1, (Hh - FY) * .2, 0, 0, Math.PI * 2); c.fill();
+      doorway(c, x, -1);
+    }
+    const DRAW = [drawGarden, drawLiving, drawKitchen, drawBed];
+    function ensureBg() {
+      const key = `${W}x${Hh}@${dpr}:${Math.floor(hourF() * 4)}:${Object.values(photos).filter((p) => p.complete).length}`;
+      if (key === bgKey) return;
+      bgKey = key;
+      for (let i = 0; i < 4; i++) {
+        const oc = bg[i] || (bg[i] = document.createElement("canvas"));
+        oc.width = cv.width; oc.height = cv.height;
+        const c = oc.getContext("2d", { willReadFrequently: true }); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+        DRAW[i](c, 0);
+      }
+    }
+
+    /* ---------- くう（うごき と ポーズ） ---------- */
+    const D = {
+      u: H.u, dir: 1, act: "idle", until: 0, tu: 0, then: null, fast: false, ph: 0, holding: false,
+      P: { t: 0, walk: 0, ph: 0, sit: 0, lie: 0, down: 0, look: 0, wag: .3, tailUp: 0, blink: 0, sleep: 0, happy: 0, mouth: 0, squat: 0, curl: 0, earUp: 0, hop: 0, tilt: 0 },
+      T: {}, wakeUntil: 0, nextBlink: 2, blinkT: 0, chew: 0, happyUntil: 0, hopV: 0, lastSay: 0,
+    };
+    const roomOf = (u) => clamp(Math.floor(u), 0, 3);
+    function pose(p) { D.T = { walk: 0, sit: 0, lie: 0, down: 0, look: 0, squat: 0, curl: 0, tailUp: 0, ...p }; }
+    function setAct(a, dur, p = {}) { D.act = a; D.until = performance.now() + dur * 1000; pose(p); }
+    function goTo(u, then, fast = false) {
+      u = clamp(u, .04, 3.96);
+      D.act = "walk"; D.tu = u; D.then = then; D.fast = fast; pose({ walk: 1 });
+      // ママが 見ている へやから 出ていくときだけ、カメラが ついていく
+      D.leaving = roomOf(D.u) === viewRoom && roomOf(u) !== viewRoom;
+      if (D.P.curl > .5 || D.P.lie > .5) hop(.04);
+    }
+    function hop(v) { D.hopV = v * 9; }
+
+    let camU = roomOf(D.u), camX = camU * 1, viewRoom = camU, manual = 0;
+    function say(text, ms) {
+      bubbleEl.textContent = text; bubbleEl.hidden = false;
+      bubbleEl.classList.remove("pop"); void bubbleEl.offsetWidth; bubbleEl.classList.add("pop");
+      clearTimeout(say.t); say.t = setTimeout(() => { bubbleEl.hidden = true; }, ms || Math.max(2400, text.length * 130));
+      D.lastSay = performance.now();
+    }
+    const snd = (n, ...a) => { try { room.snd[n](...a); } catch {} };
+
+    // つぎに なにを するか（くうの きもちで きめる）
+    function decide() {
+      const t = performance.now();
+      if (sleepy() && t > D.wakeUntil) {
+        if (Math.abs(D.u - SPOT.kbed) > .03) return goTo(SPOT.kbed, () => { setAct("sleep", 1e9, { curl: 1 }); hop(.03); });
+        return setAct("sleep", 1e9, { curl: 1 });
+      }
+      if (H.bowl) return goTo(SPOT.bowl - .1, () => { D.dir = 1; setAct("eat", 6, { down: 1 }); D.chew = 6; }, true);
+      if (H.poopAt && now() > H.poopAt) return goTo(SPOT.toilet + rand(-.02, .02), () => { setAct("poop", 3.2, { squat: 1, tailUp: 1 }); });
+      if (hungry()) {
+        return goTo(SPOT.bowl - .17, () => {
+          D.dir = 1; setAct("wait", 9, { sit: 1, look: 1 });
+          if (t - D.lastSay > 15000 && roomOf(D.u) === viewRoom) say(pick(["おなか すいた〜", "ママ、ごはん まだ？", "おさら、からっぽだよ〜", "ごはんの じかん だよ！"]), 3000);
+        });
+      }
+      if (H.water < .25 && Math.random() < .3) return goTo(SPOT.water - .1, () => { D.dir = 1; setAct("drink", 3.5, { down: 1 }); });
+      const r = Math.random(), here = roomOf(D.u);
+      const h = hourF();
+      if (r < .32) return goTo(here + rand(.12, .88), () => setAct("idle", rand(1.5, 4)));
+      if (r < .47) {
+        const w = h >= 9 && h < 17 ? [3, 4, 2, 1] : [1, 4, 2, 2];
+        let k = Math.random() * w.reduce((a, b) => a + b), to = 0;
+        while ((k -= w[to]) > 0) to++;
+        return goTo(to + rand(.15, .85), () => setAct("idle", rand(1, 3)));
+      }
+      if (r < .62) return setAct("sit", rand(4, 8), { sit: 1, look: Math.random() < .7 ? 1 : 0 });
+      if (r < .76) return setAct("lie", rand(8, 16), { lie: 1, look: Math.random() < .4 ? 1 : 0 });
+      if (r < .88) return setAct("sniff", rand(2.5, 4), { down: .7 });
+      if (here === 1 && r < .94) return goTo(SPOT.window, () => { D.dir = -1; setAct("sit", 6, { sit: 1 }); });
+      return setAct("idle", rand(2, 4));
+    }
+
+    function finish() {
+      const a = D.act;
+      if (a === "eat") {
+        H.bowl = 0; H.lastMeal = now(); H.poopAt = now() + rand(50, 100) * 6e4; H.fed = (H.fed || 0) + 1; save();
+        setAct("sit", 4, { sit: 1, look: 1 }); D.happyUntil = performance.now() + 2500;
+        if (roomOf(D.u) === viewRoom) { say(pick(["ごちそうさま！ おいしかった〜", "おなか いっぱい！ ママ ありがと！", "ぺろり！ ぜんぶ たべたよ！"]), 3200); snd("yip"); }
+        return;
+      }
+      if (a === "drink") { H.water = clamp(H.water - .08); H.waterAt = now(); save(); }
+      if (a === "poop") {
+        addPoop(D.u + .03); H.poopAt = 0; save();
+        if (roomOf(D.u) === viewRoom) say(pick(["すっきり！", "でたよ〜！ ママ かたづけて〜", "ふぅ〜 すっきりした！"]), 2800);
+        D.happyUntil = performance.now() + 2000;
+        // すっきりして ぐるっと はしる
+        return goTo(D.u + (D.u > 1.5 ? -.25 : .25), () => setAct("sit", 3, { sit: 1, look: 1 }), true);
+      }
+      if (a === "fetch2") {
+        ball.u = H.ball.u = D.u + D.dir * .1; D.holding = false; save();
+        setAct("sit", 3, { sit: 1, look: 1 }); D.happyUntil = performance.now() + 2500; addPts(2);
+        if (roomOf(D.u) === viewRoom) say(pick(["とってきたよ！ もういっかい！", "ボール だいすき！", "ママ、もういっかい なげて！"]), 2400);
+        return;
+      }
+      decide();
+    }
+    const addPts = (n) => { try { room.addPts(n); } catch {} };
+
+    /* ---------- ボール ---------- */
+    const ball = { u: H.ball.u, y: 0, vy: 0, fly: null };
+    function throwBall() {
+      const here = roomOf(ball.u), dogIn = roomOf(D.u) === here;
+      // くうから はなれた ほうへ なげる
+      const from = dogIn ? D.u - here : .5;
+      const to = here + (from > .5 ? rand(.12, .32) : rand(.68, .88));
+      ball.fly = { u0: ball.u, u1: to, t0: performance.now(), dur: 800 };
+      H.ball.u = to; save();
+      if (D.act === "sleep" || !dogIn) return;
+      snd("yip"); D.happyUntil = performance.now() + 1200;
+      setTimeout(() => {
+        if (D.act === "sleep") return;
+        goTo(to - (to > D.u ? .06 : -.06), () => {
+          D.holding = true; hop(.05);
+          goTo(here + .5 + rand(-.08, .08), () => { D.act = "fetch2"; D.until = performance.now() + 400; pose({ sit: 1, look: 1 }); }, true);
+        }, true);
+      }, 350);
+    }
+
+    /* ---------- タッチ ---------- */
+    const toWorld = (e) => { const r = cv.getBoundingClientRect(); const px = e.clientX - r.left, py = e.clientY - r.top; return { px, py, u: camX + px / W, y: py / Hh }; };
+    const dogScreen = () => ({ x: (D.u - camX) * W, y: FY - S * (D.P.curl > .5 ? .2 : D.P.sit > .5 ? .5 : .42) });
+    function onDog(p) { const d = dogScreen(); return Math.abs(p.px - d.x) < S * .5 && Math.abs(p.py - d.y) < S * .45; }
+    let down = null, petAcc = 0, lastTapDog = 0;
+    cv.addEventListener("pointerdown", (e) => {
+      const p = toWorld(e);
+      down = { ...p, t: performance.now(), dog: onDog(p), moved: 0, lx: p.px, ly: p.py };
+      try { cv.setPointerCapture(e.pointerId); } catch {}
+      hintEl.classList.add("gone");
+    });
+    cv.addEventListener("pointermove", (e) => {
+      if (!down) return;
+      const p = toWorld(e);
+      const d = Math.hypot(p.px - down.lx, p.py - down.ly);
+      down.moved += d; down.lx = p.px; down.ly = p.py;
+      if (down.dog && onDog(p) && d > 1) {
+        petAcc += d;
+        if (D.act === "sleep") { if (petAcc > 120) wakeUp(); return; }
+        if (D.act !== "pet") { setAct("pet", 1.5, { sit: 1, look: 1 }); }
+        D.until = performance.now() + 1500;
+        D.happyUntil = performance.now() + 600;
+        if (petAcc > 70) { petAcc = 0; heart(p.px, p.py - 10); addPts(.5); if (Math.random() < .12) say(pick(["そこそこ〜", "もっと なでて〜", "きもちいい〜", "ママの て、すき", "くぅ〜ん"]), 1800); }
+      }
+    });
+    const endPtr = (e) => {
+      if (!down) return;
+      const p = toWorld(e), dt = performance.now() - down.t, dx = p.px - down.px;
+      const was = down; down = null;
+      if (was.moved > 40 && was.dog) { stats.bump("pets"); return; }
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(p.py - was.py) && dt < 700) { goRoom(viewRoom + (dx < 0 ? 1 : -1)); return; }
+      if (was.moved < 14) tap(p);
+    };
+    cv.addEventListener("pointerup", endPtr);
+    cv.addEventListener("pointercancel", () => { down = null; });
+
+    function wakeUp() {
+      D.wakeUntil = performance.now() + 15000;
+      setAct("woke", 12, { lie: 1, look: 1 }); hop(.02);
+      say(pick(["むにゃ… ママ？", "ん〜… まだ ねむいよ〜", "ふぁ〜あ。ママ、きてくれたの？"]), 3200);
+    }
+    function tap(p) {
+      const here = viewRoom;
+      // うんちを かたづける
+      for (const pp of H.poops) {
+        if (roomOf(pp.u) !== here) continue;
+        const sx = (pp.u - camX) * W, sy = FY + (Hh - FY) * .45;
+        if (Math.hypot(p.px - sx, p.py - sy) < Math.max(30, W * .06)) {
+          H.poops = H.poops.filter((q) => q !== pp); H.cleaned = (H.cleaned || 0) + 1; save();
+          sparkle(sx, sy); addPts(2);
+          if (D.act !== "sleep") { say(pick(["ありがと、ママ！", "ピカピカ！ ママ だいすき！", "えへへ、ごめんね〜"]), 2400); D.happyUntil = performance.now() + 1800; }
+          return;
+        }
+      }
+      if (roomOf(ball.u) === here && !ball.fly && !D.holding) {
+        const bx = (ball.u - camX) * W, by = FY + (Hh - FY) * .3;
+        if (Math.hypot(p.px - bx, p.py - by) < Math.max(28, W * .05)) return throwBall();
+      }
+      if (onDog(p)) {
+        const t = performance.now();
+        if (D.act === "sleep") return wakeUp();
+        if (t - lastTapDog < 350) { lastTapDog = 0; setMode("dakko"); return; }
+        lastTapDog = t;
+        if (D.act === "walk" && !D.fast) D.act = "idle";
+        setAct("look", 4, { sit: 1, look: 1 }); D.happyUntil = t + 1500; hop(.04);
+        heart(p.px, p.py - 20); addPts(1); snd("yip");
+        const lines = H.poops.length ? ["うんち、しちゃった〜。かたづけて くれる？"] : hungry() ? ["ママ、ごはん〜！"] : ["なあに、ママ？", "ママだ〜！", "あそぼ！", "えへへ", "だいすき！", "しっぽ ぶんぶん！"];
+        say(pick(lines), 2200);
+        return;
+      }
+      if (here === 2 && Math.abs(p.u - SPOT.bowl) < .07 && p.y > .72 || here === 2 && Math.abs(p.u - SPOT.bag) < .06 && p.y > .55) {
+        if (H.bowl) return say("ごはん、もう はいってるよ！", 2000);
+        H.bowl = 1; save(); kibble(); addPts(3);
+        if (D.act === "sleep") return;
+        D.until = 0; if (D.act !== "walk") D.act = "idle";
+        say("ごはんだ〜！", 1600); snd("bark", 0, 1.1);
+        return;
+      }
+      if (here === 2 && Math.abs(p.u - SPOT.water) < .06 && p.y > .72) {
+        H.water = 1; H.waterAt = now(); save(); sparkle((SPOT.water - camX) * W, FY + (Hh - FY) * .4);
+        if (D.act !== "sleep") goTo(SPOT.water - .1, () => { D.dir = 1; setAct("drink", 3.2, { down: 1 }); });
+        return;
+      }
+      if (here === 3 && Math.abs(p.u - SPOT.lamp) < .07 && p.y > .38 && p.y < .82) {
+        if (darkBed()) { H.lightsOnUntil = now() + 3 * 6e4; H.lightsOffUntil = 0; if (D.act === "sleep") wakeUp(); }
+        else { H.lightsOffUntil = now() + 10 * 6e4; H.lightsOnUntil = 0; D.wakeUntil = 0; if (D.act !== "sleep") { say("おやすみ、ママ…", 2400); D.until = 0; D.act = "idle"; } }
+        save(); return;
+      }
+      // なにも ない ところ → くうを よぶ
+      if (D.act !== "sleep" && roomOf(D.u) === here && p.y > .7) { goTo(p.u, () => setAct("sit", 4, { sit: 1, look: 1 })); }
+    }
+    const darkBed = () => (nightSleep() && !lightsOn()) || H.lightsOffUntil > now();
+
+    /* ---------- へやを かえる ---------- */
+    const navBtns = [];
+    ROOMS.forEach((r, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "house-room"; b.innerHTML = `<span aria-hidden="true">${r.icon}</span>${r.name}`;
+      b.addEventListener("click", () => goRoom(i));
+      $("houseRooms").append(b); navBtns.push(b);
+    });
+    function goRoom(i) {
+      i = clamp(i, 0, 3);
+      viewRoom = i; manual = performance.now();
+      navBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i)));
+      hintEl.classList.add("gone");
+      if (roomOf(D.u) === i) return;
+      if (D.act === "sleep") { toast("くうは ねてるよ。しずかに ね"); return; }
+      setTimeout(() => {
+        if (D.act === "sleep" || viewRoom !== i) return;
+        goTo(i + rand(.3, .7), () => { setAct("sit", 4, { sit: 1, look: 1 }); D.happyUntil = performance.now() + 1500; if (roomOf(D.u) === viewRoom) say(pick(["まって〜！", "きたよ！", "ママ、どこ いくの？", "いっしょ！"]), 2000); }, true);
+      }, 500);
+    }
+    function toast(t) { statusEl.textContent = t; statusEl.classList.add("flash"); clearTimeout(toast.t); toast.t = setTimeout(() => { statusEl.classList.remove("flash"); toast.t = 0; }, 2600); }
+
+    /* ---------- エフェクト ---------- */
+    const parts = [];
+    function heart(x, y) { parts.push({ k: "h", x, y, vx: rand(-20, 20), vy: rand(-70, -40), life: 1.2, t: 0 }); }
+    function sparkle(x, y) { for (let i = 0; i < 10; i++) { const a = Math.random() * Math.PI * 2, sp = rand(40, 100); parts.push({ k: "s", x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30, life: .8, t: 0 }); } }
+    function kibble() { const bx = (SPOT.bowl - camX) * W; for (let i = 0; i < 12; i++) parts.push({ k: "k", x: bx + rand(-8, 8), y: FY - Hh * .2, vx: rand(-25, 25), vy: rand(-40, 20), life: .7, t: 0, g: 600 }); }
+
+    /* ---------- うごきの 計算 ---------- */
+    function step(dt) {
+      const t = performance.now();
+      if (D.act === "walk") {
+        const spd = (D.fast ? 1.65 : 1.05) * S / W;
+        const d = D.tu - D.u;
+        D.dir = Math.sign(d) || D.dir;
+        if (Math.abs(d) <= spd * dt) { D.u = D.tu; D.act = "idle"; const f = D.then; D.then = null; if (f) f(); else setAct("idle", 1); }
+        else D.u += Math.sign(d) * spd * dt;
+        D.ph += dt * (D.fast ? 15 : 10);
+      } else if (D.act === "sleep") {
+        if (!sleepy() && t > D.wakeUntil) { setAct("idle", 1.5, { sit: 1 }); hop(.04); if (roomOf(D.u) === viewRoom) say(pick(["ふぁ〜あ、よく ねた！", "おはよ、ママ！"]), 2600); }
+      } else if (t > D.until) finish();
+      if (D.act === "woke" && t > D.wakeUntil) { D.act = "idle"; D.until = 0; }
+      // ポーズを なめらかに
+      const P = D.P, T = D.T, ease = (k) => 1 - Math.exp(-dt * k);
+      for (const k of ["walk", "sit", "lie", "down", "look", "squat", "tailUp"]) P[k] += ((T[k] || 0) - P[k]) * ease(k === "walk" ? 12 : 7);
+      P.curl = T.curl || 0;
+      P.sleep = D.act === "sleep" ? 1 : D.act === "woke" ? .4 : 0;
+      P.ph = D.ph; P.t = t / 1000;
+      const happy = t < D.happyUntil;
+      P.happy += ((happy ? 1 : 0) - P.happy) * ease(8);
+      P.wag = D.act === "sleep" ? 0 : happy || D.act === "walk" || D.act === "wait" ? 1 : .3;
+      D.chew = Math.max(0, D.chew - dt);
+      P.mouth = D.act === "eat" || D.act === "drink" ? Math.abs(Math.sin(t / 110)) * .6 : happy ? .7 : D.act === "wait" ? .45 + Math.sin(t / 90) * .15 : 0;
+      P.down = D.act === "sniff" ? .5 + Math.sin(t / 240) * .25 : P.down;
+      P.earUp = D.act === "look" || D.act === "wait" ? .25 : 0;
+      P.tilt = D.act === "look" ? Math.sin(t / 700) * .12 : D.act === "wait" ? .08 : 0;
+      D.nextBlink -= dt;
+      if (D.nextBlink <= 0) { D.blinkT = .14; D.nextBlink = rand(2, 5); }
+      D.blinkT = Math.max(0, D.blinkT - dt); P.blink = D.blinkT > 0 ? 1 : 0;
+      D.hopV -= dt * 9 * 2.4; P.hop = Math.max(0, (P.hop || 0) + D.hopV * dt); if (P.hop === 0) D.hopV = 0;
+      // カメラ（ママが えらんだ へやを 見る。くうが うごいたら ついていく）
+      const dr = roomOf(D.u);
+      if (dr !== viewRoom && D.act === "walk" && D.leaving && t - manual > 8000) { viewRoom = dr; navBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === dr))); }
+      if (Math.abs(viewRoom - camX) > 1.2) camX = viewRoom - Math.sign(viewRoom - camX) * .6;
+      camX += (viewRoom - camX) * ease(6);
+      if (Math.abs(viewRoom - camX) < .001) camX = viewRoom;
+      // ボール
+      if (ball.fly && !D.holding) { const k = clamp((t - ball.fly.t0) / ball.fly.dur); ball.u = ball.fly.u0 + (ball.fly.u1 - ball.fly.u0) * k; ball.y = -Math.sin(k * Math.PI) * Hh * .25; if (k >= 1) { ball.y = 0; ball.fly = null; } }
+      if (D.holding) { ball.fly = null; ball.y = 0; }
+      for (let i = parts.length - 1; i >= 0; i--) { const q = parts[i]; q.t += dt; q.x += q.vx * dt; q.y += q.vy * dt; if (q.g) q.vy += q.g * dt; if (q.t > q.life) parts.splice(i, 1); }
+      H.u = D.u;
+    }
+
+    /* ---------- 描く ---------- */
+    function render() {
+      ensureBg();
+      const c = ctx;
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.clearRect(0, 0, cv.width, cv.height);
+      const r0 = Math.floor(camX), off = (camX - r0) * cv.width;
+      if (bg[r0]) c.drawImage(bg[r0], -off, 0);
+      if (off > 0.5 && bg[r0 + 1]) c.drawImage(bg[r0 + 1], cv.width - off, 0);
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const X = (u) => (u - camX) * W;
+      const tt = performance.now() / 1000;
+      // ごはんと おみず
+      {
+        const bx = X(SPOT.bowl), wx = X(SPOT.water), by = FY + (Hh - FY) * .38, bw = W * .07;
+        if (bx > -bw && bx < W + bw) {
+          c.fillStyle = "#e9806e"; c.beginPath(); c.ellipse(bx, by, bw, bw * .32, 0, 0, Math.PI); c.lineTo(bx - bw, by); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+          c.fillStyle = "#c95f50"; c.beginPath(); c.ellipse(bx, by, bw, bw * .22, 0, 0, Math.PI * 2); c.fill();
+          if (H.bowl || D.act === "eat") {
+            const k = D.act === "eat" ? clamp((D.until - performance.now()) / 6000) : 1;
+            c.fillStyle = "#a8642e";
+            for (let i = 0; i < 14 * k; i++) { c.beginPath(); c.arc(bx + Math.sin(i * 2.3) * bw * .7, by - 2 - Math.abs(Math.cos(i * 1.7)) * bw * .18, 3.2, 0, Math.PI * 2); c.fill(); }
+          }
+        }
+        if (wx > -bw && wx < W + bw) {
+          c.fillStyle = "#e7eef6"; c.beginPath(); c.ellipse(wx, by, bw, bw * .32, 0, 0, Math.PI); c.lineTo(wx - bw, by); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+          c.fillStyle = "#c3d3e3"; c.beginPath(); c.ellipse(wx, by, bw, bw * .22, 0, 0, Math.PI * 2); c.fill();
+          if (H.water > .05) { c.fillStyle = `rgba(110,170,230,${.35 + H.water * .5})`; c.beginPath(); c.ellipse(wx, by + 1, bw * .82 * Math.sqrt(H.water), bw * .16 * Math.sqrt(H.water), 0, 0, Math.PI * 2); c.fill(); }
+        }
+      }
+      // しんしつの ライト
+      {
+        const lx = X(SPOT.lamp), ly = FY - Hh * .17;
+        if (lx > -50 && lx < W + 50) {
+          const on = !darkBed();
+          c.fillStyle = "#b98a5a"; c.fillRect(lx - 3, ly - Hh * .1, 6, Hh * .1);
+          c.fillStyle = on ? "#fff2c4" : "#e8dcc4"; c.beginPath(); c.moveTo(lx - W * .04, ly - Hh * .1); c.lineTo(lx - W * .025, ly - Hh * .19); c.lineTo(lx + W * .025, ly - Hh * .19); c.lineTo(lx + W * .04, ly - Hh * .1); c.closePath(); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+        }
+      }
+      // うんち
+      for (const pp of H.poops) {
+        const px = X(pp.u), py = FY + (Hh - FY) * .45;
+        if (px < -30 || px > W + 30) continue;
+        const r = Math.max(7, W * .018);
+        c.fillStyle = "#8a5a2e";
+        c.beginPath(); c.ellipse(px, py, r * 1.3, r * .55, 0, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.ellipse(px, py - r * .55, r * .95, r * .45, 0, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.ellipse(px + r * .1, py - r * 1.0, r * .55, r * .35, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "rgba(255,255,255,.35)"; c.beginPath(); c.ellipse(px - r * .4, py - r * .7, r * .25, r * .12, -.4, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "rgba(140,160,90,.6)"; c.lineWidth = 1.6;
+        for (let k = -1; k <= 1; k++) { const sx = px + k * r * .9, ph = tt * 3 + k; c.beginPath(); c.moveTo(sx, py - r * 1.6); c.quadraticCurveTo(sx + Math.sin(ph) * 4, py - r * 2.2, sx, py - r * 2.8); c.stroke(); }
+      }
+      // ボール
+      {
+        const bx = X(ball.u), by = FY + (Hh - FY) * .3 + ball.y, r = Math.max(8, W * .02);
+        if (bx > -20 && bx < W + 20 && !D.holding) {
+          if (!D.holding) { c.fillStyle = "rgba(0,0,0,.12)"; c.beginPath(); c.ellipse(bx, FY + (Hh - FY) * .3 + r, r, r * .3, 0, 0, Math.PI * 2); c.fill(); }
+          c.fillStyle = "#e35d5d"; c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+          c.strokeStyle = "#fff"; c.lineWidth = 2; c.beginPath(); c.arc(bx, by, r * .7, -.6, 1.2); c.stroke();
+        }
+      }
+      // くう
+      {
+        const dx = X(D.u), dy = FY + (Hh - FY) * .32;
+        if (dx > -S && dx < W + S) {
+          c.fillStyle = "rgba(60,30,10,.16)"; c.beginPath(); c.ellipse(dx, dy, S * (D.P.curl > .5 ? .42 : .34), S * .05, 0, 0, Math.PI * 2); c.fill();
+          c.save(); c.translate(dx, dy); c.scale(D.dir, 1);
+          KuuDog.draw(c, D.P, S);
+          c.restore();
+          if (D.holding) {
+            const r = Math.max(8, W * .02), bx = dx + D.dir * S * .3, by = dy - S * .5;
+            c.fillStyle = "#e35d5d"; c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+          }
+          if (D.act === "sleep") {
+            c.fillStyle = "rgba(90,110,170,.75)"; c.font = `600 ${Math.round(S * .1)}px "Klee One", sans-serif`; c.textAlign = "left";
+            for (let i = 0; i < 3; i++) { const k = (tt * .5 + i / 3) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText("z", dx + D.dir * S * .25 + k * S * .2, dy - S * .35 - k * S * .4); }
+            c.globalAlpha = 1;
+          }
+        }
+      }
+      // よるの くらさ・ライトの あかり
+      for (let i = 0; i < 4; i++) {
+        const x0 = (i - camX) * W;
+        if (x0 > W || x0 + W < 0) continue;
+        let a = 0, col = "12,18,50";
+        if (i === 0) a = isNight() ? .25 : 0;
+        else if (i === 3 && darkBed()) a = .55;
+        else if (isNight()) { a = .16; col = "30,22,40"; }
+        if (a) { c.fillStyle = `rgba(${col},${a})`; c.fillRect(x0, 0, W, Hh); }
+        if (i === 3 && darkBed()) {
+          const g = c.createRadialGradient(x0 + W * .19, Hh * .3, 10, x0 + W * .19, Hh * .5, W * .45);
+          g.addColorStop(0, "rgba(170,190,255,.22)"); g.addColorStop(1, "rgba(170,190,255,0)");
+          c.fillStyle = g; c.fillRect(x0, 0, W, Hh);
+        } else if (i === 3 && isNight()) {
+          const lx = x0 + W * (SPOT.lamp - 3), g = c.createRadialGradient(lx, FY - Hh * .3, 4, lx, FY - Hh * .3, W * .4);
+          g.addColorStop(0, "rgba(255,220,150,.35)"); g.addColorStop(1, "rgba(255,220,150,0)"); c.fillStyle = g; c.fillRect(x0, 0, W, Hh);
+        }
+      }
+      // ほたる と ちょうちょ（おにわ）
+      {
+        const x0 = (0 - camX) * W;
+        if (x0 + W > 0) for (let i = 0; i < 5; i++) {
+          const fx = x0 + W * (.15 + .17 * i + Math.sin(tt * .4 + i) * .05), fy = Hh * (.45 + Math.sin(tt * .7 + i * 2) * .12);
+          if (isNight()) { c.fillStyle = `rgba(230,255,150,${.4 + .4 * Math.sin(tt * 3 + i)})`; c.beginPath(); c.arc(fx, fy, 2.5, 0, Math.PI * 2); c.fill(); }
+          else if (i < 2) { const fl = Math.abs(Math.sin(tt * 12 + i)); c.fillStyle = i ? "#f7d6e6" : "#fff4b8"; c.beginPath(); c.ellipse(fx - 4 * fl, fy, 5 * fl + 1, 6, 0, 0, Math.PI * 2); c.ellipse(fx + 4 * fl, fy, 5 * fl + 1, 6, 0, 0, Math.PI * 2); c.fill(); }
+        }
+      }
+      // エフェクト
+      for (const q of parts) {
+        const a = 1 - q.t / q.life;
+        c.globalAlpha = a;
+        if (q.k === "h") { c.fillStyle = "#f2708c"; c.font = `${Math.round(S * .12)}px sans-serif`; c.textAlign = "center"; c.fillText("♥", q.x, q.y); }
+        else if (q.k === "s") { c.fillStyle = "#ffe08a"; c.beginPath(); c.arc(q.x, q.y, 3, 0, Math.PI * 2); c.fill(); }
+        else { c.fillStyle = "#a8642e"; c.beginPath(); c.arc(q.x, q.y, 3, 0, Math.PI * 2); c.fill(); }
+      }
+      c.globalAlpha = 1;
+      // ふきだしの 位置
+      if (!bubbleEl.hidden) {
+        const d = dogScreen();
+        const show = d.x > 0 && d.x < W;
+        bubbleEl.style.visibility = show ? "visible" : "hidden";
+        const bw = bubbleEl.offsetWidth / 2 + 6;
+        bubbleEl.style.left = `${clamp(d.x, bw, Math.max(bw, W - bw))}px`;
+        bubbleEl.style.top = `${Math.max(8, d.y - S * .62)}px`;
+      }
+    }
+
+    /* ---------- いまの くう（ひとこと） ---------- */
+    function status() {
+      if (toast.t) return;
+      const a = D.act, rn = ROOMS[roomOf(D.u)].name;
+      const doing = a === "sleep" ? (napTime() ? "おひるね中" : "ねてるよ") : a === "eat" ? "ごはん中" : a === "drink" ? "おみず のんでる" : a === "poop" ? "うんち中…" : a === "wait" ? "ごはん まってる" : a === "lie" ? "ごろん中" : a === "sniff" ? "くんくん中" : a === "walk" ? "おさんぽ中" : "ママを 見てる";
+      const needs = [hungry() ? "おなか ぺこぺこ" : "", H.water < .25 ? "おみず すくない" : "", H.poops.length ? `うんち ${H.poops.length}こ` : ""].filter(Boolean);
+      statusEl.textContent = `くう：${rn}で ${doing}${needs.length ? "　・" + needs.join("・") : ""}`;
+    }
+
+    let last = performance.now(), running = false, lastStatus = 0;
+    function loop(t) {
+      const dt = Math.min(window.__kuuDt || .05, (t - last) / 1000); last = t;
+      if (current === "room" && mode === "house" && visible && W) {
+        step(dt); render();
+        if (t - lastStatus > 500) { lastStatus = t; status(); }
+        if (t - (loop.saved || 0) > 5000) { loop.saved = t; save(); }
+      }
+      requestAnimationFrame(loop);
+    }
+
+    let mode = "house";
+    function setMode(m) {
+      mode = m === "dakko" ? "dakko" : "house";
+      store.set("kuu-home-mode", mode);
+      $("room").classList.toggle("is-dakko", mode === "dakko");
+      $("modeHouse").setAttribute("aria-pressed", String(mode === "house"));
+      $("modeDakko").setAttribute("aria-pressed", String(mode === "dakko"));
+      if (mode === "house") { size(); }
+      else { try { room.enter(); } catch {} }
+    }
+    $("modeHouse").addEventListener("click", () => setMode("house"));
+    $("modeDakko").addEventListener("click", () => setMode("dakko"));
+
+    let entered = false;
+    function enter() {
+      catchUp();
+      size();
+      ["img/smile.jpg", "img/pink.jpg", "img/nap.jpg"].forEach(photo);
+      if (!running) { running = true; requestAnimationFrame(loop); }
+      // ひらいた ときの くうの 場所（時間と きもちに あわせる）
+      if (!entered) {
+        entered = true;
+        if (sleepy()) { D.u = SPOT.kbed; setAct("sleep", 1e9, { curl: 1 }); D.P.curl = 1; }
+        else if (hungry()) { D.u = SPOT.bowl - .17; D.dir = 1; setAct("wait", 6, { sit: 1, look: 1 }); }
+        else if (H.poops.length) { D.u = SPOT.toilet + .2; setAct("sit", 4, { sit: 1, look: 1 }); }
+        else { D.u = clamp(H.u, .1, 3.9); setAct("idle", 1); }
+        viewRoom = roomOf(D.u); camX = viewRoom;
+        navBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === viewRoom)));
+        const hr = new Date().getHours();
+        setTimeout(() => {
+          if (D.act === "sleep") return toast(napTime() ? "くうは おひるね中。なでると おきるよ" : "くうは ねてるよ。なでると おきるよ");
+          const hi = hr >= 5 && hr < 10 ? "おはよ、ママ！" : hr < 17 ? "ママ、きてくれた！" : "おかえり、ママ！";
+          say(hungry() ? `${hi} おなか すいた〜！` : H.poops.length ? `${hi} …あのね、うんち しちゃった` : `${hi}`, 3200);
+          D.happyUntil = performance.now() + 2000; hop(.05);
+        }, 600);
+      }
+    }
+    // おやつ（おうちの くうに あげる）
+    function treat(tr, btnEl, done) {
+      // くうが ちがう へやに いたら、くうの へやを 見せる
+      if (roomOf(D.u) !== viewRoom) { viewRoom = roomOf(D.u); manual = performance.now(); navBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === viewRoom))); }
+      if (D.act === "sleep") wakeUp();
+      setAct("look", 4, { sit: 1, look: 1 });
+      const r = cv.getBoundingClientRect(), b = btnEl.getBoundingClientRect(), d = dogScreen();
+      const fl = { icon: tr.icon, x0: clamp(b.left + b.width / 2 - r.left, 10, W - 10), y0: Math.min(b.top - r.top, Hh), t0: performance.now() };
+      const tick = () => {
+        const k = clamp((performance.now() - fl.t0) / 650);
+        flyEl.style.left = `${fl.x0 + (d.x - fl.x0) * k}px`; flyEl.style.top = `${fl.y0 + (d.y - S * .2 - fl.y0) * k - Math.sin(k * Math.PI) * 60}px`;
+        if (k < 1) return requestAnimationFrame(tick);
+        flyEl.hidden = true;
+        if (tr.bad) { snd("hmph"); D.dir = -D.dir; setAct("sit", 2.5, { sit: 1 }); say(tr.say, 4200); done(false); return; }
+        setAct("eat2", 2, { sit: 1, look: 1 }); D.chew = 2; snd("crunch");
+        setTimeout(() => { D.happyUntil = performance.now() + 2000; hop(.05); say(tr.say, 3200); snd("yip"); done(true); }, 1200);
+      };
+      flyEl.textContent = tr.icon; flyEl.hidden = false; tick();
+    }
+    const flyEl = document.createElement("span"); flyEl.className = "house-fly"; flyEl.hidden = true; wrap.append(flyEl);
+
+    setMode(store.get("kuu-home-mode", "house"));
+    window.__KuuDog = KuuDog;
+    window.__kuuHouse = { D, H, get view() { return viewRoom; }, get cam() { return camX; } };
+    $("tab-room").addEventListener("click", enter);
+    return { enter, treat, get on() { return mode === "house"; } };
+  })();
+
 
   /* ================= くうが「ママの思い出」を覚えている（AIにわたす文脈） ================= */
   const MOODS = [
@@ -3472,8 +4585,11 @@ ${letter}
     { v: "wish", eyebrow: "Wish upon a star", title: "星に、ねがいごと", badge: "NEW", since: 3,
       body: "ほしぞらの へやで ねがいごとを 書くと、ながれぼしに のって 夜空を わたり、ピンクの 星に なります。\nタップすると、くうが おへんじを くれるよ。",
       tries: ["ねがいごとを 書く", "ピンクの 星"], cta: "ねがいごとを する", go: () => { goTab("sky"); setTimeout(() => $("wishForm").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500); } },
+    { v: "house", eyebrow: "Room 02 · House", title: "くうの おうち", badge: "NEW", since: 4,
+      body: "おにわ・リビング・キッチン・しんしつ。くうが 自分で 歩いて くらしています。\nごはんの 時間には おさらの まえで まって、夜は ベッドで すやすや。うんちを したら、かたづけて あげてね。",
+      tries: ["おさらに ごはん", "ボールを なげる", "うんちを かたづける", "しんしつの ライト"], cta: "おうちを のぞく", go: () => goTab("room") },
     { v: "room", eyebrow: "Room 02 · Room", title: "おへやの くうに、さわれる", badge: "NEW",
-      body: "写真の くうが、息をして、まばたきして、首を かしげます。\nなでると 目を細めて「くぅ〜ん」。鼻を タップすると…？\nおやつを あげたり、おしゃべりも できるよ。",
+      body: "おへやの「写真の くう」を おすと、写真の くうが、息をして、まばたきして、首を かしげます。\nなでると 目を細めて「くぅ〜ん」。鼻を タップすると…？\nおやつを あげたり、おしゃべりも できるよ。",
       tries: ["なでなで", "鼻を タップ", "おやつ", "おしゃべり"], cta: "くうに 会いにいく", go: () => goTab("room") },
     { v: "walk", eyebrow: "Room 03 · Walk", title: "くうと、季節の おさんぽ",
       body: "タップで ジャンプ。はる・なつ・あき・ふゆを 60秒で かけぬけます。\nピンクの服に 着がえることも できるよ。",
@@ -3513,11 +4629,21 @@ ${letter}
       tries: [], cta: "はじめる", go: () => {}, share: !IN_APP },
   ];
 
+  // ガイド用：おうちの くう（絵。画像に しないで、その場で 描く）
+  function drawKuuPic(c) {
+    try {
+      c.width = 420; c.height = 360;
+      // 小さな 絵は CPUで 描く（一部の 端末の GPUで 色が くずれることがある）
+      const x = c.getContext("2d", { willReadFrequently: true }); x.translate(215, 330);
+      KuuDog.draw(x, { t: 0, walk: 0, ph: 0, sit: 1, lie: 0, down: 0, look: 1, wag: 0, tailUp: 0, blink: 0, sleep: 0, happy: 1, mouth: .7, squat: 0, curl: 0, earUp: .2, hop: 0, tilt: .08 }, 300);
+    } catch {}
+  }
   const GV = {
     face: () => `<div class="gv gv-face"><i></i><img src="img/face.jpg" alt=""></div>`,
     dots: () => `<div class="gv gv-dots"><img src="img/face.jpg" alt=""></div>`,
     path: () => `<div class="gv gv-path"><img src="img/baby.jpg" alt=""><img src="img/cake.jpg" alt=""><img src="img/smile.jpg" alt=""></div>`,
     sky: () => `<div class="gv gv-sky"><img src="img/face.jpg" alt=""><b style="left:18%;top:62%"></b><b style="left:46%;top:74%"></b><b style="left:78%;top:58%"></b><b style="left:70%;top:24%"></b><em></em></div>`,
+    house: () => `<div class="gv gv-house"><canvas aria-hidden="true"></canvas><q>ママ、おかえり！</q></div>`,
     room: () => `<div class="gv gv-room"><img src="img/room.jpg" alt=""><span>♥</span><span>♥</span><span>♥</span><q>くぅ〜ん</q></div>`,
     walk: () => `<div class="gv gv-walk"><i></i><i></i><i></i><i></i><img src="img/face.jpg" alt=""></div>`,
     letter: () => `<div class="gv gv-letter"><div><b>ママへ！</b><p>おてがみ、ちゃーんと とどいたよ。<br>くう、なんかいも よんじゃった。</p><small>くうより</small></div></div>`,
@@ -3539,6 +4665,7 @@ ${letter}
   function renderGuide(dir = 1) {
     const s = GUIDE[gi];
     $("guideVisual").innerHTML = GV[s.v]();
+    $("guideVisual").querySelectorAll(".gv-house canvas").forEach(drawKuuPic);
     $("guideEyebrow").textContent = s.eyebrow;
     $("guideStep").textContent = `${String(gi + 1).padStart(2, "0")} / ${String(GUIDE.length).padStart(2, "0")}`;
     $("guideTitle").textContent = s.title;
@@ -3587,7 +4714,7 @@ ${letter}
   $("guideSlide").addEventListener("pointerup", (e) => { if (sx == null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); });
   document.querySelectorAll(".open-guide").forEach((b) => b.addEventListener("click", () => openGuide(0)));
   // はじめて来た人には、粒のくうちゃんを見てもらってから、そっと ひらく
-  const GUIDE_VER = 3;
+  const GUIDE_VER = 4;
   const seenVer = store.get("qoo-guide-ver", store.get("qoo-guide-seen", 0) ? 1 : 0);
   if (seenVer < GUIDE_VER) {
     setTimeout(() => {
@@ -3667,7 +4794,7 @@ ${letter}
   const startHash = (location.hash || "").slice(1);
   show(tabs.includes(startHash) ? startHash : "sky");
   if (current === "walk") startWalkLoop();
-  if (current === "room") room.enter();
+  if (current === "room") { room.enter(); house.enter(); }
   sizeSky(); requestAnimationFrame(skyLoop);
   drawWalk(0);
 })();
@@ -4158,7 +5285,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202610300222").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011329").catch(() => {});
 </script>
 </body>
 </html>

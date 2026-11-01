@@ -435,6 +435,35 @@
   .wp-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
   .wp-links .btn { flex: 1 1 140px; font-size: 12px; letter-spacing: .04em; padding: 9px 8px; white-space: nowrap; }
   @media (max-width: 420px) { .wp-head h3 small { display: none; } }
+  .tricks { margin-top: 10px; }
+  .tricks > p { margin: 0 0 6px; display: flex; gap: 10px; align-items: baseline; font-family: var(--f-display); font-size: 14px; letter-spacing: .1em; color: var(--cream); }
+  .tricks > p small { font-size: 11px; letter-spacing: 0; color: var(--mist); }
+  .trick-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .trick { position: relative; overflow: hidden; display: grid; justify-items: center; gap: 1px; padding: 7px 2px 9px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--cream); font: inherit; cursor: pointer; }
+  .trick i { font-style: normal; font-size: 20px; line-height: 1.2; }
+  .trick b { font-size: 12px; font-weight: 500; }
+  .trick .trick-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p, 0) * 100%); background: var(--honey); }
+  .trick.ok { border-color: var(--honey); color: var(--honey); }
+  .trick:disabled { opacity: .45; cursor: default; }
+  .shop-bones { margin: 0 0 10px; font-size: 14px; color: var(--honey); }
+  .shop-tabs { margin-bottom: 10px; }
+  .shop-tabs button[aria-pressed="true"] { background: var(--honey); color: var(--night); }
+  .shop-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 46vh; overflow-y: auto; }
+  .shop-item { display: grid; grid-template-columns: 34px 1fr auto; grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--cream); font: inherit; cursor: pointer; }
+  .shop-item i { grid-row: span 2; font-style: normal; font-size: 24px; text-align: center; }
+  .shop-item b { font-family: var(--f-hand); font-size: 13px; font-weight: 600; }
+  .shop-item small { grid-column: 2; font-size: 10px; color: var(--mist); line-height: 1.4; }
+  .shop-item em { grid-row: 1 / span 2; grid-column: 3; font-style: normal; font-size: 12px; color: var(--honey); white-space: nowrap; }
+  .shop-item.owned { border-color: rgba(214,181,122,.5); }
+  .shop-item.using { background: rgba(214,181,122,.18); border-color: var(--honey); }
+  .shop-item.bad b { color: #e9a3a3; }
+  .cook-pick { text-align: center; font-size: 22px; margin: 12px 0 8px; color: var(--cream); }
+  .cook-empty { grid-column: 1 / -1; font-size: 13px; color: var(--mist); }
+  #cookGo { display: block; margin: 0 auto; }
+  .recipe-h { margin: 16px 0 8px; display: flex; gap: 10px; align-items: baseline; font-family: var(--f-display); font-size: 15px; color: var(--cream); }
+  .recipe-h small { font-size: 12px; color: var(--mist); }
+  .my-treats-h { margin: 14px 0 8px; font-family: var(--f-display); font-size: 13px; letter-spacing: .1em; color: var(--honey); }
+  .treat .treat-n { font-size: 10px; color: var(--honey); }
   .life-toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 60; transform: translateX(-50%);
     display: grid; gap: 2px; text-align: center; min-width: 220px; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 16px;
@@ -676,11 +705,13 @@
   .gv-sky em { position: absolute; left: 10%; top: 14%; width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, #fff); transform: rotate(-24deg); animation: shoot 3.2s ease-in infinite; }
   @keyframes twinkle { 50% { opacity: .3; transform: scale(.7); } }
   @keyframes shoot { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 60%, 100% { opacity: 0; translate: 160px 70px; } }
-  .gv-wish { background: radial-gradient(circle at 50% 30%, #2a2416, #0d0e14); }
-  .gv-wish ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; width: 78%; }
-  .gv-wish li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.08); color: var(--cream); font-family: var(--f-hand); font-size: 14px; }
-  .gv-wish li.ok { background: rgba(214,181,122,.2); color: var(--honey); }
-  .gv-wish span { position: absolute; right: 10%; bottom: 8%; font-size: 34px; transform: rotate(-12deg); }
+  .gv-today { background: radial-gradient(circle at 50% 30%, #2a2416, #0d0e14); }
+  .gv-today ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; width: 78%; }
+  .gv-today li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.08); color: var(--cream); font-family: var(--f-hand); font-size: 14px; }
+  .gv-today li.ok { background: rgba(214,181,122,.2); color: var(--honey); }
+  .gv-today span { position: absolute; right: 10%; bottom: 8%; font-size: 34px; transform: rotate(-12deg); }
+  .gv-play div { display: grid; grid-template-columns: repeat(2, 70px); gap: 14px; }
+  .gv-play div span { position: static; display: grid; place-items: center; height: 70px; border-radius: 18px; background: rgba(255,255,255,.08); font-size: 34px; transform: none; }
   .gv-house { background: linear-gradient(#f6ead6 0 70%, #dea267 70%); }
   .gv-house img { position: absolute; left: 50%; bottom: 6%; height: 80%; transform: translateX(-50%); }
   .gv-house q { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); quotes: none; padding: 6px 14px; border-radius: 16px; background: var(--paper); color: var(--ink); font-family: var(--f-hand); font-size: 14px; white-space: nowrap; }
@@ -1058,12 +1089,13 @@
         <p class="room-hint house-hint" id="houseHint"><span class="nb">くうを タップ・なでなで</span>　<span class="nb">おさら・ボール・ライトも さわれるよ</span></p>
       </div>
       <div class="house-rooms" id="houseRooms" role="group" aria-label="へやを えらぶ"></div>
+      <div class="tricks"><p>しつけ<small>れんしゅうすると おぼえるよ</small></p><div class="trick-row" id="trickRow"></div></div>
     </div>
     <div class="wish-panel" id="wishPanel">
       <div class="wp-head"><h3>きょうの おねがい<small>Today's wishes</small></h3><span class="wp-bones" title="ためた ほね">🦴 <b id="boneCount">0</b></span></div>
       <ol class="wp-list" id="wishList"></ol>
       <p class="wp-note" id="wishNote"></p>
-      <div class="wp-links"><button class="btn ghost" id="openDiary" type="button">📖 くう日記・カレンダー</button><button class="btn ghost" id="openZukan" type="button">🔍 おさんぽ図鑑</button></div>
+      <div class="wp-links"><button class="btn ghost" id="openShop" type="button">🛍 ほねの おみせ</button><button class="btn ghost" id="openCook" type="button">🍳 おやつ作り</button><button class="btn ghost" id="openDiary" type="button">📖 くう日記</button><button class="btn ghost" id="openZukan" type="button">🔍 おさんぽ図鑑</button></div>
     </div>
     <div class="room">
       <div class="room-stage" id="roomStage">
@@ -1078,6 +1110,7 @@
           <h3>おやつを あげる<small>Treats</small></h3>
           <div class="treat-row" id="treatRow"></div>
           <p class="room-note">くうが たべちゃ いけない ものも まざってるよ。</p>
+          <div id="myTreats" hidden><h4 class="my-treats-h">ママの てづくり おやつ</h4><div class="treat-row" id="myTreatRow"></div></div>
         </div>
         <div>
           <h3>くうと おしゃべり<small>Talk</small></h3>
@@ -1247,6 +1280,35 @@
   </div>
 </div>
 
+<div class="overlay" id="shopModal" hidden>
+  <div class="album-card" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+    <header>
+      <p class="eyebrow-l">Bone Shop</p>
+      <h2 id="shopTitle">ほねの おみせ</h2>
+      <button class="album-x" id="shopClose" type="button" aria-label="とじる">×</button>
+    </header>
+    <p class="shop-bones">もってる ほね 🦴 <b id="shopBones">0</b></p>
+    <div class="seg shop-tabs" id="shopTabs"><button type="button" data-tab="room">もようがえ</button><button type="button" data-tab="kuu">くうの おしゃれ</button><button type="button" data-tab="ing">ざいりょう</button></div>
+    <div class="shop-grid" id="shopGrid"></div>
+    <p class="album-msg" id="shopMsg" aria-live="polite"></p>
+  </div>
+</div>
+<div class="overlay" id="cookModal" hidden>
+  <div class="album-card" role="dialog" aria-modal="true" aria-labelledby="cookTitle">
+    <header>
+      <p class="eyebrow-l">Homemade Treats</p>
+      <h2 id="cookTitle">おやつ作り</h2>
+      <button class="album-x" id="cookClose" type="button" aria-label="とじる">×</button>
+    </header>
+    <p class="album-msg">ざいりょうを 2つ えらんで、くうの おやつを つくろう。いぬが たべちゃ だめな ものは、くうが とめてくれるよ。</p>
+    <div class="shop-grid" id="cookGrid"></div>
+    <p class="cook-pick" id="cookPick"></p>
+    <button class="btn" id="cookGo" type="button" disabled>つくる！</button>
+    <p class="album-msg" id="cookMsg" aria-live="polite"></p>
+    <h3 class="recipe-h">レシピ<small id="recipeSum"></small></h3>
+    <div class="zukan" id="recipeBook"></div>
+  </div>
+</div>
 <div class="overlay" id="diaryModal" hidden>
   <div class="album-card diary-card" role="dialog" aria-modal="true" aria-labelledby="diaryTitle">
     <header>
@@ -1416,6 +1478,9 @@
       { id: "walk", cat: 2, icon: "🐾", text: "おさんぽ いこ！", ev: "walk", n: 1, bones: 3, hint: "「おさんぽ」の へやへ" },
       { id: "flower", cat: 2, icon: "🌼", text: "おさんぽで おはな みつけてきて", ev: "flower", n: 1, bones: 4, hint: "おさんぽで はなを ひろう" },
       { id: "kuji", cat: 2, icon: "🎴", text: "きょうの くうみくじ ひいて！", ev: "kuji", n: 1, bones: 2, hint: "「おみくじ」の へやへ" },
+      { id: "sunwater", cat: 0, icon: "🌻", text: "ひまわりに おみず あげて〜", ev: "sunwater", n: 1, bones: 3, hint: "おにわの はたけを タップ", need: () => ctx.needWater && ctx.needWater() },
+      { id: "trick", cat: 1, icon: "🐕", text: "しつけの れんしゅう しよ！", ev: "trick", n: 3, bones: 3, hint: "おうちの 下の「しつけ」" },
+      { id: "cook", cat: 2, icon: "🍳", text: "てづくり おやつ つくって！", ev: "cook", n: 1, bones: 4, hint: "「おやつ作り」から" },
     ];
     const ALL_BONUS = 5;
     const MILES = [[3, 10, "スタンプ 3こ！ ママ、いつも きてくれて ありがと！"], [7, 15, "スタンプ 7こ！ いっしゅうかん ぶん、ぼくの たからもの！"], [14, 20, "スタンプ 14こ！ ママと すごす 毎日、だいすき！"],
@@ -1472,6 +1537,7 @@
       L.found[id] = (L.found[id] || 0) + 1;
       if (!L.foundAt[id]) L.foundAt[id] = dkey();
       d.found.push(id);
+      if (id === "himawari") L.seeds = (L.seeds || 0) + 1;
       save();
       if (it.flower) ev("flower");
       else emit();
@@ -1509,13 +1575,20 @@
         out.push(`${uniq.map((i) => i.name).join("と ")}を みつけた。おうちに かざったよ。`);
       }
       if (g.kuji) out.push("くうみくじ ひいた。");
+      if (d.bought && d.bought.length) out.push(`ママが おみせで ${[...new Set(d.bought)].join("と ")}を かってくれた！`);
+      if (d.planted) out.push("おにわに ひまわりの たねを まいた。");
+      if (g.sunwater) out.push("ひまわりに おみずを あげた。おおきく なあれ。");
+      if (d.bloom) out.push("ひまわりが さいた！ ママの すきな はな！");
+      if (g.trick) out.push(`しつけの れんしゅう ${g.trick}かい。`);
+      if (d.learned) out.push(`${d.learned.join("と ")}を おぼえた！ ほめて ほめて！`);
+      if (d.cooked) out.push(`ママが ${[...new Set(d.cooked)].join("と ")}を つくってくれた。`);
       if (g.lights) out.push("ママが でんきを けしてくれて、ぐっすり。");
       if (!out.length) out.push("ママが 会いにきてくれた。それだけで うれしい。");
       return out;
     }
 
     return {
-      ev, find, walkDone, today, diaryLines, ITEMS, item, wishDef, WISHES, dkey, ctx,
+      ev, find, walkDone, today, diaryLines, ITEMS, item, wishDef, WISHES, dkey, ctx, save,
       get L() { return L; },
       on(f) { listeners.add(f); f(); }, onToast(f) { toastFn = f; },
       pickFind(seasonIdx) {
@@ -1527,6 +1600,139 @@
     };
   })();
   window.QooLife = life;
+  /* ================= 第2弾：ほねの おみせ・ひまわり畑・しつけ・手作りおやつ ================= */
+  const play = (() => {
+    const L = life.L;
+    L.owned = L.owned || []; L.use = L.use || {}; L.tricks = L.tricks || {}; L.ing = L.ing || {}; L.box = L.box || {}; L.recipes = L.recipes || [];
+    if (L.seeds == null) L.seeds = 1; // さいしょの たねは プレゼント
+    L.plots = L.plots || [null, null, null, null, null, null];
+    const save = () => life.save();
+    const day = () => life.today();
+    const note = (k, v) => { const d = day(); (d[k] = d[k] || []).push(v); save(); };
+
+    // おみせ（slot が おなじ ものは どれか ひとつ。slot なしは つける・はずす）
+    const SHOP = [
+      { id: "vase", cat: "room", icon: "🌻", name: "ひまわりの 花びん", price: 15, desc: "リビングに ひまわりを かざる" },
+      { id: "garland", cat: "room", icon: "🎏", name: "ガーランド", price: 20, desc: "リビングの かべに かわいい はた" },
+      { id: "rug-heart", cat: "room", slot: "rug", icon: "💗", name: "ハートの ラグ", price: 25, desc: "リビングの ラグを ピンクに" },
+      { id: "rug-sun", cat: "room", slot: "rug", icon: "🌼", name: "ひまわりいろの ラグ", price: 25, desc: "リビングの ラグを きいろに" },
+      { id: "wall-blue", cat: "room", slot: "wall", icon: "🩵", name: "みずいろの かべがみ", price: 40, desc: "リビングの かべを そらいろに" },
+      { id: "wall-pink", cat: "room", slot: "wall", icon: "🩷", name: "さくらいろの かべがみ", price: 40, desc: "リビングの かべを ピンクに" },
+      { id: "bed-sun", cat: "room", slot: "bed", icon: "🛏️", name: "ひまわりの ベッド", price: 30, desc: "くうの ベッドを ひまわりがらに" },
+      { id: "bed-dot", cat: "room", slot: "bed", icon: "🫧", name: "みずたまの ベッド", price: 30, desc: "くうの ベッドを みずたまに" },
+      { id: "stars", cat: "room", icon: "✨", name: "ほしの ライト", price: 30, desc: "しんしつに きらきらの ライト" },
+      { id: "bench", cat: "room", icon: "🪑", name: "おにわの ベンチ", price: 35, desc: "おにわに すわれる ベンチ" },
+      { id: "acc-ribbon", cat: "kuu", slot: "acc", icon: "🎀", name: "リボン", price: 20, desc: "くうの あたまに リボン" },
+      { id: "acc-flower", cat: "kuu", slot: "acc", icon: "🌻", name: "ひまわりの かみかざり", price: 25, desc: "ママの すきな ひまわり" },
+      { id: "acc-hat", cat: "kuu", slot: "acc", icon: "👒", name: "むぎわらぼうし", price: 35, desc: "なつの くうの ぼうし" },
+      { id: "acc-star", cat: "kuu", slot: "acc", icon: "⭐", name: "ほしの かみかざり", price: 30, desc: "くうちゃん座の ほし" },
+      { id: "acc-crown", cat: "kuu", slot: "acc", icon: "👑", name: "おうかん", price: 60, desc: "くうは せかいいちの おうじさま" },
+      { id: "seed", cat: "seed", icon: "🌱", name: "ひまわりの たね", price: 5, desc: "おにわに まいて そだてる", stack: true },
+    ];
+    const INGS = [
+      { id: "kabocha", icon: "🎃", name: "かぼちゃ" }, { id: "imo", icon: "🍠", name: "さつまいも" }, { id: "ringo", icon: "🍎", name: "りんご" },
+      { id: "ninjin", icon: "🥕", name: "にんじん" }, { id: "tamago", icon: "🥚", name: "たまご" }, { id: "sasami", icon: "🍗", name: "ささみ" },
+      { id: "yogurt", icon: "🥛", name: "ヨーグルト" },
+      { id: "choco", icon: "🍫", name: "チョコ", bad: "チョコは いぬには どく！ たべると ぐあいが わるくなっちゃう" },
+      { id: "budou", icon: "🍇", name: "ぶどう", bad: "ぶどうは いぬには だめ！ ほしぶどうも だめなんだよ" },
+      { id: "tamanegi", icon: "🧅", name: "たまねぎ", bad: "たまねぎは いぬには どく！ にこんでも だめなの" },
+    ];
+    const ING_PRICE = 2;
+    const RECIPES = [
+      { id: "boro", a: "kabocha", b: "tamago", icon: "🟠", name: "かぼちゃボーロ", say: "ころころ かぼちゃボーロ！ ママの てづくり、せかいいち！" },
+      { id: "applecake", a: "imo", b: "ringo", icon: "🍰", name: "おいもりんごケーキ", say: "あまーい！ おいもと りんご、なかよしの あじ！" },
+      { id: "maki", a: "sasami", b: "ninjin", icon: "🥢", name: "ささみの やさいまき", say: "ささみ！ にんじんも ちゃんと たべたよ、えらい？" },
+      { id: "ringoyo", a: "yogurt", b: "ringo", icon: "🍨", name: "りんごヨーグルト", say: "ひんやり しゃくしゃく！ おいしい〜" },
+      { id: "pudding", a: "kabocha", b: "yogurt", icon: "🍮", name: "かぼちゃプリン", say: "ぷるぷる プリン！ もう いっこ！" },
+      { id: "sweetpotato", a: "imo", b: "tamago", icon: "🍠", name: "スイートポテト", say: "ほくほく スイートポテト！ しあわせ〜" },
+      { id: "dango", a: "sasami", b: "kabocha", icon: "🍡", name: "ささみかぼちゃだんご", say: "おだんご！ もちもち〜" },
+      { id: "cookie", a: "ninjin", b: "tamago", icon: "🍪", name: "にんじんクッキー", say: "さくさく クッキー！ にんじん、すきに なっちゃった" },
+    ];
+    const MYSTERY = { id: "mix", icon: "🥣", name: "なぞの てづくりおやつ", say: "これ なあに？ …でも おいしい！ ママが つくったから！" };
+    const TRICKS = [
+      { id: "sit", icon: "🐕", name: "おすわり" }, { id: "down", icon: "🛏️", name: "ふせ" }, { id: "paw", icon: "🐾", name: "おて" },
+      { id: "spin", icon: "🔄", name: "まわれ" }, { id: "jump", icon: "⤴️", name: "ジャンプ" },
+    ];
+    const def = (id) => SHOP.find((s) => s.id === id);
+    const has = (id) => L.owned.includes(id);
+    const using = (slot) => L.use[slot] || null;
+    const on = (id) => { const d = def(id); return d && has(id) && (d.slot ? L.use[d.slot] === id : L.use[id] !== false); };
+
+    function buy(id) {
+      const d = def(id); if (!d) return { ok: false };
+      if (L.bones < d.price) return { ok: false, need: d.price - L.bones };
+      L.bones -= d.price;
+      if (d.stack) L.seeds++;
+      else { if (!has(id)) L.owned.push(id); if (d.slot) L.use[d.slot] = id; else L.use[id] = true; }
+      note("bought", d.name); life.ev("buy");
+      return { ok: true };
+    }
+    function toggle(id) {
+      const d = def(id); if (!d || !has(id)) return;
+      if (d.slot) L.use[d.slot] = L.use[d.slot] === id ? null : id;
+      else L.use[id] = L.use[id] === false;
+      save(); life.ev("deco", 0);
+    }
+    function buyIng(id) {
+      if (L.bones < ING_PRICE) return false;
+      L.bones -= ING_PRICE; L.ing[id] = (L.ing[id] || 0) + 1; save(); life.ev("deco", 0); return true;
+    }
+
+    // ひまわり畑：たねを まいて、ちがう日に おみずを 4かい あげると さく（かれない）
+    const STAGES = ["たね", "め", "ふたば", "つぼみ", "まんかい"];
+    function plant(i) {
+      if (L.plots[i] || L.seeds < 1) return false;
+      L.seeds--; L.plots[i] = { st: 0, w: "" };
+      note("planted", 1); life.ev("plant");
+      return true;
+    }
+    function water(i) {
+      const p = L.plots[i]; if (!p || p.st >= 4) return "none";
+      const k = life.dkey(); if (p.w === k) return "done";
+      p.w = k; p.st++;
+      if (p.st >= 4) note("bloom", 1);
+      life.ev("sunwater");
+      return p.st >= 4 ? "bloom" : "grow";
+    }
+    const needWater = () => L.plots.some((p) => p && p.st < 4 && p.w !== life.dkey());
+
+    // しつけ：れんしゅうすると すこしずつ できるように なる（しっぱいしても なにも へらない）
+    function trickState(id) { return L.tricks[id] || (L.tricks[id] = { p: 0, ok: false }); }
+    const unlocked = (i) => i === 0 || trickState(TRICKS[i - 1].id).ok;
+    function practice(id) {
+      const s = trickState(id);
+      const success = s.ok || Math.random() < .35 + s.p * .6;
+      let learned = false;
+      if (!s.ok) {
+        s.p = Math.min(1, s.p + (success ? .2 : .1));
+        if (s.p >= 1) { s.ok = true; learned = true; L.bones += 5; note("learned", TRICKS.find((t) => t.id === id).name); }
+      }
+      save(); life.ev("trick");
+      return { success, learned };
+    }
+
+    // 手作りおやつ
+    function cook(a, b) {
+      const A = INGS.find((x) => x.id === a), B = INGS.find((x) => x.id === b);
+      const bad = [A, B].find((x) => x.bad);
+      if (bad) return { kind: "bad", ing: bad };
+      if ((L.ing[a] || 0) < (a === b ? 2 : 1) || (L.ing[b] || 0) < 1) return { kind: "none" };
+      L.ing[a]--; L.ing[b]--;
+      const r = RECIPES.find((x) => (x.a === a && x.b === b) || (x.a === b && x.b === a)) || MYSTERY;
+      const isNew = r !== MYSTERY && !L.recipes.includes(r.id);
+      if (isNew) L.recipes.push(r.id);
+      L.box[r.id] = (L.box[r.id] || 0) + 1;
+      note("cooked", r.name); life.ev("cook");
+      return { kind: "ok", r, isNew };
+    }
+    const treatDef = (id) => RECIPES.find((x) => x.id === id) || (id === "mix" ? MYSTERY : null);
+    function useTreat(id) { if (!L.box[id]) return false; L.box[id]--; save(); return true; }
+
+    life.ctx.needWater = needWater;
+    return { SHOP, INGS, ING_PRICE, RECIPES, MYSTERY, TRICKS, STAGES, def, has, using, on, buy, toggle, buyIng, plant, water, needWater,
+      trickState, unlocked, practice, cook, treatDef, useTreat, get L() { return L; } };
+  })();
+
 
   /* ================= ママのアルバム（写真とエピソードを、この端末にしまう） ================= */
   const album = (() => {
@@ -2443,7 +2649,7 @@
         else if (it.k === "find") {
           const yy = it.y + Math.sin(t * 3 + it.x / 40) * 4;
           w.fillStyle = "rgba(255,255,255,.55)"; w.beginPath(); w.arc(it.x + 18, yy + 14, 22, 0, Math.PI * 2); w.fill();
-          w.font = "30px sans-serif"; w.textAlign = "center"; w.textBaseline = "middle"; w.fillText(life.item(it.id).icon, it.x + 18, yy + 15); w.textBaseline = "alphabetic";
+          w.fillStyle = "#000"; w.font = "30px sans-serif"; w.textAlign = "center"; w.textBaseline = "middle"; w.fillText(life.item(it.id).icon, it.x + 18, yy + 15); w.textBaseline = "alphabetic";
         }
         else drawHeart(it.x, it.y + Math.sin(t * 3 + it.x / 40) * 4, it.w);
       }
@@ -3314,7 +3520,8 @@ ${letter}
       K.lastAct = performance.now();
     }
     $("tab-room").addEventListener("click", enter);
-    return { enter, addPts, snd: { yip, bark, crunch, hmph, whine } };
+    function feedExt(tr, btnEl) { if (eating) return false; feed(tr, btnEl); return true; }
+    return { enter, addPts, feedExt, snd: { yip, bark, crunch, hmph, whine } };
   })();
 
   /* ================= おうちの くう（本物の 写真を 切りぬいて、骨を いれて 動かす） ================= */
@@ -3533,6 +3740,7 @@ ${letter}
     // 場所（へやの番号 + へやの中の よこ位置 0〜1）
     const SPOT = { toilet: 1.11, rug: 1.42, window: 1.27, sofa: 1.72, bowl: 2.36, water: 2.53, bag: 2.12, kbed: 3.21, lamp: 3.43, sunflower: .8, tree: .2 };
     const MEALS = [[7, 30], [18, 30]];
+    const PLOTS = [.1, .24, .38, .52, .66, .8];
     const now = () => Date.now();
     const rand = (a, b) => a + Math.random() * (b - a);
     const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -3701,19 +3909,58 @@ ${letter}
       {
         const flowers = life.ITEMS.filter((i) => i.flower && life.L.found[i.id]);
         const total = Math.min(14, flowers.reduce((a, i) => a + life.L.found[i.id], 0));
-        c.font = `${Math.round(Math.min(W * .04, Hh * .045))}px sans-serif`; c.textAlign = "center";
+        c.fillStyle = "#000"; c.font = `${Math.round(Math.min(W * .04, Hh * .045))}px sans-serif`; c.textAlign = "center";
         for (let k = 0; k < total; k++) {
           const it = flowers[k % flowers.length];
-          const fx = .36 + ((k * 0.377) % 1) * .26, fy = FY + (Hh - FY) * (.55 + ((k * .61) % 1) * .35);
+          const fx = .3 + ((k * 0.377) % 1) * .6, fy = FY + (Hh - FY) * (.18 + ((k * .61) % 1) * .2);
           c.fillText(it.icon, x + W * fx, fy);
         }
       }
+      // ベンチ
+      if (play.on("bench")) {
+        const bx2 = x + W * .03, by2 = FY - Hh * .02, bw2 = W * .2;
+        c.fillStyle = "#a8743f"; c.fillRect(bx2, by2 - Hh * .1, bw2, Hh * .025); c.fillRect(bx2, by2 - Hh * .05, bw2, Hh * .028);
+        c.fillRect(bx2 + W * .015, by2 - Hh * .05, 5, Hh * .07); c.fillRect(bx2 + bw2 - W * .015 - 5, by2 - Hh * .05, 5, Hh * .07);
+      }
+      // ひまわり畑（ママが そだてる はたけ）
+      PLOTS.forEach((fx, i) => {
+        const px = x + W * fx, py = FY + (Hh - FY) * .8, pl = play.L.plots[i];
+        c.fillStyle = "#8a5a35"; c.beginPath(); c.ellipse(px, py, W * .055, (Hh - FY) * .12, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "rgba(255,255,255,.12)"; c.beginPath(); c.ellipse(px - W * .01, py - 2, W * .03, (Hh - FY) * .04, 0, 0, Math.PI * 2); c.fill();
+        if (!pl) { c.strokeStyle = "rgba(255,255,255,.35)"; c.lineWidth = 1.5; c.setLineDash([3, 3]); c.beginPath(); c.ellipse(px, py, W * .045, (Hh - FY) * .09, 0, 0, Math.PI * 2); c.stroke(); c.setLineDash([]); return; }
+        const st = pl.st, top = py - [0, .05, .09, .2, .32][st] * Hh;
+        if (st === 0) { c.fillStyle = "#3d2a1a"; for (const d2 of [-6, 0, 6]) { c.beginPath(); c.ellipse(px + d2, py - 2, 2.5, 1.6, 0, 0, Math.PI * 2); c.fill(); } }
+        else {
+          c.strokeStyle = "#4f8f3a"; c.lineWidth = st >= 3 ? 4 : 2.5; c.beginPath(); c.moveTo(px, py); c.lineTo(px, top); c.stroke();
+          c.fillStyle = "#62a84a";
+          const lf = (dir, yy, sz) => { c.beginPath(); c.ellipse(px + dir * sz * .9, yy, sz, sz * .45, dir * -.5, 0, Math.PI * 2); c.fill(); };
+          if (st === 1) { lf(-1, top + 3, W * .012); lf(1, top + 3, W * .012); }
+          else { lf(-1, top + (py - top) * .5, W * .022); lf(1, top + (py - top) * .3, W * .02); if (st === 2) { lf(-1, top + 3, W * .016); lf(1, top + 3, W * .016); } }
+          const r2 = W * (st === 4 ? .04 : .018);
+          if (st === 3) { c.fillStyle = "#7fb95e"; c.beginPath(); c.arc(px, top, r2, 0, Math.PI * 2); c.fill(); c.fillStyle = "#f6c935"; c.beginPath(); c.arc(px, top - r2 * .6, r2 * .5, 0, Math.PI * 2); c.fill(); }
+          if (st === 4) {
+            c.fillStyle = isNight() ? "#b8a24a" : "#f6c935";
+            for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; c.beginPath(); c.ellipse(px + Math.cos(a) * r2, top + Math.sin(a) * r2, r2 * .55, r2 * .22, a, 0, Math.PI * 2); c.fill(); }
+            c.fillStyle = "#7a4a22"; c.beginPath(); c.arc(px, top, r2 * .62, 0, Math.PI * 2); c.fill();
+          }
+        }
+        if (st < 4 && pl.w !== life.dkey()) { c.fillStyle = "#000"; c.font = `${Math.round(W * .03)}px sans-serif`; c.textAlign = "center"; c.fillText("💧", px + W * .035, top - 6); }
+      });
       // いえの かべと ガラス戸（リビングへ）
       c.fillStyle = "#efe2cc"; c.fillRect(x + W * .965, 0, W * .035, FY);
       c.fillStyle = "rgba(200,225,240,.6)"; c.fillRect(x + W * .97, Hh * .26, W * .03, FY - Hh * .26);
     }
     function drawLiving(c, x) {
-      wall(c, x, W, "#f6ead6", "rgba(214,190,150,.13)");
+      const wl = play.using("wall");
+      wall(c, x, W, wl === "wall-blue" ? "#e4eef8" : wl === "wall-pink" ? "#f9e7ea" : "#f6ead6", wl === "wall-blue" ? "rgba(150,180,215,.16)" : wl === "wall-pink" ? "rgba(225,160,175,.14)" : "rgba(214,190,150,.13)");
+      if (play.on("garland")) {
+        const cols = ["#f2a7b8", "#f6d36b", "#9cc7ec", "#b5dba0", "#f3b78a"];
+        c.strokeStyle = "#b98a5a"; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x + W * .03, Hh * .045); c.quadraticCurveTo(x + W * .5, Hh * .1, x + W * .97, Hh * .045); c.stroke();
+        for (let i = 0; i < 13; i++) {
+          const t = (i + .5) / 13, px = x + W * (.03 + .94 * t), py = Hh * (.045 + .055 * 4 * t * (1 - t) * 1.0);
+          c.fillStyle = cols[i % cols.length]; c.beginPath(); c.moveTo(px - W * .022, py); c.lineTo(px + W * .022, py); c.lineTo(px, py + Hh * .045); c.closePath(); c.fill();
+        }
+      }
       // まど
       const wx = x + W * .16, wy = Hh * .13, ww = W * .28, wh = Hh * .36;
       skyBox(c, wx, wy, ww, wh, 16);
@@ -3750,8 +3997,22 @@ ${letter}
       c.fillStyle = "#8a5a35"; c.fillRect(sx + W * .02, FY - Hh * .05, 6, Hh * .05); c.fillRect(sx + sw - W * .03, FY - Hh * .05, 6, Hh * .05);
       woodFloor(c, x, W);
       // ラグ
-      c.fillStyle = "#c2d3ea"; c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .23, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
+      const rg = play.using("rug");
+      c.fillStyle = rg === "rug-heart" ? "#f3c3cf" : rg === "rug-sun" ? "#f6da80" : "#c2d3ea"; c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .23, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
       c.strokeStyle = "#f3f6fb"; c.lineWidth = 3; c.setLineDash([6, 6]); c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .2, (Hh - FY) * .24, 0, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+      if (rg === "rug-heart") { c.fillStyle = "rgba(255,255,255,.75)"; c.font = `${Math.round(W * .03)}px sans-serif`; c.textAlign = "center"; for (const [hx, hy] of [[.32, .45], [.42, .58], [.52, .45]]) c.fillText("♥", x + W * hx, FY + (Hh - FY) * hy); }
+      // ひまわりの 花びん
+      if (play.on("vase")) {
+        const vx = x + W * .49, vy = FY + 2;
+        for (const [dx2, hgt] of [[-.025, .17], [0, .2], [.025, .16]]) {
+          const tx2 = vx + W * dx2, ty2 = vy - Hh * hgt;
+          c.strokeStyle = "#4f8f3a"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(vx, vy - Hh * .06); c.lineTo(tx2, ty2); c.stroke();
+          const r2 = W * .02; c.fillStyle = "#f6c935";
+          for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2; c.beginPath(); c.ellipse(tx2 + Math.cos(a) * r2, ty2 + Math.sin(a) * r2, r2 * .55, r2 * .22, a, 0, Math.PI * 2); c.fill(); }
+          c.fillStyle = "#7a4a22"; c.beginPath(); c.arc(tx2, ty2, r2 * .6, 0, Math.PI * 2); c.fill();
+        }
+        c.fillStyle = "#8fb8d8"; c.beginPath(); c.moveTo(vx - W * .025, vy - Hh * .07); c.lineTo(vx + W * .025, vy - Hh * .07); c.lineTo(vx + W * .03, vy); c.lineTo(vx - W * .03, vy); c.closePath(); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+      }
       // トイレ（ペットシーツ）
       const tx = x + W * (SPOT.toilet - 1) - W * .07;
       box(c, tx, FY + (Hh - FY) * .25, W * .14, (Hh - FY) * .4, 6, "#f4f6f8");
@@ -3811,6 +4072,11 @@ ${letter}
       c.lineWidth = 3; c.beginPath(); c.moveTo(wx, wy + wh / 2); c.lineTo(wx + ww, wy + wh / 2); c.stroke();
       // ねる くうの 写真
       framed(c, "img/nap.jpg", x + W * .39, Hh * .16, W * .1, Hh * .15);
+      if (play.on("stars")) {
+        c.strokeStyle = "rgba(120,110,90,.5)"; c.lineWidth = 1; c.beginPath(); c.moveTo(x + W * .33, Hh * .06); c.quadraticCurveTo(x + W * .66, Hh * .14, x + W * .99, Hh * .06); c.stroke();
+        for (let i = 0; i < 12; i++) { const t = (i + .5) / 12, px = x + W * (.33 + .66 * t), py = Hh * (.06 + .08 * 4 * t * (1 - t) * .5);
+          c.fillStyle = ["#ffe58a", "#ffd0e0", "#cfe6ff"][i % 3]; c.beginPath(); c.arc(px, py + 4, 4, 0, Math.PI * 2); c.fill(); c.fillStyle = "rgba(255,240,180,.25)"; c.beginPath(); c.arc(px, py + 4, 9, 0, Math.PI * 2); c.fill(); }
+      }
       // ママの ベッド
       const bx = x + W * .55, bw = W * .45;
       box(c, bx, FY - Hh * .44, W * .04, Hh * .44, 6, "#b98a5a");
@@ -3825,16 +4091,16 @@ ${letter}
       woodFloor(c, x, W);
       c.fillStyle = "rgba(255,255,255,.35)"; c.beginPath(); c.ellipse(x + W * .3, FY + (Hh - FY) * .55, W * .22, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
       // くうの ベッド（ヒョウがらの まるい クッション）
-      const kx = x + W * (SPOT.kbed - 3), ky = FY + (Hh - FY) * .35;
-      c.fillStyle = "#c79a68"; c.beginPath(); c.ellipse(kx, ky, W * .15, (Hh - FY) * .34, 0, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
-      c.fillStyle = "#5a3a22";
-      for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; c.beginPath(); c.ellipse(kx + Math.cos(a) * W * .125, ky + Math.sin(a) * (Hh - FY) * .27, 4, 2.5, a, 0, Math.PI * 2); c.fill(); }
+      const kx = x + W * (SPOT.kbed - 3), ky = FY + (Hh - FY) * .35, bd = play.using("bed");
+      c.fillStyle = bd === "bed-sun" ? "#f3c84a" : bd === "bed-dot" ? "#9fc3ea" : "#c79a68"; c.beginPath(); c.ellipse(kx, ky, W * .15, (Hh - FY) * .34, 0, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = bd === "bed-sun" ? "#c9762a" : bd === "bed-dot" ? "#ffffff" : "#5a3a22";
+      for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; c.beginPath(); if (bd) c.arc(kx + Math.cos(a) * W * .125, ky + Math.sin(a) * (Hh - FY) * .27, bd === "bed-sun" ? 3.5 : 3, 0, Math.PI * 2); else c.ellipse(kx + Math.cos(a) * W * .125, ky + Math.sin(a) * (Hh - FY) * .27, 4, 2.5, a, 0, Math.PI * 2); c.fill(); }
       c.fillStyle = "#f8f2e8"; c.beginPath(); c.ellipse(kx, ky, W * .1, (Hh - FY) * .2, 0, 0, Math.PI * 2); c.fill();
       doorway(c, x, -1);
     }
     const DRAW = [drawGarden, drawLiving, drawKitchen, drawBed];
     function ensureBg() {
-      const key = `${W}x${Hh}@${dpr}:${Math.floor(hourF() * 4)}:${Object.values(photos).filter((p) => p.complete).length}:${Object.entries(life.L.found).join()}`;
+      const key = `${W}x${Hh}@${dpr}:${Math.floor(hourF() * 4)}:${Object.values(photos).filter((p) => p.complete).length}:${Object.entries(life.L.found).join()}:${JSON.stringify([play.L.use, play.L.owned.length, play.L.plots, life.dkey()])}`;
       if (key === bgKey) return;
       bgKey = key;
       for (let i = 0; i < 4; i++) {
@@ -3857,7 +4123,7 @@ ${letter}
       const P = D.P, t = P.t, chew = D.act === "eat" || D.act === "drink" || D.act === "eat2";
       const idle = 1 - P.walk;
       return {
-        uT: t, uLie: lieAmt(), uWalk: P.walk, uPh: P.ph,
+        uT: t, uLie: lieAmt(), uWalk: Math.max(P.walk, D.pawA || 0), uPh: (D.pawA || 0) > .02 ? Math.PI / 2 : P.ph,
         uTilt: P.tilt + P.curl * .22 + Math.sin(t * .5) * .03 * idle,
         uDown: Math.max(P.down, P.curl * .6),
         uTurn: P.walk * .9 + (1 - P.look) * idle * .35,
@@ -3904,6 +4170,11 @@ ${letter}
         });
       }
       if (H.water < .25 && Math.random() < .3) return goTo(SPOT.water - .1, () => { D.dir = 1; setAct("drink", 3.5, { down: 1 }); });
+      // おぼえた 芸を ときどき じまんする
+      if (Math.random() < .07) {
+        const learned = play.TRICKS.filter((tk) => play.trickState(tk.id).ok);
+        if (learned.length) { const tk = pick(learned); doTrick(tk.id, true); if (roomOf(D.u) === viewRoom) say(`みてみて！ ${tk.name}！`, 2200); return; }
+      }
       const r = Math.random(), here = roomOf(D.u);
       const h = hourF();
       if (r < .32) return goTo(here + rand(.12, .88), () => setAct("idle", rand(1.5, 4)));
@@ -4067,6 +4338,25 @@ ${letter}
         else { H.lightsOffUntil = now() + 10 * 6e4; H.lightsOnUntil = 0; D.wakeUntil = 0; life.ev("lights"); if (D.act !== "sleep") { say("おやすみ、ママ…", 2400); D.until = 0; D.act = "idle"; } }
         save(); return;
       }
+      // ひまわり畑
+      if (here === 0 && p.y > .84) {
+        const i = PLOTS.findIndex((fx) => Math.abs(p.u - fx) < .065);
+        if (i >= 0) {
+          const pl = play.L.plots[i], px = (PLOTS[i] - camX) * W, py = FY + (Hh - FY) * .8;
+          if (!pl) {
+            if (play.plant(i)) { sparkle(px, py); say("たね まいた！ まいにち おみず あげてね", 2600); }
+            else toast("たねが ないよ。ほねの おみせで かえるよ");
+          } else {
+            const r = play.water(i);
+            if (r === "grow") { sparkle(px, py - 10); say(pick(["おおきく なあれ！", "ぐんぐん そだってる！", `${play.STAGES[pl.st]}に なったよ！`]), 2200); }
+            else if (r === "bloom") { for (let k = 0; k < 3; k++) sparkle(px, py - Hh * .3); say("さいた！ ママの すきな ひまわり！", 3000); D.happyUntil = performance.now() + 2500; try { window.QooToast("<b>🌻 ひまわりが さいた！</b><span>おにわが すこし ひまわり畑に なったよ</span>"); } catch {} }
+            else if (r === "done") toast("きょうは もう おみず あげたよ。また あしたね");
+            else say("きれいに さいてるね！", 2000);
+          }
+          bgKey = "";
+          return;
+        }
+      }
       // たからものの たな → おさんぽ図鑑
       if (here === 1 && p.u - 1 > .58 && p.u - 1 < .95 && p.y > .32 && p.y < .44) { try { window.QooZukan(); } catch {} return; }
       // なにも ない ところ → くうを よぶ
@@ -4126,6 +4416,7 @@ ${letter}
       P.happy += ((happy ? 1 : 0) - P.happy) * ease(8);
       P.wag = D.act === "sleep" ? 0 : happy || D.act === "walk" || D.act === "wait" ? 1 : .3;
       D.chew = Math.max(0, D.chew - dt);
+      D.pawA = (D.pawA || 0) + ((t < (D.pawUntil || 0) ? 1 : 0) - (D.pawA || 0)) * ease(10);
       if (!down || !down.dog) D.press = Math.max(0, D.press - dt * 3);
       D.stroke[0] *= Math.exp(-dt * 6); D.stroke[1] *= Math.exp(-dt * 6);
       P.mouth = D.act === "eat" || D.act === "drink" ? Math.abs(Math.sin(t / 110)) * .6 : happy ? .7 : D.act === "wait" ? .45 + Math.sin(t / 90) * .15 : 0;
@@ -4221,6 +4512,16 @@ ${letter}
           const pp = photoPose();
           KuuPhoto.draw(c, dx, dy, h, D.dir, pp, dpr, 1 - wk);
           KuuSide.draw(c, dx, dy, hs, D.dir, { uT: pp.uT, uPh: D.P.ph, uWalk: 1, uWag: 1, bob: Math.abs(Math.sin(D.P.ph)) * .03 }, dpr, wk);
+          // くうの おしゃれ（あたまの うえ）
+          const acc = play.using("acc");
+          if (acc) {
+            const ic = play.def(acc).icon, big = acc === "acc-hat" || acc === "acc-crown";
+            const fx2 = dx + D.dir * ((1 - wk) * (big ? .02 : .16) * h * KuuPhoto.AR + wk * .36 * hs * KuuSide.AR);
+            const fy2 = dy - (1 - wk) * ((big ? .9 : .86) - la * .2 - (pp.uDown || 0) * .07 + (pp.bob || 0)) * h - wk * (big ? .86 : .83) * hs;
+            c.save(); c.globalAlpha = 1; c.translate(fx2, fy2); c.rotate(-(1 - wk) * (pp.uTilt || 0) * D.dir); c.scale(D.dir, 1);
+            c.fillStyle = "#000"; c.font = `${Math.round(h * (big ? .26 : .17))}px sans-serif`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(ic, 0, 0); c.textBaseline = "alphabetic";
+            c.restore();
+          }
           if (D.holding) {
             const r = Math.max(8, W * .02);
             const bx = dx + D.dir * (.42 * hs * KuuSide.AR) * wk, by = dy - ((.54 - la * .2) * h) * (1 - wk) - (.6 * hs) * wk;
@@ -4370,6 +4671,37 @@ ${letter}
     window.__KuuPhoto = KuuPhoto; window.__KuuSide = KuuSide;
     window.__kuuHouse = { D, H, get view() { return viewRoom; }, get cam() { return camX; } };
     $("tab-room").addEventListener("click", enter);
+    /* ---------- しつけ ---------- */
+    function doTrick(id, ok) {
+      const t0 = performance.now();
+      D.then = null; D.act = "trick"; D.until = t0 + 2600;
+      if (!ok) {
+        const wrong = pick(["sit", "down", "look"]);
+        pose(wrong === "down" ? { lie: 1, look: 1 } : { sit: 1, look: 1 }); D.P.tilt = .2;
+        return;
+      }
+      if (id === "sit") pose({ sit: 1, look: 1 });
+      else if (id === "down") pose({ lie: 1, look: 1 });
+      else if (id === "paw") { pose({ sit: 1, look: 1 }); D.pawUntil = t0 + 1500; }
+      else if (id === "spin") { pose({ look: 1 }); let n = 0; const iv = setInterval(() => { D.dir *= -1; hop(.025); if (++n >= 4) clearInterval(iv); }, 170); }
+      else if (id === "jump") { pose({ look: 1 }); hop(.12); setTimeout(() => hop(.1), 450); }
+      D.happyUntil = t0 + 2000;
+    }
+    function trick(id) {
+      if (mode !== "house") return;
+      if (roomOf(D.u) !== viewRoom) { viewRoom = roomOf(D.u); manual = performance.now(); navBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === viewRoom))); }
+      if (D.act === "sleep") { wakeUp(); return; }
+      const name = play.TRICKS.find((x) => x.id === id).name;
+      const r = play.practice(id);
+      doTrick(id, r.success);
+      const d = dogScreen();
+      if (r.learned) {
+        snd("bark", 0, 1.1); for (let i = 0; i < 10; i++) heart(d.x + rand(-40, 40), d.top + rand(0, 40));
+        say(`${name}、おぼえたよ！ ほめて ほめて！`, 3200);
+        try { window.QooToast(`<b>🎓 ${name} を おぼえた！</b><span>🦴+5　くうが ときどき じまんするよ</span>`); } catch {}
+      } else if (r.success) { snd("yip"); heart(d.x, d.top + 10); heart(d.x + 20, d.top + 20); say(pick(["できた！", "みてた？", "えっへん！", "じょうず？"]), 1800); }
+      else say(pick(["？？", "えっと…これかな？", "あれれ〜？", "もう いっかい！"]), 1800);
+    }
     // おねがいを かなえた とき、おうちの くうが よろこぶ
     function cheer(e) {
       if (mode !== "house" || current !== "room" || D.act === "sleep") return;
@@ -4378,7 +4710,7 @@ ${letter}
       if (e.kind === "all") say("ぜんぶ かなえてくれた！ ママ、だーいすき！", 3200);
       else if (e.kind === "wish" && Math.random() < .6) say(pick(["ありがと、ママ！", "やったー！", "えへへ、うれしい！"]), 2000);
     }
-    return { enter, treat, cheer, get on() { return mode === "house"; } };
+    return { enter, treat, cheer, trick, get on() { return mode === "house"; } };
   })();
 
 
@@ -4489,6 +4821,122 @@ ${letter}
     $("zukanClose").addEventListener("click", () => { $("zukanModal").hidden = true; });
     for (const id of ["diaryModal", "zukanModal"]) $(id).addEventListener("click", (e) => { if (e.target.id === id) $(id).hidden = true; });
     window.QooZukan = openZukan;
+    window.QooToast = (h) => { queue.push(h); next(); };
+  })();
+
+  /* ================= おみせ・おやつ作り・しつけ（画面） ================= */
+  (() => {
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const msg = (id, t) => { $(id).textContent = t; };
+
+    /* ---------- ほねの おみせ ---------- */
+    let shopTab = "room";
+    function renderShop() {
+      $("shopBones").textContent = play.L.bones;
+      for (const b of $("shopTabs").children) b.setAttribute("aria-pressed", String(b.dataset.tab === shopTab));
+      const grid = $("shopGrid"); grid.replaceChildren();
+      if (shopTab === "ing") {
+        for (const g of play.INGS) {
+          const c = el("button", "shop-item" + (g.bad ? " bad" : "")); c.type = "button";
+          c.append(el("i", null, g.icon), el("b", null, g.name), el("small", null, g.bad ? "ママの おやつ用" : `もってる ${play.L.ing[g.id] || 0}こ`), el("em", null, `🦴${play.ING_PRICE}`));
+          c.addEventListener("click", () => { if (play.buyIng(g.id)) msg("shopMsg", `${g.icon} ${g.name} を かったよ。「おやつ作り」で つかえるよ。`); else msg("shopMsg", "ほねが たりないよ。おねがいや おさんぽで ためてね。"); renderShop(); });
+          grid.append(c);
+        }
+        return;
+      }
+      for (const d of play.SHOP.filter((s) => s.cat === shopTab || (shopTab === "room" && s.cat === "seed"))) {
+        const owned = play.has(d.id), using = play.on(d.id);
+        const c = el("button", "shop-item" + (using ? " using" : owned ? " owned" : "")); c.type = "button";
+        const status = d.stack ? `もってる ${play.L.seeds}こ` : using ? "つかってる（おすと はずす）" : owned ? "もってる（おすと つかう）" : d.desc;
+        c.append(el("i", null, d.icon), el("b", null, d.name), el("small", null, status), el("em", null, owned && !d.stack ? "✓" : `🦴${d.price}`));
+        c.addEventListener("click", () => {
+          if (owned && !d.stack) { play.toggle(d.id); msg("shopMsg", play.on(d.id) ? `${d.name} を つかったよ。` : `${d.name} を はずしたよ。`); }
+          else {
+            const r = play.buy(d.id);
+            msg("shopMsg", r.ok ? (d.stack ? "たねを かったよ。おにわの はたけを タップして まいてね。" : `${d.name} を かったよ！ くう、よろこんでる！`) : `ほねが あと ${r.need}本 たりないよ。おねがいや おさんぽで ためてね。`);
+          }
+          renderShop();
+        });
+        grid.append(c);
+      }
+    }
+    for (const b of $("shopTabs").children) b.addEventListener("click", () => { shopTab = b.dataset.tab; msg("shopMsg", ""); renderShop(); });
+    $("openShop").addEventListener("click", () => { msg("shopMsg", ""); renderShop(); $("shopModal").hidden = false; });
+    $("shopClose").addEventListener("click", () => { $("shopModal").hidden = true; });
+
+    /* ---------- おやつ作り ---------- */
+    let pick = [];
+    function renderCook() {
+      const grid = $("cookGrid"); grid.replaceChildren();
+      const have = play.INGS.filter((g) => (play.L.ing[g.id] || 0) > 0);
+      if (!have.length) grid.append(el("p", "cook-empty", "ざいりょうが ないよ。「ほねの おみせ」の「ざいりょう」で かってね。"));
+      for (const g of have) {
+        const n = play.L.ing[g.id], sel = pick.filter((x) => x === g.id).length;
+        const c = el("button", "shop-item" + (sel ? " using" : "")); c.type = "button";
+        c.append(el("i", null, g.icon), el("b", null, g.name), el("small", null, `${n}こ`), el("em", null, sel ? "✓".repeat(sel) : ""));
+        c.addEventListener("click", () => {
+          if (sel && (sel >= n || pick.length >= 2)) pick = pick.filter((x, i) => !(x === g.id && i === pick.lastIndexOf(g.id)));
+          else if (pick.length < 2) pick.push(g.id);
+          renderCook();
+        });
+        grid.append(c);
+      }
+      $("cookPick").textContent = pick.length ? pick.map((id) => play.INGS.find((g) => g.id === id).icon).join(" ＋ ") + (pick.length < 2 ? " ＋ ？" : "") : "ざいりょうを 2つ えらんでね";
+      $("cookGo").disabled = pick.length < 2;
+      const book = $("recipeBook"); book.replaceChildren();
+      for (const r of play.RECIPES) {
+        const known = play.L.recipes.includes(r.id);
+        const c = el("div", "zk" + (known ? "" : " unknown"));
+        const ia = play.INGS.find((g) => g.id === r.a), ib = play.INGS.find((g) => g.id === r.b);
+        c.append(el("i", null, known ? r.icon : "？"), el("b", null, known ? r.name : "？？？"), el("small", null, known ? `${ia.icon}＋${ib.icon}` : "どの くみあわせ かな"));
+        book.append(c);
+      }
+      $("recipeSum").textContent = `レシピ ${play.L.recipes.length} / ${play.RECIPES.length}`;
+    }
+    $("cookGo").addEventListener("click", () => {
+      const [a, b] = pick;
+      const r = play.cook(a, b);
+      if (r.kind === "bad") { msg("cookMsg", `🐶「まって、ママ！ ${r.ing.bad}」`); pick = pick.filter((x) => x !== r.ing.id); }
+      else if (r.kind === "ok") {
+        msg("cookMsg", `${r.r.icon} ${r.r.name} が できた！${r.isNew ? "　あたらしい レシピ！" : ""}　おやつばこに いれたよ。`);
+        pick = [];
+      } else msg("cookMsg", "ざいりょうが たりないよ。");
+      renderCook(); renderBox();
+    });
+    $("openCook").addEventListener("click", () => { pick = []; msg("cookMsg", ""); renderCook(); $("cookModal").hidden = false; });
+    $("cookClose").addEventListener("click", () => { $("cookModal").hidden = true; });
+    for (const id of ["shopModal", "cookModal"]) $(id).addEventListener("click", (e) => { if (e.target.id === id) $(id).hidden = true; });
+
+    /* ---------- てづくりおやつばこ（おやつの ところに ならぶ） ---------- */
+    function renderBox() {
+      const row = $("myTreatRow"); row.replaceChildren();
+      const ids = Object.keys(play.L.box).filter((id) => play.L.box[id] > 0);
+      $("myTreats").hidden = !ids.length;
+      for (const id of ids) {
+        const t = play.treatDef(id); if (!t) continue;
+        const b = el("button", "treat"); b.type = "button";
+        const ic = el("span", null, t.icon); ic.setAttribute("aria-hidden", "true");
+        b.append(ic, document.createTextNode(t.name), el("small", "treat-n", `×${play.L.box[id]}`));
+        b.addEventListener("click", () => { if (room.feedExt({ icon: t.icon, name: t.name, say: t.say, home: id }, b)) { play.useTreat(id); renderBox(); } });
+        row.append(b);
+      }
+    }
+    life.on(renderBox);
+
+    /* ---------- しつけ ---------- */
+    function renderTricks() {
+      const bar = $("trickRow"); bar.replaceChildren();
+      play.TRICKS.forEach((t, i) => {
+        const s = play.trickState(t.id), open = play.unlocked(i);
+        const b = el("button", "trick" + (s.ok ? " ok" : "")); b.type = "button"; b.disabled = !open;
+        b.append(el("i", null, open ? t.icon : "🔒"), el("b", null, t.name), el("span", "trick-bar", ""));
+        b.lastChild.style.setProperty("--p", s.ok ? 1 : s.p);
+        b.title = s.ok ? "おぼえた！" : open ? "れんしゅう中" : "まえの 芸を おぼえると ふえるよ";
+        b.addEventListener("click", () => { try { house.trick(t.id); } catch {} renderTricks(); });
+        bar.append(b);
+      });
+    }
+    life.on(renderTricks);
   })();
 
   /* ================= くうが「ママの思い出」を覚えている（AIにわたす文脈） ================= */
@@ -4981,9 +5429,12 @@ ${letter}
     { v: "house", eyebrow: "Room 02 · House", title: "くうの おうち", badge: "NEW", since: 4,
       body: "おにわ・リビング・キッチン・しんしつ。くうが 自分で 歩いて くらしています。\nごはんの 時間には おさらの まえで まって、夜は ベッドで すやすや。うんちを したら、かたづけて あげてね。",
       tries: ["おさらに ごはん", "ボールを なげる", "うんちを かたづける", "しんしつの ライト"], cta: "おうちを のぞく", go: () => goTab("room") },
-    { v: "wish", eyebrow: "Every day", title: "きょうの おねがい", badge: "NEW", since: 5,
+    { v: "today", eyebrow: "Every day", title: "きょうの おねがい", badge: "NEW", since: 5,
       body: "まいにち くうから、ちいさな おねがいが 3つ とどきます。\nかなえると ほねが たまって、ぜんぶ かなえると カレンダーに 🐾スタンプ。\nおさんぽで ひろった はなや どんぐりは、おうちに かざられるよ。",
       tries: ["おねがいを かなえる", "くう日記", "おさんぽ図鑑"], cta: "おねがいを みる", go: () => { goTab("room"); setTimeout(() => $("wishPanel").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500); } },
+    { v: "play", eyebrow: "More to do", title: "そだてる・おぼえる・つくる", badge: "NEW", since: 6,
+      body: "ためた ほねで、おへやの もようがえや くうの おしゃれが できます。\nおにわに ひまわりの たねを まいて、まいにち おみずを あげると さくよ。\nしつけを れんしゅうすると 芸を おぼえて、てづくり おやつの レシピも ふえていきます。",
+      tries: ["ほねの おみせ", "ひまわり畑", "しつけ", "おやつ作り"], cta: "おうちへ", go: () => goTab("room") },
     { v: "room", eyebrow: "Room 02 · Room", title: "おへやの くうに、さわれる", badge: "NEW",
       body: "おへやの「写真の くう」を おすと、写真の くうが、息をして、まばたきして、首を かしげます。\nなでると 目を細めて「くぅ〜ん」。鼻を タップすると…？\nおやつを あげたり、おしゃべりも できるよ。",
       tries: ["なでなで", "鼻を タップ", "おやつ", "おしゃべり"], cta: "くうに 会いにいく", go: () => goTab("room") },
@@ -5030,7 +5481,8 @@ ${letter}
     dots: () => `<div class="gv gv-dots"><img src="img/face.jpg" alt=""></div>`,
     path: () => `<div class="gv gv-path"><img src="img/baby.jpg" alt=""><img src="img/cake.jpg" alt=""><img src="img/smile.jpg" alt=""></div>`,
     sky: () => `<div class="gv gv-sky"><img src="img/face.jpg" alt=""><b style="left:18%;top:62%"></b><b style="left:46%;top:74%"></b><b style="left:78%;top:58%"></b><b style="left:70%;top:24%"></b><em></em></div>`,
-    wish: () => `<div class="gv gv-wish"><ol><li class="ok">🔴 ボール 3かい なげて！<b>✓</b></li><li class="ok">💧 おみず かえて〜<b>✓</b></li><li>🌼 おはな みつけてきて<b>🦴4</b></li></ol><span>🐾</span></div>`,
+    play: () => `<div class="gv gv-today gv-play"><div><span>🛍</span><span>🌻</span><span>🐕</span><span>🍪</span></div></div>`,
+    today: () => `<div class="gv gv-today"><ol><li class="ok">🔴 ボール 3かい なげて！<b>✓</b></li><li class="ok">💧 おみず かえて〜<b>✓</b></li><li>🌼 おはな みつけてきて<b>🦴4</b></li></ol><span>🐾</span></div>`,
     house: () => `<div class="gv gv-house"><img src="img/kuu-body.png" alt=""><q>ママ、おかえり！</q></div>`,
     room: () => `<div class="gv gv-room"><img src="img/room.jpg" alt=""><span>♥</span><span>♥</span><span>♥</span><q>くぅ〜ん</q></div>`,
     walk: () => `<div class="gv gv-walk"><i></i><i></i><i></i><i></i><img src="img/face.jpg" alt=""></div>`,
@@ -5101,7 +5553,7 @@ ${letter}
   $("guideSlide").addEventListener("pointerup", (e) => { if (sx == null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); });
   document.querySelectorAll(".open-guide").forEach((b) => b.addEventListener("click", () => openGuide(0)));
   // はじめて来た人には、粒のくうちゃんを見てもらってから、そっと ひらく
-  const GUIDE_VER = 5;
+  const GUIDE_VER = 6;
   const seenVer = store.get("qoo-guide-ver", store.get("qoo-guide-seen", 0) ? 1 : 0);
   if (seenVer < GUIDE_VER) {
     setTimeout(() => {
@@ -5673,7 +6125,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011417").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011433").catch(() => {});
 </script>
 </body>
 </html>

@@ -141,6 +141,7 @@
   .game-ui .inner { display: grid; gap: 10px; justify-items: center; max-width: 380px; }
   .game-ui h2 { margin: 0; font-family: var(--f-hand); font-size: clamp(20px, 5vw, 28px); font-weight: 600; }
   .game-ui p { margin: 0; font-size: 13px; color: var(--cream); }
+  .walk-got { margin: 0; font-size: 13px; color: var(--honey); }
   .game-ui .say { font-family: var(--f-hand); font-size: 16px; color: var(--cream); white-space: pre-line; }
   .stats { display: flex; gap: 14px; font-size: 13px; color: var(--mist); flex-wrap: wrap; }
   .stats b { color: var(--cream); font-variant-numeric: tabular-nums; }
@@ -414,6 +415,61 @@
   @keyframes houseBubblePop { from { transform: translate(-50%, -100%) scale(.6); opacity: 0; } to { transform: translate(-50%, -100%) scale(1); opacity: 1; } }
   .house-hint { top: 46px; bottom: auto; font-size: 12px; }
   .house-fly { position: absolute; font-size: 28px; transform: translate(-50%, -50%); pointer-events: none; }
+  .wish-panel { width: 100%; max-width: 760px; margin: 18px auto 0; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.035); }
+  #room.is-dakko .wish-panel { margin-top: 0; margin-bottom: 18px; }
+  .wp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .wp-head h3 { margin: 0; white-space: nowrap; display: flex; align-items: baseline; gap: 10px; font-family: var(--f-display); font-weight: 600; font-size: 16px; letter-spacing: .1em; color: var(--cream); }
+  .wp-head h3 small { font-family: var(--f-latin); font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--mist); font-weight: 400; }
+  .wp-bones { font-size: 14px; color: var(--honey); white-space: nowrap; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; }
+  .wp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .wp-list li { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.05); }
+  .wp-list li i { font-style: normal; font-size: 22px; text-align: center; }
+  .wp-list li span { display: grid; min-width: 0; }
+  .wp-list li b { font-family: var(--f-hand); font-weight: 600; font-size: 15px; color: var(--cream); }
+  .wp-list li small { font-size: 11px; color: var(--mist); }
+  .wp-list li em { font-style: normal; font-size: 13px; color: var(--honey); white-space: nowrap; }
+  .wp-list li.done { background: rgba(214,181,122,.14); }
+  .wp-list li.done b { color: var(--honey); }
+  .wp-list li.done em { font-size: 18px; }
+  .wp-note { margin: 10px 2px 0; font-size: 12px; color: var(--mist); }
+  .wp-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .wp-links .btn { flex: 1 1 140px; font-size: 12px; letter-spacing: .04em; padding: 9px 8px; white-space: nowrap; }
+  @media (max-width: 420px) { .wp-head h3 small { display: none; } }
+  .life-toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 60; transform: translateX(-50%);
+    display: grid; gap: 2px; text-align: center; min-width: 220px; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 16px;
+    background: var(--paper); color: var(--ink); box-shadow: 0 12px 40px rgba(0,0,0,.45); pointer-events: none;
+  }
+  .life-toast b { font-family: var(--f-hand); font-size: 16px; }
+  .life-toast span { font-size: 13px; }
+  .life-toast.in { animation: lifeToast .5s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes lifeToast { from { transform: translate(-50%, 20px) scale(.9); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+  .cal-head { display: flex; justify-content: center; align-items: center; gap: 18px; margin: 4px 0 8px; color: var(--cream); }
+  .cal-head button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--cream); font-size: 18px; cursor: pointer; }
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
+  .cal > b { font-size: 11px; color: var(--mist); font-weight: 400; padding: 2px 0; }
+  .cal-day { aspect-ratio: 1; border: 1px solid rgba(255,255,255,.06); border-radius: 8px; background: transparent; color: var(--mist); display: grid; place-items: center; padding: 0; font: inherit; cursor: pointer; }
+  .cal-day small { font-size: 10px; line-height: 1; }
+  .cal-day i { font-style: normal; font-size: 16px; line-height: 1; min-height: 16px; }
+  .cal-day.seen { background: rgba(255,255,255,.05); color: var(--cream); }
+  .cal-day.gold { background: rgba(214,181,122,.2); color: var(--honey); border-color: rgba(214,181,122,.4); }
+  .cal-day.today { outline: 2px solid var(--honey); outline-offset: -2px; }
+  .cal-day:disabled { cursor: default; }
+  .cal-sum { margin: 10px 0 6px; font-size: 12px; color: var(--mist); text-align: center; }
+  .diary-list { display: grid; gap: 10px; max-height: 42vh; overflow-y: auto; padding-right: 2px; }
+  .diary-day { padding: 10px 14px; border-radius: 10px; background: var(--paper); color: var(--ink); }
+  .diary-day h4 { margin: 0 0 4px; font-family: var(--f-display); font-size: 13px; color: #8a6a3a; }
+  .diary-day p { margin: 0; font-family: var(--f-hand); font-size: 15px; line-height: 1.75; white-space: pre-line; }
+  .diary-day.flash { animation: dayFlash 1.2s; }
+  @keyframes dayFlash { 0%, 60% { box-shadow: 0 0 0 3px var(--honey); } 100% { box-shadow: none; } }
+  .diary-empty { font-size: 13px; color: var(--mist); text-align: center; }
+  .zukan { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .zk { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 10px; background: rgba(255,255,255,.06); text-align: center; }
+  .zk i { font-style: normal; font-size: 30px; line-height: 1.2; }
+  .zk b { font-family: var(--f-hand); font-size: 13px; color: var(--cream); }
+  .zk small { font-size: 10px; color: var(--mist); }
+  .zk.unknown i { color: var(--mist); font-family: var(--f-display); }
+  .zk.unknown b { color: var(--mist); }
   .house-rooms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
   .house-room {
     font: inherit; font-size: 13px; color: var(--cream); cursor: pointer; padding: 8px 2px; border-radius: 10px;
@@ -620,6 +676,11 @@
   .gv-sky em { position: absolute; left: 10%; top: 14%; width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, #fff); transform: rotate(-24deg); animation: shoot 3.2s ease-in infinite; }
   @keyframes twinkle { 50% { opacity: .3; transform: scale(.7); } }
   @keyframes shoot { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 60%, 100% { opacity: 0; translate: 160px 70px; } }
+  .gv-wish { background: radial-gradient(circle at 50% 30%, #2a2416, #0d0e14); }
+  .gv-wish ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; width: 78%; }
+  .gv-wish li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,.08); color: var(--cream); font-family: var(--f-hand); font-size: 14px; }
+  .gv-wish li.ok { background: rgba(214,181,122,.2); color: var(--honey); }
+  .gv-wish span { position: absolute; right: 10%; bottom: 8%; font-size: 34px; transform: rotate(-12deg); }
   .gv-house { background: linear-gradient(#f6ead6 0 70%, #dea267 70%); }
   .gv-house img { position: absolute; left: 50%; bottom: 6%; height: 80%; transform: translateX(-50%); }
   .gv-house q { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); quotes: none; padding: 6px 14px; border-radius: 16px; background: var(--paper); color: var(--ink); font-family: var(--f-hand); font-size: 14px; white-space: nowrap; }
@@ -998,6 +1059,12 @@
       </div>
       <div class="house-rooms" id="houseRooms" role="group" aria-label="へやを えらぶ"></div>
     </div>
+    <div class="wish-panel" id="wishPanel">
+      <div class="wp-head"><h3>きょうの おねがい<small>Today's wishes</small></h3><span class="wp-bones" title="ためた ほね">🦴 <b id="boneCount">0</b></span></div>
+      <ol class="wp-list" id="wishList"></ol>
+      <p class="wp-note" id="wishNote"></p>
+      <div class="wp-links"><button class="btn ghost" id="openDiary" type="button">📖 くう日記・カレンダー</button><button class="btn ghost" id="openZukan" type="button">🔍 おさんぽ図鑑</button></div>
+    </div>
     <div class="room">
       <div class="room-stage" id="roomStage">
         <canvas id="roomGL" aria-label="くうちゃん。なでたり、タップしたりできます"></canvas>
@@ -1033,7 +1100,7 @@
       <div class="game-ui" id="walkStart">
         <div class="inner">
           <h2>くうと おさんぽ</h2>
-          <p>はる・なつ・あき・ふゆ を 60びょうで かけぬけるよ。<br>がめんを タップで ジャンプ、2かいで 2だんジャンプ。<br>ほねとハートをあつめて、水たまりは よけてね。</p>
+          <p>はる・なつ・あき・ふゆ を 60びょうで かけぬけるよ。<br>がめんを タップで ジャンプ、2かいで 2だんジャンプ。<br>ほねとハートをあつめて、水たまりは よけてね。<br>みちに おちてる はなや どんぐりは、おうちに もってかえれるよ。</p>
           <div class="outfit" role="group" aria-label="おようふく">
             <button type="button" id="outfitNone" aria-pressed="true">そのまま</button>
             <button type="button" id="outfitPink" aria-pressed="false">ピンクのふく</button>
@@ -1047,6 +1114,7 @@
           <h2>おさんぽ おわり！</h2>
           <div class="stats"><span>ほね <b id="rBone">0</b></span><span>ハート <b id="rHeart">0</b></span><span>ぴょん <b id="rJump">0</b></span></div>
           <p class="say" id="rSay"></p>
+          <p class="walk-got" id="rGot"></p>
           <button class="btn" id="walkAgain">もういっかい！</button>
         </div>
       </div>
@@ -1179,6 +1247,30 @@
   </div>
 </div>
 
+<div class="overlay" id="diaryModal" hidden>
+  <div class="album-card diary-card" role="dialog" aria-modal="true" aria-labelledby="diaryTitle">
+    <header>
+      <p class="eyebrow-l">Qoo's Diary</p>
+      <h2 id="diaryTitle">くう日記</h2>
+      <button class="album-x" id="diaryClose" type="button" aria-label="とじる">×</button>
+    </header>
+    <div class="cal-head"><button type="button" id="calPrev" aria-label="まえの月">‹</button><b id="calMonth"></b><button type="button" id="calNext" aria-label="つぎの月">›</button></div>
+    <div class="cal" id="calGrid"></div>
+    <p class="cal-sum" id="calSum"></p>
+    <div class="diary-list" id="diaryList"></div>
+  </div>
+</div>
+<div class="overlay" id="zukanModal" hidden>
+  <div class="album-card" role="dialog" aria-modal="true" aria-labelledby="zukanTitle">
+    <header>
+      <p class="eyebrow-l">Walk Collection</p>
+      <h2 id="zukanTitle">おさんぽ図鑑</h2>
+      <button class="album-x" id="zukanClose" type="button" aria-label="とじる">×</button>
+    </header>
+    <p class="album-msg" id="zukanSum"></p>
+    <div class="zukan" id="zukanGrid"></div>
+  </div>
+</div>
 <div class="overlay" id="albumModal" hidden>
   <div class="album-card" role="dialog" aria-modal="true" aria-labelledby="albumTitle">
     <header>
@@ -1281,6 +1373,160 @@
     const visits = store.get("qoo-visits", []);
     if (!visits.includes(key)) { visits.push(key); store.set("qoo-visits", visits); }
   }
+
+  /* ================= くらしの きろく（きょうの おねがい・ほね・スタンプ・くう日記・おさんぽ図鑑） ================= */
+  // おうち・写真の くう・おさんぽ・おみくじで あったことを ここに あつめて、毎日 すこしずつ つみあがるように する。
+  // 失敗も 罰も ない。来なかった日が あっても、なにも へらない。
+  const life = (() => {
+    const dkey = (d = new Date()) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    const L = Object.assign({ bones: 0, days: {}, found: {}, foundAt: {}, walks: 0, miles: [] }, store.get("kuu-life", {}));
+    const save = () => store.set("kuu-life", L);
+    const ctx = { poops: () => 0 };
+    const listeners = new Set();
+    const emit = () => listeners.forEach((f) => { try { f(); } catch {} });
+
+    // おさんぽで みつかる もの（きせつ ごと）
+    const ITEMS = [
+      { id: "tanpopo", icon: "🌼", name: "たんぽぽ", season: 0, flower: true, say: "たんぽぽ みーっけ！ ママに あげる！" },
+      { id: "sakura", icon: "🌸", name: "さくらの はなびら", season: 0, flower: true, say: "さくらの はなびら、はなに のっかった〜" },
+      { id: "clover", icon: "🍀", name: "よつばの クローバー", season: -1, flower: true, rare: true, say: "よつばだ！ ママに いいこと ありますように！" },
+      { id: "himawari", icon: "🌻", name: "ひまわり", season: 1, flower: true, say: "ひまわり！ ママの すきな はな！" },
+      { id: "kusa", icon: "🌿", name: "くさぶえの は", season: 1, say: "いい においの くさ、みつけた！" },
+      { id: "donguri", icon: "🌰", name: "どんぐり", season: 2, say: "どんぐり ころころ〜" },
+      { id: "momiji", icon: "🍁", name: "もみじ", season: 2, say: "まっかな もみじ！ ママの ほっぺみたい" },
+      { id: "ochiba", icon: "🍂", name: "おちば", season: 2, say: "かさかさ おちば、たのしい！" },
+      { id: "tsubaki", icon: "🌺", name: "つばきの はな", season: 3, flower: true, say: "さむい日に さく はな、つよいね" },
+      { id: "yuki", icon: "⛄", name: "ちいさな ゆきだるま", season: 3, say: "ゆきだるま つくったよ！ ぼくに にてる？" },
+      { id: "ishi", icon: "🪨", name: "きれいな いし", season: -1, say: "つるつるの いし。たからもの！" },
+      { id: "hane", icon: "🪶", name: "とりの はね", season: -1, say: "ふわふわの はね、ひろったよ" },
+    ];
+    const item = (id) => ITEMS.find((i) => i.id === id);
+
+    // きょうの おねがい（お世話・あそび・おでかけ から 1つずつ）
+    const WISHES = [
+      { id: "feed", cat: 0, icon: "🍚", text: "ごはん ちょうだい！", ev: "eat", n: 1, bones: 2, hint: "キッチンの おさらを タップ" },
+      { id: "water", cat: 0, icon: "💧", text: "おみず かえて〜", ev: "water", n: 1, bones: 2, hint: "キッチンの みずいれを タップ" },
+      { id: "clean", cat: 0, icon: "🧻", text: "うんち かたづけて くれる？", ev: "clean", n: 1, bones: 3, hint: "うんちを タップ", need: () => ctx.poops() > 0 },
+      { id: "pet", cat: 0, icon: "🤲", text: "いっぱい なでなで して〜", ev: "pet", n: 12, bones: 2, hint: "くうを ゆびで なでる" },
+      { id: "treat", cat: 0, icon: "🦴", text: "おやつ ほしいな〜", ev: "treat", n: 1, bones: 2, hint: "下の おやつを あげる" },
+      { id: "ball", cat: 1, icon: "🔴", text: "ボール 3かい なげて！", ev: "ball", n: 3, bones: 3, hint: "リビングの ボールを タップ" },
+      { id: "garden", cat: 1, icon: "☀️", text: "おにわで ひなたぼっこ したいな", ev: "garden", n: 1, bones: 3, hint: "くうと いっしょに おにわへ", need: (h) => h >= 7 && h < 17 },
+      { id: "dakko", cat: 1, icon: "🫶", text: "だっこ して〜", ev: "dakko", n: 1, bones: 2, hint: "上の「写真の くう」を ひらく" },
+      { id: "lights", cat: 1, icon: "🌙", text: "でんき けして、ねかせて〜", ev: "lights", n: 1, bones: 3, hint: "しんしつの ライトを タップ", need: (h) => h >= 18 || h < 3 },
+      { id: "walk", cat: 2, icon: "🐾", text: "おさんぽ いこ！", ev: "walk", n: 1, bones: 3, hint: "「おさんぽ」の へやへ" },
+      { id: "flower", cat: 2, icon: "🌼", text: "おさんぽで おはな みつけてきて", ev: "flower", n: 1, bones: 4, hint: "おさんぽで はなを ひろう" },
+      { id: "kuji", cat: 2, icon: "🎴", text: "きょうの くうみくじ ひいて！", ev: "kuji", n: 1, bones: 2, hint: "「おみくじ」の へやへ" },
+    ];
+    const ALL_BONUS = 5;
+    const MILES = [[3, 10, "スタンプ 3こ！ ママ、いつも きてくれて ありがと！"], [7, 15, "スタンプ 7こ！ いっしゅうかん ぶん、ぼくの たからもの！"], [14, 20, "スタンプ 14こ！ ママと すごす 毎日、だいすき！"],
+      [30, 30, "スタンプ 30こ！ ひとつき ぶんの ぎゅー！"], [50, 40, "スタンプ 50こ！ くう、ママの こと ずーっと みてるよ"], [100, 80, "スタンプ 100こ！ ママ、ほんとうに ありがとう。だいすき！"]];
+
+    const seeded = (seed) => { let x = seed; return () => { x = (x * 1103515245 + 12345) % 2147483648; return x / 2147483648; }; };
+    function today() {
+      const k = dkey();
+      let d = L.days[k];
+      if (!d) {
+        const now = new Date(), h = now.getHours();
+        const rnd = seeded(now.getFullYear() * 1000 + now.getMonth() * 40 + now.getDate());
+        const wishes = [0, 1, 2].map((cat) => {
+          const ok = WISHES.filter((w) => w.cat === cat && (!w.need || w.need(h)));
+          const w = ok[Math.floor(rnd() * ok.length)];
+          return { id: w.id, got: 0, done: false };
+        });
+        d = L.days[k] = { wishes, log: {}, treats: [], found: [], all: false };
+        save();
+      }
+      return d;
+    }
+    function wishDef(id) { return WISHES.find((w) => w.id === id); }
+
+    let toastFn = null;
+    // できごとを きろくする（ev：なにが あったか、n：いくつ）
+    function ev(name, n = 1, extra) {
+      const d = today();
+      d.log[name] = (d.log[name] || 0) + n;
+      if (name === "treat" && extra) { if (!d.treats.includes(extra)) d.treats.push(extra); }
+      const done = [];
+      for (const w of d.wishes) {
+        const def = wishDef(w.id);
+        if (w.done || def.ev !== name) continue;
+        w.got = Math.min(def.n, w.got + n);
+        if (w.got >= def.n) { w.done = true; L.bones += def.bones; done.push(def); }
+      }
+      let all = false;
+      if (!d.all && d.wishes.every((w) => w.done)) { d.all = true; all = true; L.bones += ALL_BONUS; }
+      let mile = null;
+      if (all) {
+        const gold = Object.values(L.days).filter((x) => x.all).length;
+        for (const [n2, b, msg] of MILES) if (gold >= n2 && !L.miles.includes(n2)) { L.miles.push(n2); L.bones += b; mile = { n: n2, b, msg }; }
+      }
+      save(); emit();
+      for (const def of done) toastFn && toastFn({ kind: "wish", def });
+      if (all) toastFn && toastFn({ kind: "all" });
+      if (mile) toastFn && toastFn({ kind: "mile", mile });
+    }
+    // おさんぽで ひろった もの
+    function find(id) {
+      const it = item(id); if (!it) return;
+      const d = today();
+      L.found[id] = (L.found[id] || 0) + 1;
+      if (!L.foundAt[id]) L.foundAt[id] = dkey();
+      d.found.push(id);
+      save();
+      if (it.flower) ev("flower");
+      else emit();
+    }
+    function walkDone(bones, hearts) {
+      L.walks++;
+      const got = Math.max(1, Math.round(bones / 5) + Math.round(hearts / 2));
+      L.bones += got;
+      const d = today(); d.log.walkBones = (d.log.walkBones || 0) + bones; d.log.hearts = (d.log.hearts || 0) + hearts;
+      save();
+      ev("walk");
+      return got;
+    }
+
+    // くう日記（その日に あったことを、くうの ことばで）
+    function diaryLines(k) {
+      const d = L.days[k]; if (!d) return [];
+      const g = d.log, out = [];
+      if (d.all) out.push("ママが おねがいを ぜんぶ かなえてくれた！ スタンプ ゲット！");
+      if (g.eat) out.push(g.eat > 1 ? `ごはんを ${g.eat}かい たべた。おなか いっぱい！` : "ごはん たべた。おいしかった〜");
+      if (d.treats.length) out.push(`おやつは ${d.treats.join("と ")}。`);
+      if (g.water) out.push("おみずを かえてもらった。つめたくて おいしい！");
+      if (g.clean) out.push(g.clean > 1 ? `うんちを ${g.clean}かい かたづけてもらった。ありがと、ママ。` : "うんちを かたづけてもらった。えへへ。");
+      if (g.ball) out.push(`ボールあそび ${g.ball}かい！ ぜんぶ とってきたよ。`);
+      if (g.pet) out.push(g.pet >= 20 ? "なでなで いーっぱい。とろけちゃった。" : "なでなで してもらった。");
+      if (g.dakko) out.push("だっこ してもらった。");
+      if (g.garden) out.push("おにわで ひなたぼっこ。ぽかぽか。");
+      if (g.walk) {
+        let s = g.walk > 1 ? `おさんぽ ${g.walk}かい！` : "おさんぽ いった！";
+        if (g.hearts) s += ` ハート ${g.hearts}こ あつめた。`;
+        out.push(s);
+      }
+      if (d.found.length) {
+        const uniq = [...new Set(d.found)].map((id) => item(id)).filter(Boolean);
+        out.push(`${uniq.map((i) => i.name).join("と ")}を みつけた。おうちに かざったよ。`);
+      }
+      if (g.kuji) out.push("くうみくじ ひいた。");
+      if (g.lights) out.push("ママが でんきを けしてくれて、ぐっすり。");
+      if (!out.length) out.push("ママが 会いにきてくれた。それだけで うれしい。");
+      return out;
+    }
+
+    return {
+      ev, find, walkDone, today, diaryLines, ITEMS, item, wishDef, WISHES, dkey, ctx,
+      get L() { return L; },
+      on(f) { listeners.add(f); f(); }, onToast(f) { toastFn = f; },
+      pickFind(seasonIdx) {
+        // きせつの もの 7わり・いつでも ある もの 3わり。よつばは たまに
+        if (Math.random() < .05) return "clover";
+        const pool = ITEMS.filter((i) => !i.rare && (Math.random() < .7 ? i.season === seasonIdx : i.season === -1));
+        return pool.length ? pool[Math.floor(Math.random() * pool.length)].id : "ishi";
+      },
+    };
+  })();
+  window.QooLife = life;
 
   /* ================= ママのアルバム（写真とエピソードを、この端末にしまう） ================= */
   const album = (() => {
@@ -1860,7 +2106,7 @@
     try { downloads = await window.claude?.use?.("downloads"); } catch { downloads = null; }
     $("albumExport").hidden = !downloads && !STANDALONE;
   })();
-  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits", "kuu-house", "kuu-home-mode"];
+  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits", "kuu-house", "kuu-home-mode", "kuu-life"];
   function backupData() { const o = {}; for (const k of BACKUP_KEYS) { const v = store.get(k, null); if (v != null) o[k] = v; } return o; }
   // もどすときは、いまの データと まぜる（同じものは 2重に しない、数字は 大きいほう）
   function mergeData(src) {
@@ -1944,7 +2190,7 @@
 
   function newGame() {
     G = { t: 0, speed: GW < 800 ? 270 : 300, x: GW < 800 ? 130 : 150, y: GROUND, vy: 0, jumps: 0, onGround: true,
-          items: [], parts: [], floats: [], spawn: 1, bones: 0, hearts: 0, jumpsTotal: 0,
+          items: [], parts: [], floats: [], spawn: 1, bones: 0, hearts: 0, jumpsTotal: 0, found: [], nextFind: 3 + Math.random() * 4,
           hurt: 0, slow: 0, scroll: 0, running: true, done: false };
   }
   function seasonAt(p) { return SEASONS[Math.min(3, Math.floor(p * 4))]; }
@@ -1958,6 +2204,11 @@
     else if (r < .78) G.items.push({ k: "bone", x: GW + 40, y: GROUND - 30 - Math.random() * 90, w: 34, h: 18 });
     else G.items.push({ k: "heart", x: GW + 40, y: GROUND - 150 - Math.random() * 50, w: 26, h: 24 });
     if (Math.random() < .25) G.items.push({ k: "bone", x: GW + 120, y: GROUND - 30, w: 34, h: 18 });
+  }
+  // おさんぽで みつかる もの（はな・どんぐり など。おうちに もちかえる）
+  function spawnFind(p) {
+    const id = life.pickFind(Math.min(3, Math.floor(p * 4)));
+    G.items.push({ k: "find", id, x: GW + 60, y: GROUND - 34 - Math.random() * 80, w: 36, h: 36 });
   }
   function floatText(text, x, y, color) { G.floats.push({ text, x, y, life: 1, color }); }
 
@@ -1973,6 +2224,8 @@
 
     G.spawn -= dt;
     if (G.spawn <= 0 && p < .98) { spawnItem(); G.spawn = .75 + Math.random() * .9; }
+    G.nextFind -= dt;
+    if (G.nextFind <= 0 && p < .95) { spawnFind(p); G.nextFind = 9 + Math.random() * 6; }
 
     const kx = G.x, ky = G.y - 30 * KS();
     for (const it of G.items) {
@@ -1988,6 +2241,7 @@
       } else if (Math.hypot(cx - kx, cy - ky) < 42 * KS()) {
         it.got = true;
         if (it.k === "bone") { G.bones++; if (Math.random() < .35) floatText(SAY_BONE[Math.floor(Math.random() * SAY_BONE.length)], kx, ky - 60, "#8a5a1f"); }
+        else if (it.k === "find") { G.found.push(it.id); const def = life.item(it.id); floatText(def.say, kx, ky - 60, "#6a4a8a"); life.find(it.id); }
         else { G.hearts++; floatText("だいすき！", kx, ky - 60, "#d44a6a"); }
         for (let i = 0; i < 8; i++) G.parts.push({ x: cx, y: cy, vx: (Math.random() - .5) * 200, vy: (Math.random() - .5) * 200, life: .5, c: it.k === "bone" ? "#f2b866" : "#f394a4", r: 2.5 });
       }
@@ -2186,6 +2440,11 @@
           w.beginPath(); w.ellipse(it.x + it.w / 2, it.y, it.w / 2, it.h / 2, 0, 0, Math.PI * 2); w.fill();
           w.fillStyle = "rgba(255,255,255,.6)"; w.beginPath(); w.ellipse(it.x + it.w / 2 - 12, it.y - 2, 10, 2, 0, 0, Math.PI * 2); w.fill();
         } else if (it.k === "bone") drawBone(it.x, it.y + Math.sin(t * 4 + it.x / 50) * 3, it.w, it.h);
+        else if (it.k === "find") {
+          const yy = it.y + Math.sin(t * 3 + it.x / 40) * 4;
+          w.fillStyle = "rgba(255,255,255,.55)"; w.beginPath(); w.arc(it.x + 18, yy + 14, 22, 0, Math.PI * 2); w.fill();
+          w.font = "30px sans-serif"; w.textAlign = "center"; w.textBaseline = "middle"; w.fillText(life.item(it.id).icon, it.x + 18, yy + 15); w.textBaseline = "alphabetic";
+        }
         else drawHeart(it.x, it.y + Math.sin(t * 3 + it.x / 40) * 4, it.w);
       }
     }
@@ -2218,6 +2477,9 @@
     const score = G.bones + G.hearts * 3;
     if (score > best) { best = score; store.set("kuu-walk-best", best); $("sBest").textContent = best; }
     $("rBone").textContent = G.bones; $("rHeart").textContent = G.hearts; $("rJump").textContent = G.jumpsTotal;
+    const got = life.walkDone(G.bones, G.hearts);
+    const fs = [...new Set(G.found)].map((id) => life.item(id));
+    $("rGot").textContent = `🦴+${got} ほねの つぼへ` + (fs.length ? `　みつけた ${fs.map((i) => i.icon).join("")}` : "");
     let say;
     if (G.hearts >= 8) say = "ハートいっぱい！ くう、ママのこと だーいすき！";
     else if (G.bones >= 25) say = `ほね ${G.bones}こ！ ぼく、おなか ぱんぱん。また いっしょに いこうね、ママ！`;
@@ -2405,6 +2667,7 @@ ${letter}
   async function drawKuji() {
     if (kujiBusy) return;
     kujiBusy = true; $("kujiDraw").disabled = true;
+    life.ev("kuji");
     const wrap = $("kujiWrap");
     wrap.classList.remove("out"); wrap.classList.add("shaking");
     $("kujiCard").hidden = true;
@@ -2828,6 +3091,7 @@ ${letter}
         if (Math.random() < .4) say(pick(PET_LINES));
       }
       addPts(Math.min(len * 30, .6));
+      if (now - (petting.lv || 0) > 450) { petting.lv = now; life.ev("pet"); }
     }
     function tap(p) {
       const now = performance.now();
@@ -2872,7 +3136,7 @@ ${letter}
       // おうちに いるときは、おうちの くうが たべる
       if (house.on) {
         eating = true; loadSounds();
-        house.treat(tr, btnEl, (ok) => { eating = false; if (ok) { addPts(5); stats.bump("treats"); } });
+        house.treat(tr, btnEl, (ok) => { eating = false; if (ok) { addPts(5); stats.bump("treats"); life.ev("treat", 1, tr.name); } });
         return;
       }
       eating = true; hideHint();
@@ -2904,7 +3168,7 @@ ${letter}
         const line = isBirthday() && tr.icon === "🍰" ? "ぼくの おたんじょうびケーキ！ ママ、おいわい ありがとう！" : tr.say;
         say(full ? "おなか いっぱい… でも あと ひとくち なら… たべられる かも！" : line, 3600);
         heartBurst(mx, my - 20, 10); K.happyT = 1; K.happyHold = 1.3; K.sqV += 1.5; yip();
-        addPts(5); eating = false; stats.bump("treats");
+        addPts(5); eating = false; stats.bump("treats"); life.ev("treat", 1, tr.name);
       }, 1550);
     }
 
@@ -3433,6 +3697,17 @@ ${letter}
         for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; c.beginPath(); c.ellipse(sx + Math.cos(a) * r, top + Math.sin(a) * r, r * .55, r * .22, a, 0, Math.PI * 2); c.fill(); }
         c.fillStyle = "#7a4a22"; c.beginPath(); c.arc(sx, top, r * .62, 0, Math.PI * 2); c.fill();
       }
+      // おさんぽで みつけた はなを、おにわに うえる（みつけた かずだけ ふえる）
+      {
+        const flowers = life.ITEMS.filter((i) => i.flower && life.L.found[i.id]);
+        const total = Math.min(14, flowers.reduce((a, i) => a + life.L.found[i.id], 0));
+        c.font = `${Math.round(Math.min(W * .04, Hh * .045))}px sans-serif`; c.textAlign = "center";
+        for (let k = 0; k < total; k++) {
+          const it = flowers[k % flowers.length];
+          const fx = .36 + ((k * 0.377) % 1) * .26, fy = FY + (Hh - FY) * (.55 + ((k * .61) % 1) * .35);
+          c.fillText(it.icon, x + W * fx, fy);
+        }
+      }
       // いえの かべと ガラス戸（リビングへ）
       c.fillStyle = "#efe2cc"; c.fillRect(x + W * .965, 0, W * .035, FY);
       c.fillStyle = "rgba(200,225,240,.6)"; c.fillRect(x + W * .97, Hh * .26, W * .03, FY - Hh * .26);
@@ -3454,6 +3729,17 @@ ${letter}
       // 写真（レースの えりの くう）
       framed(c, "img/smile.jpg", x + W * .63, Hh * .12, W * .12, Hh * .2);
       framed(c, "img/pink.jpg", x + W * .79, Hh * .16, W * .09, Hh * .14);
+      // たからものの たな（おさんぽで みつけた もの）
+      {
+        const sy = Hh * .405, sx0 = x + W * .6, sx1 = x + W * .93;
+        const got = life.ITEMS.filter((i) => life.L.found[i.id]).sort((a, b) => (life.L.foundAt[a.id] > life.L.foundAt[b.id] ? 1 : -1)).slice(-6);
+        c.fillStyle = "#b98a5a"; c.fillRect(sx0, sy, sx1 - sx0, Hh * .016);
+        c.fillStyle = "rgba(90,60,30,.25)"; c.fillRect(sx0 + 4, sy + Hh * .016, sx1 - sx0 - 8, 3);
+        c.fillStyle = "#a07448"; c.fillRect(sx0 + W * .02, sy + Hh * .016, 4, Hh * .03); c.fillRect(sx1 - W * .02 - 4, sy + Hh * .016, 4, Hh * .03);
+        c.font = `${Math.round(Math.min(W * .045, Hh * .05))}px sans-serif`; c.textAlign = "center"; c.textBaseline = "alphabetic";
+        if (!got.length) { c.fillStyle = "rgba(120,90,60,.45)"; c.font = `${Math.max(9, W * .022)}px "Klee One", sans-serif`; c.fillText("おさんぽの たからもの", (sx0 + sx1) / 2, sy - 6); }
+        got.forEach((it, i) => c.fillText(it.icon, sx0 + (sx1 - sx0) * (i + .5) / 6, sy - 2));
+      }
       // ソファ
       const sx = x + W * .52, sw = W * .44, sy = FY - Hh * .3;
       box(c, sx, sy, sw, Hh * .2, 14, "#d9a5a0");
@@ -3548,7 +3834,7 @@ ${letter}
     }
     const DRAW = [drawGarden, drawLiving, drawKitchen, drawBed];
     function ensureBg() {
-      const key = `${W}x${Hh}@${dpr}:${Math.floor(hourF() * 4)}:${Object.values(photos).filter((p) => p.complete).length}`;
+      const key = `${W}x${Hh}@${dpr}:${Math.floor(hourF() * 4)}:${Object.values(photos).filter((p) => p.complete).length}:${Object.entries(life.L.found).join()}`;
       if (key === bgKey) return;
       bgKey = key;
       for (let i = 0; i < 4; i++) {
@@ -3638,6 +3924,7 @@ ${letter}
       const a = D.act;
       if (a === "eat") {
         H.bowl = 0; H.lastMeal = now(); H.poopAt = now() + rand(50, 100) * 6e4; H.fed = (H.fed || 0) + 1; save();
+        life.ev("eat");
         setAct("sit", 4, { sit: 1, look: 1 }); D.happyUntil = performance.now() + 2500;
         if (roomOf(D.u) === viewRoom) { say(pick(["ごちそうさま！ おいしかった〜", "おなか いっぱい！ ママ ありがと！", "ぺろり！ ぜんぶ たべたよ！"]), 3200); snd("yip"); }
         return;
@@ -3651,6 +3938,7 @@ ${letter}
         return goTo(D.u + (D.u > 1.5 ? -.25 : .25), () => setAct("sit", 3, { sit: 1, look: 1 }), true);
       }
       if (a === "fetch2") {
+        life.ev("ball");
         ball.u = H.ball.u = D.u + D.dir * .1; D.holding = false; save();
         setAct("sit", 3, { sit: 1, look: 1 }); D.happyUntil = performance.now() + 2500; addPts(2);
         if (roomOf(D.u) === viewRoom) say(pick(["とってきたよ！ もういっかい！", "ボール だいすき！", "ママ、もういっかい なげて！"]), 2400);
@@ -3711,7 +3999,7 @@ ${letter}
         if (D.act !== "pet") { setAct("pet", 1.5, { sit: 1, look: 1 }); }
         D.until = performance.now() + 1500;
         D.happyUntil = performance.now() + 600;
-        if (petAcc > 70) { petAcc = 0; heart(p.px, p.py - 10); addPts(.5); if (Math.random() < .12) say(pick(["そこそこ〜", "もっと なでて〜", "きもちいい〜", "ママの て、すき", "くぅ〜ん"]), 1800); }
+        if (petAcc > 70) { petAcc = 0; heart(p.px, p.py - 10); addPts(.5); life.ev("pet"); if (Math.random() < .12) say(pick(["そこそこ〜", "もっと なでて〜", "きもちいい〜", "ママの て、すき", "くぅ〜ん"]), 1800); }
       }
     });
     const endPtr = (e) => {
@@ -3738,6 +4026,7 @@ ${letter}
         const sx = (pp.u - camX) * W, sy = FY + (Hh - FY) * .45;
         if (Math.hypot(p.px - sx, p.py - sy) < Math.max(30, W * .06)) {
           H.poops = H.poops.filter((q) => q !== pp); H.cleaned = (H.cleaned || 0) + 1; save();
+          life.ev("clean");
           sparkle(sx, sy); addPts(2);
           if (D.act !== "sleep") { say(pick(["ありがと、ママ！", "ピカピカ！ ママ だいすき！", "えへへ、ごめんね〜"]), 2400); D.happyUntil = performance.now() + 1800; }
           return;
@@ -3769,14 +4058,17 @@ ${letter}
       }
       if (here === 2 && Math.abs(p.u - SPOT.water) < .06 && p.y > .72) {
         H.water = 1; H.waterAt = now(); save(); sparkle((SPOT.water - camX) * W, FY + (Hh - FY) * .4);
+        life.ev("water");
         if (D.act !== "sleep") goTo(SPOT.water - .1, () => { D.dir = 1; setAct("drink", 3.2, { down: 1 }); });
         return;
       }
       if (here === 3 && Math.abs(p.u - SPOT.lamp) < .07 && p.y > .38 && p.y < .82) {
         if (darkBed()) { H.lightsOnUntil = now() + 3 * 6e4; H.lightsOffUntil = 0; if (D.act === "sleep") wakeUp(); }
-        else { H.lightsOffUntil = now() + 10 * 6e4; H.lightsOnUntil = 0; D.wakeUntil = 0; if (D.act !== "sleep") { say("おやすみ、ママ…", 2400); D.until = 0; D.act = "idle"; } }
+        else { H.lightsOffUntil = now() + 10 * 6e4; H.lightsOnUntil = 0; D.wakeUntil = 0; life.ev("lights"); if (D.act !== "sleep") { say("おやすみ、ママ…", 2400); D.until = 0; D.act = "idle"; } }
         save(); return;
       }
+      // たからものの たな → おさんぽ図鑑
+      if (here === 1 && p.u - 1 > .58 && p.u - 1 < .95 && p.y > .32 && p.y < .44) { try { window.QooZukan(); } catch {} return; }
       // なにも ない ところ → くうを よぶ
       if (D.act !== "sleep" && roomOf(D.u) === here && p.y > .7) { goTo(p.u, () => setAct("sit", 4, { sit: 1, look: 1 })); }
     }
@@ -3997,13 +4289,20 @@ ${letter}
       statusEl.textContent = `くう：${rn}で ${doing}${needs.length ? "　・" + needs.join("・") : ""}`;
     }
 
-    let last = performance.now(), running = false, lastStatus = 0;
+    let last = performance.now(), running = false, lastStatus = 0, sunT = 0;
+    life.ctx.poops = () => H.poops.length;
     function loop(t) {
       const dt = Math.min(window.__kuuDt || .05, (t - last) / 1000); last = t;
       if (current === "room" && mode === "house" && visible && W) {
         step(dt); render();
         if (t - lastStatus > 500) { lastStatus = t; status(); }
         if (t - (loop.saved || 0) > 5000) { loop.saved = t; save(); }
+        // おにわで いっしょに ひなたぼっこ（ひるま、くうと ママが おにわに 8びょう）
+        const hh = hourF();
+        if (viewRoom === 0 && roomOf(D.u) === 0 && D.act !== "sleep" && hh >= 7 && hh < 17) {
+          sunT += dt;
+          if (sunT > 8) { sunT = -1e9; life.ev("garden"); say(pick(["ぽかぽか〜 ひなたぼっこ さいこう！", "おひさま きもちいいね、ママ"]), 2600); D.happyUntil = performance.now() + 2000; }
+        }
       }
       requestAnimationFrame(loop);
     }
@@ -4019,7 +4318,7 @@ ${letter}
       else { try { room.enter(); } catch {} }
     }
     $("modeHouse").addEventListener("click", () => setMode("house"));
-    $("modeDakko").addEventListener("click", () => setMode("dakko"));
+    $("modeDakko").addEventListener("click", () => { setMode("dakko"); life.ev("dakko"); });
 
     let entered = false;
     function enter() {
@@ -4071,9 +4370,126 @@ ${letter}
     window.__KuuPhoto = KuuPhoto; window.__KuuSide = KuuSide;
     window.__kuuHouse = { D, H, get view() { return viewRoom; }, get cam() { return camX; } };
     $("tab-room").addEventListener("click", enter);
-    return { enter, treat, get on() { return mode === "house"; } };
+    // おねがいを かなえた とき、おうちの くうが よろこぶ
+    function cheer(e) {
+      if (mode !== "house" || current !== "room" || D.act === "sleep") return;
+      D.happyUntil = performance.now() + 2200; hop(.06); snd("yip");
+      const d = dogScreen(); for (let i = 0; i < 6; i++) heart(d.x + rand(-30, 30), d.top + rand(0, 30));
+      if (e.kind === "all") say("ぜんぶ かなえてくれた！ ママ、だーいすき！", 3200);
+      else if (e.kind === "wish" && Math.random() < .6) say(pick(["ありがと、ママ！", "やったー！", "えへへ、うれしい！"]), 2000);
+    }
+    return { enter, treat, cheer, get on() { return mode === "house"; } };
   })();
 
+
+  /* ================= きょうの おねがい・くう日記・おさんぽ図鑑（画面） ================= */
+  (() => {
+    const listEl = $("wishList"), boneEl = $("boneCount"), noteEl = $("wishNote");
+    function renderWishes() {
+      const d = life.today();
+      boneEl.textContent = life.L.bones;
+      listEl.replaceChildren(...d.wishes.map((w) => {
+        const def = life.wishDef(w.id);
+        const li = document.createElement("li");
+        li.className = w.done ? "done" : "";
+        li.innerHTML = `<i aria-hidden="true">${def.icon}</i><span><b></b><small></small></span><em></em>`;
+        li.querySelector("b").textContent = def.text;
+        li.querySelector("small").textContent = w.done ? `かなえた！ ほね +${def.bones}` : def.hint;
+        li.querySelector("em").textContent = w.done ? "✓" : def.n > 1 ? `${w.got}/${def.n}` : `🦴${def.bones}`;
+        return li;
+      }));
+      const left = d.wishes.filter((w) => !w.done).length;
+      noteEl.textContent = d.all ? "きょうの おねがいは ぜんぶ かなえてくれた！ また あしたね。" : `あと ${left}こ。ぜんぶ かなえると スタンプと ほね +5`;
+    }
+    life.on(renderWishes);
+
+    // かなえた ときの おしらせ（どの へやに いても 見える）
+    const toast = document.createElement("div");
+    toast.className = "life-toast"; toast.hidden = true; toast.setAttribute("role", "status");
+    document.body.append(toast);
+    const queue = [];
+    let showing = false;
+    function next() {
+      if (showing || !queue.length) return;
+      showing = true;
+      const t = queue.shift();
+      toast.innerHTML = t; toast.hidden = false;
+      toast.classList.remove("in"); void toast.offsetWidth; toast.classList.add("in");
+      setTimeout(() => { toast.hidden = true; showing = false; next(); }, 2600);
+    }
+    life.onToast((e) => {
+      if (e.kind === "wish") queue.push(`<b>おねがい かなえた！</b><span>${e.def.icon} ${e.def.text}　🦴+${e.def.bones}</span>`);
+      else if (e.kind === "all") queue.push(`<b>🐾 スタンプ ゲット！</b><span>きょうの おねがい ぜんぶ！　🦴+5</span>`);
+      else if (e.kind === "mile") queue.push(`<b>🎁 ${e.mile.msg}</b><span>ほね +${e.mile.b}</span>`);
+      next();
+      try { house.cheer(e); } catch {}
+    });
+
+    /* ---------- くう日記と カレンダー ---------- */
+    let calY, calM;
+    function openDiary() {
+      const n = new Date(); calY = n.getFullYear(); calM = n.getMonth();
+      renderCal(); $("diaryModal").hidden = false;
+    }
+    function renderCal() {
+      $("calMonth").textContent = `${calY}年 ${calM + 1}月`;
+      const first = new Date(calY, calM, 1), days = new Date(calY, calM + 1, 0).getDate();
+      const grid = $("calGrid"); grid.replaceChildren();
+      for (const w of ["日", "月", "火", "水", "木", "金", "土"]) { const h = document.createElement("b"); h.textContent = w; grid.append(h); }
+      for (let i = 0; i < first.getDay(); i++) grid.append(document.createElement("span"));
+      const todayK = life.dkey();
+      for (let dd = 1; dd <= days; dd++) {
+        const k = `${calY}-${calM + 1}-${dd}`, rec = life.L.days[k];
+        const c = document.createElement("button");
+        c.type = "button"; c.className = "cal-day" + (rec ? rec.all ? " gold" : " seen" : "") + (k === todayK ? " today" : "");
+        c.innerHTML = `<small>${dd}</small><i aria-hidden="true">${rec ? rec.all ? "🐾" : "・" : ""}</i>`;
+        c.setAttribute("aria-label", `${calM + 1}月${dd}日${rec ? rec.all ? " スタンプ" : " きた日" : ""}`);
+        if (rec) c.addEventListener("click", () => { const el = document.getElementById("dy-" + k); if (el) { el.scrollIntoView({ behavior: "smooth", block: "nearest" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); } });
+        else c.disabled = true;
+        grid.append(c);
+      }
+      const keys = Object.keys(life.L.days).filter((k) => k.startsWith(`${calY}-${calM + 1}-`)).sort((a, b) => +b.split("-")[2] - +a.split("-")[2]);
+      const gold = Object.values(life.L.days).filter((x) => x.all).length;
+      $("calSum").textContent = `スタンプ ぜんぶで ${gold}こ　・　ためた ほね ${life.L.bones}本　・　おさんぽ ${life.L.walks}かい`;
+      const list = $("diaryList"); list.replaceChildren();
+      if (!keys.length) { const p = document.createElement("p"); p.className = "diary-empty"; p.textContent = "この月の 日記は まだ ないよ。"; list.append(p); }
+      for (const k of keys) {
+        const [, m, d] = k.split("-"), rec = life.L.days[k];
+        const box = document.createElement("article");
+        box.className = "diary-day"; box.id = "dy-" + k;
+        const h = document.createElement("h4"); h.textContent = `${m}/${d}${rec.all ? "　🐾" : ""}`;
+        const p = document.createElement("p"); p.textContent = life.diaryLines(k).join("\n");
+        box.append(h, p); list.append(box);
+      }
+    }
+    $("calPrev").addEventListener("click", () => { calM--; if (calM < 0) { calM = 11; calY--; } renderCal(); });
+    $("calNext").addEventListener("click", () => { calM++; if (calM > 11) { calM = 0; calY++; } renderCal(); });
+    $("openDiary").addEventListener("click", openDiary);
+    $("diaryClose").addEventListener("click", () => { $("diaryModal").hidden = true; });
+
+    /* ---------- おさんぽ図鑑 ---------- */
+    const SEASON = ["はる", "なつ", "あき", "ふゆ"];
+    function openZukan() {
+      const grid = $("zukanGrid"); grid.replaceChildren();
+      let got = 0;
+      for (const it of life.ITEMS) {
+        const n = life.L.found[it.id] || 0; if (n) got++;
+        const c = document.createElement("div");
+        c.className = "zk" + (n ? "" : " unknown");
+        const when = it.season < 0 ? (it.rare ? "めったに ない" : "いつでも") : SEASON[it.season];
+        c.innerHTML = `<i aria-hidden="true">${n ? it.icon : "？"}</i><b></b><small></small>`;
+        c.querySelector("b").textContent = n ? it.name : "？？？";
+        c.querySelector("small").textContent = n ? `${n}こ　${life.L.foundAt[it.id].split("-").slice(1).join("/")}に はじめて` : `${when}の おさんぽで`;
+        grid.append(c);
+      }
+      $("zukanSum").textContent = `${got} / ${life.ITEMS.length} しゅるい みつけた。みつけた ものは おうちに かざられるよ。`;
+      $("zukanModal").hidden = false;
+    }
+    $("openZukan").addEventListener("click", openZukan);
+    $("zukanClose").addEventListener("click", () => { $("zukanModal").hidden = true; });
+    for (const id of ["diaryModal", "zukanModal"]) $(id).addEventListener("click", (e) => { if (e.target.id === id) $(id).hidden = true; });
+    window.QooZukan = openZukan;
+  })();
 
   /* ================= くうが「ママの思い出」を覚えている（AIにわたす文脈） ================= */
   const MOODS = [
@@ -4565,6 +4981,9 @@ ${letter}
     { v: "house", eyebrow: "Room 02 · House", title: "くうの おうち", badge: "NEW", since: 4,
       body: "おにわ・リビング・キッチン・しんしつ。くうが 自分で 歩いて くらしています。\nごはんの 時間には おさらの まえで まって、夜は ベッドで すやすや。うんちを したら、かたづけて あげてね。",
       tries: ["おさらに ごはん", "ボールを なげる", "うんちを かたづける", "しんしつの ライト"], cta: "おうちを のぞく", go: () => goTab("room") },
+    { v: "wish", eyebrow: "Every day", title: "きょうの おねがい", badge: "NEW", since: 5,
+      body: "まいにち くうから、ちいさな おねがいが 3つ とどきます。\nかなえると ほねが たまって、ぜんぶ かなえると カレンダーに 🐾スタンプ。\nおさんぽで ひろった はなや どんぐりは、おうちに かざられるよ。",
+      tries: ["おねがいを かなえる", "くう日記", "おさんぽ図鑑"], cta: "おねがいを みる", go: () => { goTab("room"); setTimeout(() => $("wishPanel").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }), 500); } },
     { v: "room", eyebrow: "Room 02 · Room", title: "おへやの くうに、さわれる", badge: "NEW",
       body: "おへやの「写真の くう」を おすと、写真の くうが、息をして、まばたきして、首を かしげます。\nなでると 目を細めて「くぅ〜ん」。鼻を タップすると…？\nおやつを あげたり、おしゃべりも できるよ。",
       tries: ["なでなで", "鼻を タップ", "おやつ", "おしゃべり"], cta: "くうに 会いにいく", go: () => goTab("room") },
@@ -4611,6 +5030,7 @@ ${letter}
     dots: () => `<div class="gv gv-dots"><img src="img/face.jpg" alt=""></div>`,
     path: () => `<div class="gv gv-path"><img src="img/baby.jpg" alt=""><img src="img/cake.jpg" alt=""><img src="img/smile.jpg" alt=""></div>`,
     sky: () => `<div class="gv gv-sky"><img src="img/face.jpg" alt=""><b style="left:18%;top:62%"></b><b style="left:46%;top:74%"></b><b style="left:78%;top:58%"></b><b style="left:70%;top:24%"></b><em></em></div>`,
+    wish: () => `<div class="gv gv-wish"><ol><li class="ok">🔴 ボール 3かい なげて！<b>✓</b></li><li class="ok">💧 おみず かえて〜<b>✓</b></li><li>🌼 おはな みつけてきて<b>🦴4</b></li></ol><span>🐾</span></div>`,
     house: () => `<div class="gv gv-house"><img src="img/kuu-body.png" alt=""><q>ママ、おかえり！</q></div>`,
     room: () => `<div class="gv gv-room"><img src="img/room.jpg" alt=""><span>♥</span><span>♥</span><span>♥</span><q>くぅ〜ん</q></div>`,
     walk: () => `<div class="gv gv-walk"><i></i><i></i><i></i><i></i><img src="img/face.jpg" alt=""></div>`,
@@ -4681,7 +5101,7 @@ ${letter}
   $("guideSlide").addEventListener("pointerup", (e) => { if (sx == null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); });
   document.querySelectorAll(".open-guide").forEach((b) => b.addEventListener("click", () => openGuide(0)));
   // はじめて来た人には、粒のくうちゃんを見てもらってから、そっと ひらく
-  const GUIDE_VER = 4;
+  const GUIDE_VER = 5;
   const seenVer = store.get("qoo-guide-ver", store.get("qoo-guide-seen", 0) ? 1 : 0);
   if (seenVer < GUIDE_VER) {
     setTimeout(() => {
@@ -5253,7 +5673,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011400").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011417").catch(() => {});
 </script>
 </body>
 </html>

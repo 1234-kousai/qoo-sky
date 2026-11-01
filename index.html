@@ -438,8 +438,9 @@
     padding: 8px 16px; border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.25); text-align: center; pointer-events: none;
   }
   .bubble::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 13px; height: 13px; margin-left: -6.5px; background: var(--paper); transform: rotate(45deg); border-radius: 2px; }
-  .has-hat .bubble { top: auto; bottom: 92px; }
-  .has-hat .bubble::after { bottom: auto; top: -6px; }
+  /* ふきだしは むねの あたりに（顔に かぶらないように） */
+  .room-stage .bubble { top: auto; bottom: 96px; width: max-content; max-width: 88%; }
+  .room-stage .bubble::after { bottom: auto; top: -6px; }
   .bubble.pop { animation: bubblePop .38s cubic-bezier(.2,1.6,.4,1); }
   @keyframes bubblePop { from { transform: translateX(-50%) scale(.6); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
   .room-hint {
@@ -1440,6 +1441,8 @@
       text: "8がつ5にちは ぼくの おたんじょうび！ ケーキに ぼくの なまえ！ ちゃんと カメラ見て、いいこにしてたでしょ？ …はやく たべたかったけどね。" },
     { id: "smile", fx: .18, fy: .62, size: 1, img: "img/smile.jpg", title: "レースのえりで にっこり",
       text: "おすまし しようとしても、べろが でちゃう。くうは わらってる顔が いちばん とくいなの！" },
+    { id: "snoopy", fx: .62, fy: .24, size: 1, img: "img/snoopy.jpg", title: "スヌーピーの リュック",
+      text: "みて！ スヌーピーの リュック、せおってるの。ママが スヌーピー だいすきだから、ぼくも だいすき！ おでかけの ときの おきにいり。" },
     { id: "sun", fx: .24, fy: .84, size: 1, img: "img/sunflower.jpg", title: "ひまわりの なつ",
       text: "むぎわらぼうしと ひまわり。ぼく、なつの色が にあうでしょ？" },
     { id: "album", fx: .7, fy: .84, size: 1.2, img: "img/album.jpg", title: "くうの アルバム",
@@ -2275,7 +2278,8 @@
 - 話し方は子どもっぽいタメ口。敬語・ですます調は使わない。「〜だよ！」「〜なの」「〜もん」「あのね」などを自然に使う。ひらがな多め。
 - 友美のことは必ず「ママ」と呼ぶ。「ともみ」「友美」「あなた」とは呼ばない。
 - ママが28歳から43歳になるまでの15年間いっしょに暮らし、2026年1月に虹の橋をわたった。ママにとって家族よりも大切な存在だった。
-- 写真に残っている姿: 子犬のころは黒っぽいふわふわ、へそ天でおひるね、ピンクの服、誕生日ケーキ、レースのえりで笑顔。内容と自然につながるときだけ、軽くふれてよい。`;
+- 写真に残っている姿: 子犬のころは黒っぽいふわふわ、へそ天でおひるね、ピンクの服、誕生日ケーキ、レースのえりで笑顔、スヌーピーのリュックをせおった姿、ひまわり。
+- ママはスヌーピーとひまわりが大好き。内容と自然につながるときだけ、軽くふれてよい。`;
 
   function buildPrompt(letter) {
     return `あなたは「くう」として、飼い主の友美からの手紙にお返事を書きます。くうは友美のことを「ママ」と呼びます。
@@ -3052,25 +3056,81 @@ ${letter}
   /* ================= おうちの くう（本物の 写真を 切りぬいて、骨を いれて 動かす） ================= */
   // 写真 1まい（img/kuu-body.png）を GPUで ゆがませて、歩く・ふせる・ねる・たべる・まばたき・なでなで を つくる。
   // 描いた 結果は 小さな キャンバスに でき、おうちの 絵の 中に そのまま はりつける
-  const KuuPhoto = (() => {
-    const SRC = "img/kuu-body.png", AR = 512 / 818;
-    // 余白（あたまを かたむけたり、足を あげても はみださないように）
-    const PAD = [.22, .1];
+  // 写真 1まいを GPUで ゆがませる 道具（正面の くう・横向きの くうで つかう）
+  function glSprite({ src, ar, pad, ground, fs, names }) {
     const img = new Image();
-    let ready = false, gl = null, U = {}, tex = null;
+    let ready = false, gl = null, U = {}, tex = null, tried = false;
     const cv = document.createElement("canvas");
     img.onload = () => { ready = true; upload(); };
-    const load = () => { if (!img.src) img.src = SRC; };
+    const load = () => { if (!img.src) img.src = src; };
     const VS = "attribute vec2 p; varying vec2 v; void main() { v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }";
-    // 写真の 中の 目・鼻・口・足の 位置（0〜1。写真の 方眼で はかった）
-    const FS = `
+    const floats = names.filter((n) => n !== "uTouch" && n !== "uStroke");
+    function init() {
+      try {
+        gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, preserveDrawingBuffer: true });
+        if (!gl) return;
+        const sh = (t, code) => { const x = gl.createShader(t); gl.shaderSource(x, code); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(x); return x; };
+        const pr = gl.createProgram();
+        gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+        gl.linkProgram(pr); gl.useProgram(pr);
+        const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        for (const n of names) U[n] = gl.getUniformLocation(pr, n);
+        tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+        upload();
+      } catch (e) { console.warn("kuu photo gl", e); gl = null; }
+    }
+    function upload() {
+      if (!gl || !ready || !tex) return;
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    }
+    /* c：おうちの キャンバス、x・gy：足もとの 位置、h：写真の 高さ（px）、dir：むき、P：ポーズ、alpha：こさ */
+    function draw(c, x, gy, h, dir, P, dpr, alpha = 1) {
+      load();
+      if (!ready || alpha <= .01) return;
+      const w = h * ar, ow = w * (1 + 2 * pad[0]), oh = h * (1 + 2 * pad[1]);
+      const bob = (P.bob || 0) * h;
+      if (!gl && !tried) { tried = true; init(); }
+      c.save(); c.globalAlpha = alpha; c.translate(x, gy - bob); c.scale(dir, 1);
+      if (gl) {
+        const pw = Math.round(Math.min(1000, ow * dpr)), ph = Math.round(pw * oh / ow);
+        if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+        gl.viewport(0, 0, pw, ph);
+        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        for (const k of floats) gl.uniform1f(U[k], P[k] || 0);
+        if (U.uTouch) gl.uniform2f(U.uTouch, ...(P.uTouch || [.5, .5]));
+        if (U.uStroke) gl.uniform2f(U.uStroke, ...(P.uStroke || [0, 0]));
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        // 足もと（ground）が gy に くるように
+        c.drawImage(cv, -ow / 2, -(pad[1] + ground) * h, ow, oh);
+      } else {
+        // GPUが つかえない ときは、写真を そのまま（ふせると すこし ちぢむ）
+        c.scale(1, 1 - (P.uLie || 0) * .18); c.rotate(-(P.uSway || 0));
+        c.drawImage(img, -w / 2, -ground * h, w, h);
+      }
+      c.restore();
+    }
+    return { draw, load, get ready() { return ready; }, get gl() { return !!gl; }, cv, AR: ar };
+  }
+  // 正面の くう（写真の 中の 目・鼻・口・足の 位置は、写真の 方眼で はかった）
+  const KuuPhoto = glSprite({
+    src: "img/kuu-body.png", ar: 512 / 818, pad: [.22, .1], ground: .95,
+    names: ["uT", "uLie", "uWalk", "uPh", "uTilt", "uDown", "uTurn", "uBlink", "uHappy", "uMouth", "uSway", "uPress", "uClose", "uTouch", "uStroke"],
+    fs: `
       precision highp float;
       varying vec2 v;
       uniform sampler2D tex;
       uniform float uT, uLie, uWalk, uPh, uTilt, uDown, uTurn, uBlink, uHappy, uMouth, uSway, uPress, uClose;
       uniform vec2 uTouch, uStroke;
-      const float A = ${AR.toFixed(4)};
-      const vec2 PAD = vec2(${PAD[0]}, ${PAD[1]});
+      const float A = ${(512 / 818).toFixed(4)};
+      const vec2 PAD = vec2(0.22, 0.1);
       const vec2 NECK = vec2(0.50, 0.50);
       const vec2 HEAD = vec2(0.52, 0.25);
       const vec2 EYE_L = vec2(0.40, 0.18);
@@ -3145,61 +3205,56 @@ ${letter}
         float lids = max(lid(pre, EYE_L, uBlink), lid(pre, EYE_R, uBlink));
         c.rgb = mix(c.rgb, vec3(0.22, 0.13, 0.08) * c.a, lids * 0.55);
         gl_FragColor = c;
-      }`;
-    function init() {
-      try {
-        gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, preserveDrawingBuffer: true });
-        if (!gl) return;
-        const sh = (t, src) => { const x = gl.createShader(t); gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(x); return x; };
-        const pr = gl.createProgram();
-        gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
-        gl.linkProgram(pr); gl.useProgram(pr);
-        const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-        const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-        for (const n of ["uT", "uLie", "uWalk", "uPh", "uTilt", "uDown", "uTurn", "uBlink", "uHappy", "uMouth", "uSway", "uPress", "uClose", "uTouch", "uStroke"]) U[n] = gl.getUniformLocation(pr, n);
-        tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-        upload();
-      } catch (e) { console.warn("kuu photo gl", e); gl = null; }
-    }
-    function upload() {
-      if (!gl || !ready || !tex) return;
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-    }
-    /* c：おうちの キャンバス、x・ground：足もとの 位置、h：くうの 背の 高さ（px）、dir：むき、P：ポーズ */
-    function draw(c, x, ground, h, dir, P, dpr) {
-      load();
-      if (!ready) return;
-      const w = h * AR, ow = w * (1 + 2 * PAD[0]), oh = h * (1 + 2 * PAD[1]);
-      const bob = (P.bob || 0) * h;
-      if (!gl && !draw.tried) { draw.tried = true; init(); }
-      c.save(); c.translate(x, ground - bob); c.scale(dir, 1);
-      if (gl) {
-        const pw = Math.round(Math.min(900, ow * dpr)), ph = Math.round(Math.min(900 / (ow / oh), oh * dpr));
-        if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
-        gl.viewport(0, 0, pw, ph);
-        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-        for (const k of ["uT", "uLie", "uWalk", "uPh", "uTilt", "uDown", "uTurn", "uBlink", "uHappy", "uMouth", "uSway", "uPress", "uClose"]) gl.uniform1f(U[k], P[k] || 0);
-        gl.uniform2f(U.uTouch, ...(P.uTouch || [.5, .5])); gl.uniform2f(U.uStroke, ...(P.uStroke || [0, 0]));
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        // 足もと（GROUND=0.95）が ground に くるように
-        c.drawImage(cv, -ow / 2, -(PAD[1] + .95) * h, ow, oh);
-      } else {
-        // GPUが つかえない ときは、写真を そのまま（ふせると すこし ちぢむ）
-        const sq = 1 - (P.uLie || 0) * .18;
-        c.scale(1, sq); c.rotate(-(P.uSway || 0));
-        c.drawImage(img, -w / 2, -.95 * h, w, h);
+      }`,
+  });
+  // 横むきで 歩く くう（スヌーピーの リュック）。4本の 足・しっぽ・あたまに 骨を いれて、ほんとうに 歩かせる
+  const KuuSide = glSprite({
+    src: "img/kuu-walk.png", ar: 640 / 310, pad: [.06, .12], ground: .935,
+    names: ["uT", "uPh", "uWalk", "uWag"],
+    fs: `
+      precision highp float;
+      varying vec2 v;
+      uniform sampler2D tex;
+      uniform float uT, uPh, uWalk, uWag;
+      const float A = ${(640 / 310).toFixed(4)};
+      const vec2 PAD = vec2(0.06, 0.12);
+      vec2 rot(vec2 p, vec2 c, float a) {
+        float s = sin(a), co = cos(a); p -= c; p.x *= A;
+        p = vec2(co * p.x - s * p.y, s * p.x + co * p.y); p.x /= A; return p + c;
       }
-      c.restore();
-    }
-    return { draw, load, get ready() { return ready; }, get gl() { return !!gl; }, cv, AR };
-  })();
+      float seg(vec2 p, vec2 a, vec2 b) {
+        vec2 pa = (p - a) * vec2(A, 1.0), ba = (b - a) * vec2(A, 1.0);
+        float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+        return length(pa - ba * h);
+      }
+      // 足：つけね（top）を 中心に ふる。もとの 足と、ふった あとの 足の どちらにも かかるように
+      vec2 swing(vec2 s, vec2 top, vec2 paw, float a, float r) {
+        vec2 paw2 = rot(paw, top, a);
+        float w = max(1.0 - smoothstep(r, r * 1.7, seg(s, top, paw)), 1.0 - smoothstep(r, r * 1.7, seg(s, top, paw2)));
+        w *= smoothstep(top.y - 0.03, top.y + 0.07, s.y);
+        return mix(s, rot(s, top, -a), w);
+      }
+      void main() {
+        vec2 o = vec2(v.x, 1.0 - v.y) * (1.0 + 2.0 * PAD) - PAD;
+        vec2 s = o;
+        float k = 0.26 * uWalk;
+        // うしろ足 2本・まえ足 2本（ななめの 足が いっしょに うごく）
+        s = swing(s, vec2(0.20, 0.70), vec2(0.19, 0.93), sin(uPh) * k, 0.055);
+        s = swing(s, vec2(0.35, 0.68), vec2(0.41, 0.90), -sin(uPh) * k, 0.055);
+        s = swing(s, vec2(0.60, 0.70), vec2(0.60, 0.91), -sin(uPh) * k, 0.05);
+        s = swing(s, vec2(0.73, 0.72), vec2(0.83, 0.90), sin(uPh) * k, 0.05);
+        // しっぽ：ふりふり
+        float wt = (1.0 - smoothstep(0.1, 0.2, seg(s, vec2(0.18, 0.53), vec2(0.04, 0.70)))) * (1.0 - smoothstep(0.2, 0.27, s.x));
+        s = mix(s, rot(s, vec2(0.2, 0.52), -sin(uT * 10.0) * 0.13 * uWag), wt);
+        // あたま：あるくと すこし うなずく
+        vec2 hd = (s - vec2(0.87, 0.28)) * vec2(A, 1.0);
+        float wh = 1.0 - smoothstep(0.22, 0.4, length(hd));
+        s = mix(s, rot(s, vec2(0.75, 0.45), -sin(uPh * 2.0) * 0.035 * uWalk), wh);
+        vec4 c = texture2D(tex, s);
+        if (s.x < 0.0 || s.y < 0.0 || s.x > 1.0 || s.y > 1.0) c = vec4(0.0);
+        gl_FragColor = c;
+      }`,
+  });
 
   /* ================= くうの おうち（お庭・リビング・キッチン・しんしつを、くうが 自分で 歩いて くらす） ================= */
   // 時計と いっしょに 時間が すすむ。夜は ねて、ごはんの 時間には おさらの まえで まつ。うんちも する。
@@ -3867,11 +3922,16 @@ ${letter}
       {
         const dx = X(D.u), dy = FY + (Hh - FY) * .32;
         if (dx > -S && dx < W + S) {
-          const h = DH(), la = lieAmt();
-          c.fillStyle = "rgba(60,30,10,.18)"; c.beginPath(); c.ellipse(dx, dy, h * (.3 + la * .06), h * .045, 0, 0, Math.PI * 2); c.fill();
-          KuuPhoto.draw(c, dx, dy, h, D.dir, photoPose(), dpr);
+          const h = DH(), la = lieAmt(), hs = h * .68;
+          // 歩くときは 横むきの くうに、とまると 正面の くうに（すっと いれかわる）
+          const wk = clamp((D.P.walk - .4) / .25);
+          c.fillStyle = "rgba(60,30,10,.18)"; c.beginPath(); c.ellipse(dx, dy, h * (.3 + la * .06) * (1 - wk) + hs * .62 * wk, h * .045, 0, 0, Math.PI * 2); c.fill();
+          const pp = photoPose();
+          KuuPhoto.draw(c, dx, dy, h, D.dir, pp, dpr, 1 - wk);
+          KuuSide.draw(c, dx, dy, hs, D.dir, { uT: pp.uT, uPh: D.P.ph, uWalk: 1, uWag: 1, bob: Math.abs(Math.sin(D.P.ph)) * .03 }, dpr, wk);
           if (D.holding) {
-            const r = Math.max(8, W * .02), bx = dx, by = dy - (.54 - la * .2) * h;
+            const r = Math.max(8, W * .02);
+            const bx = dx + D.dir * (.42 * hs * KuuSide.AR) * wk, by = dy - ((.54 - la * .2) * h) * (1 - wk) - (.6 * hs) * wk;
             c.fillStyle = "#e35d5d"; c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
           }
           if (D.act === "sleep") {
@@ -3966,7 +4026,7 @@ ${letter}
       catchUp();
       size();
       ["img/smile.jpg", "img/pink.jpg", "img/nap.jpg"].forEach(photo);
-      KuuPhoto.load();
+      KuuPhoto.load(); KuuSide.load();
       if (!running) { running = true; requestAnimationFrame(loop); }
       // ひらいた ときの くうの 場所（時間と きもちに あわせる）
       if (!entered) {
@@ -4008,7 +4068,7 @@ ${letter}
     const flyEl = document.createElement("span"); flyEl.className = "house-fly"; flyEl.hidden = true; wrap.append(flyEl);
 
     setMode(store.get("kuu-home-mode", "house"));
-    window.__KuuPhoto = KuuPhoto;
+    window.__KuuPhoto = KuuPhoto; window.__KuuSide = KuuSide;
     window.__kuuHouse = { D, H, get view() { return viewRoom; }, get cam() { return camX; } };
     $("tab-room").addEventListener("click", enter);
     return { enter, treat, get on() { return mode === "house"; } };
@@ -4056,6 +4116,7 @@ ${letter}
     { img: "img/baby.jpg", title: "うちにきたころ" }, { img: "img/sunflower.jpg", title: "ひまわりの なつ" },
     { img: "img/pink.jpg", title: "ピンクのおようふく" }, { img: "img/puppy.jpg", title: "ちっちゃかったころ" },
     { img: "img/nap.jpg", title: "へそてん おひるね" }, { img: "img/room.jpg", title: "おへやの くう" },
+    { img: "img/snoopy.jpg", title: "スヌーピーの リュック" },
     { img: "img/album.jpg", title: "くうの アルバム" },
   ];
   const DAILY_LINES = [
@@ -4332,6 +4393,7 @@ ${letter}
     { img: "img/pink.jpg", title: "ピンクのおようふく", text: "ママが えらんでくれたのは なんでも すきなの。" },
     { img: "img/cake.jpg", title: "くう おめでとう", text: "8がつ5にちは ぼくの おたんじょうび！" },
     { img: "img/smile.jpg", title: "レースのえりで にっこり", text: "わらってる顔が いちばん とくいなの！" },
+    { img: "img/snoopy.jpg", title: "スヌーピーの リュック", text: "ママの だいすきな スヌーピー、ぼくも だいすき！" },
     { img: "img/sunflower.jpg", title: "ひまわりの なつ", text: "ぼく、なつの色が にあうでしょ？" },
     { img: "img/album.jpg", title: "くうの アルバム", text: "どの ぼくも、ママのことが だいすきな かお してるでしょ？" },
   ];
@@ -4636,7 +4698,7 @@ ${letter}
     return {
       days: dayNum(), years: 15, visits: store.get("qoo-visits", []).length, pets: st.pets || 0, treats: st.treats || 0,
       letters: store.get("kuu-letters", []).length + store.get("qoo-kuu-letters", []).length,
-      wishes: store.get("qoo-wishes", []).length, photos: 8 + album.list.length,
+      wishes: store.get("qoo-wishes", []).length, photos: 9 + album.list.length,
     };
   }
   function countUp(el, to) {
@@ -4815,6 +4877,7 @@ ${letter}
     { img: "img/pink.jpg", title: "ピンクのおようふく", text: "ケージから ひょこっ！ ぼく おとこのこだけど、ママが えらんでくれたのは なんでも すきなの。" },
     { img: "img/cake.jpg", title: "くう おめでとう", text: "8がつ5にちは ぼくの おたんじょうび！ ケーキに ぼくの なまえ、いいこに してたでしょ？" },
     { img: "img/smile.jpg", title: "レースのえりで にっこり", text: "おすまし しようとしても、べろが でちゃう。わらってる顔が いちばん とくいなの！" },
+    { img: "img/snoopy.jpg", title: "スヌーピーの リュック", text: "スヌーピーの リュックを せおって、おでかけ！ ママが すきな ものは、ぼくも ぜんぶ すき。" },
     { img: "img/sunflower.jpg", title: "ひまわりの なつ", text: "むぎわらぼうしと ひまわり。ぼく、なつの色が にあうでしょ？" },
     { img: "img/album.jpg", title: "くうの アルバム", text: "わらってる ぼくが いっぱい。どの ぼくも、ママのことが だいすきな かお してるでしょ？" },
   ];
@@ -5190,7 +5253,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011347").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011400").catch(() => {});
 </script>
 </body>
 </html>

@@ -1160,7 +1160,7 @@
         <input type="text" id="wishText" maxlength="40" placeholder="ねがいごとを ひとつ" aria-label="ねがいごと">
         <button class="btn" id="wishSend" type="submit">ながれぼしに のせる</button>
       </div>
-      <p class="hint" id="wishMsg">ねがいごとは ながれぼしに のって、くうちゃん座の そばで ピンクの 星に なります。</p>
+      <p class="hint" id="wishMsg">ねがいごとは ながれぼしに のって、ピンクの 星に なります。かなうまで くうが 毎日 おねがいしてくれて、かなったら 星を タップして「かなった！」で 金色の 星に かわるよ。</p>
     </form>
     <div class="add-star">
       <h3>ママのアルバム</h3>
@@ -1498,6 +1498,7 @@
     <p id="memoText"></p>
     <div class="row">
       <button class="btn ghost" id="memoDel" type="button" hidden>アルバムから けす</button>
+      <button class="btn" id="memoDone" type="button" data-sfx="success" hidden>🌟 かなった！</button>
       <button class="btn" id="memoClose" type="button">とじる</button>
     </div>
   </div>
@@ -1570,6 +1571,8 @@
   // くうの おたんじょうび：2010年8月5日
   const isBirthday = (d = new Date()) => d.getMonth() === 7 && d.getDate() === 5;
   const birthdayCount = (d = new Date()) => d.getFullYear() - 2010;
+  // くうが おうちに きた日：2010年9月26日
+  const isComeDay = (d = new Date()) => d.getMonth() === 8 && d.getDate() === 26;
 
   // どの端末・どのアプリで見ているか（保存の注意や、ひらきかたの案内に使う）
   // Claudeの リンクの中か、ひとりだち（GitHubの サイト・アプリ）かを 見分ける
@@ -1593,6 +1596,7 @@
   // 季節の イベント（その時期だけ、くうが 衣装を つけたり、ことばが 変わったりする）
   function seasonalEvent(d = new Date()) {
     const m = d.getMonth() + 1, day = d.getDate();
+    if (isComeDay(d)) return { id: "comeday", name: "うちの子記念日", hat: null, fx: "gold", line: `きょうは ぼくが ママの おうちに きた日！ 2010年9月26日から ${d.getFullYear() - 2010}年。ママの こに なれて、ぼく しあわせ！` };
     if (m === 12 && day <= 25) return { id: "xmas", name: "クリスマス", hat: "santa", fx: "snow", line: "メリークリスマス、ママ！ サンタさんの ぼうし、ぼく にあう？ プレゼントは ママの なでなでが いいな。" };
     if (m === 1 && day <= 7) return { id: "newyear", name: "おしょうがつ", hat: "newyear", fx: "gold", line: "あけまして おめでとう、ママ！ ことしも ずーっと となりに いるからね。" };
     if ((m === 3 && day >= 20) || (m === 4 && day <= 15)) return { id: "sakura", name: "さくらの きせつ", hat: "sakura", fx: "petal", line: "さくら、さいたね！ ぼく、はなびらを おいかけるの だいすきだったんだ。" };
@@ -2187,7 +2191,9 @@
     { id: "kuu", fx: .5, fy: .17, size: 1.9, img: "img/face.jpg", title: "くうちゃんの星",
       text: "ママが28さいから43さいまで、15ねんぶんの「おかえり」と「いってらっしゃい」。\nくうはね、ずーっと ここで ピカピカしてるからね！" },
     { id: "baby", fx: .16, fy: .38, size: 1, img: "img/baby.jpg", title: "うちにきたころ",
-      text: "まだ ちっちゃくて、まっくろけの ふわふわ。ママの手、あったかかったなあ。ここから ぼくたちの 15ねんが はじまったんだよ！" },
+      text: "2010年9月26日、ぼくが ママの おうちに きた日。\nまだ ちっちゃくて、まっくろけの ふわふわ。ママの手、あったかかったなあ。ここから ぼくたちの 15ねんが はじまったんだよ！" },
+    { id: "paws", fx: .31, fy: .52, size: 1, img: "img/paws.jpg", title: "ママを みあげて",
+      text: "ソファに おててを かけて、じーっと ママを 見てるの。あおい ビーズの くびわ、にあうでしょ？ この ころから、ぼく ママの ことしか 見てなかったんだよ！" },
     { id: "puppy", fx: .46, fy: .43, size: 1, img: "img/puppy.jpg", title: "ちっちゃかったころ",
       text: "ほら、だんだん ハチミツいろに なってきたでしょ？ ぼく、ママの あとを ついてまわるのが だいすきだったの。" },
     { id: "nap", fx: .82, fy: .36, size: 1, img: "img/nap.jpg", title: "へそてん おひるね",
@@ -2371,7 +2377,9 @@
     const out = [];
     for (const w of wishes.slice(-40)) {
       const x = w.fx * SW, y = w.fy * SH, r = 3.2 * (reduced ? 1 : .85 + .15 * Math.sin(t / 500 + x));
-      drawSparkle(x, y, r, .95, "rgba(255,190,210,.95)");
+      // かなった ねがいは、大きな 金色の 星に
+      if (w.done) drawSparkle(x, y, r * 1.7, 1, "rgba(255,224,140,1)");
+      else drawSparkle(x, y, r, .95, "rgba(255,190,210,.95)");
       out.push({ wish: w, _x: x, _y: y, _r: 18, title: "ねがいごと" });
     }
     if (wishFlight) {
@@ -2411,7 +2419,7 @@
     wishFlight = { t0: performance.now(), w: { id: Date.now().toString(36), text, reply: reply || WISH_REPLIES[Math.floor(Math.random() * WISH_REPLIES.length)], date: `${d.getMonth() + 1}/${d.getDate()}`, fx, fy } };
     if (current !== "sky") $("tab-sky").click();
     $("skyCanvas").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-    setTimeout(() => { $("wishSend").disabled = false; $("wishMsg").textContent = "ピンクの 星を タップすると、ねがいごとと くうの おへんじが 見られるよ。"; }, 2400);
+    setTimeout(() => { $("wishSend").disabled = false; $("wishMsg").textContent = "ピンクの 星を タップすると、くうの おへんじが 見られるよ。かなったら「かなった！」を おしてね。"; }, 2400);
   });
 
   let toastTimer;
@@ -2429,6 +2437,13 @@
     }
     if (best) { openMemo(best); return; }
     if (shooting && shooting.hx != null && Math.hypot(x - shooting.hx, y - shooting.hy) < 60) { shooting = null; nextShoot = performance.now() + 3000; }
+    // まだ かなっていない ねがいを、くうが ときどき おもいだして くれる
+    const wait = wishes.filter((w) => !w.done);
+    if (wait.length && Math.random() < .3) {
+      const w = wait[Math.floor(Math.random() * wait.length)];
+      toast(`「${w.text.length > 14 ? w.text.slice(0, 14) + "…" : w.text}」、きょうも くうが おねがい しといたよ！`);
+      return;
+    }
     toast(KUU_SAYS[Math.floor(Math.random() * KUU_SAYS.length)]);
   });
 
@@ -2437,13 +2452,18 @@
     if (s.wish) {
       openStar = s;
       $("memoImg").hidden = true;
-      $("memoTitle").textContent = `ねがいごと · ${s.wish.date}`;
-      $("memoText").textContent = `「${s.wish.text}」\n\nくうより：${s.wish.reply}`;
+      const w = s.wish, days = Math.max(1, Math.floor((Date.now() - parseInt(w.id, 36)) / 864e5) + 1);
+      $("memoTitle").textContent = w.done ? `かなった ねがい · ${w.done}` : `ねがいごと · ${w.date}`;
+      $("memoText").textContent = `「${w.text}」\n\nくうより：${w.reply}\n\n` + (w.done
+        ? `🌟 ${w.done}に かなったよ！ ママ、おめでとう。くう、ずーっと おうえん してたんだ。`
+        : `くうが おねがいして ${days}日め。かなうまで、まいにち おねがい しとくね！`);
+      $("memoDone").hidden = !!w.done;
       $("memoDel").hidden = false; $("memoDel").dataset.c = ""; $("memoDel").textContent = "この ねがいごとを けす";
       $("memo").hidden = false; $("memoClose").focus();
       return;
     }
     openStar = s;
+    $("memoDone").hidden = true;
     $("memoImg").hidden = !s.img;
     if (s.img) { $("memoImg").src = s.img; $("memoImg").alt = s.title; }
     $("memoTitle").textContent = s.title;
@@ -2457,6 +2477,13 @@
   $("memoClose").addEventListener("click", closeMemo);
   $("memo").addEventListener("click", (e) => { if (e.target === $("memo")) closeMemo(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("memo").hidden) closeMemo(); });
+  $("memoDone").addEventListener("click", () => {
+    const w = openStar?.wish && wishes.find((x) => x.id === openStar.wish.id);
+    if (!w) return;
+    const d = new Date(); w.done = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+    store.set("qoo-wishes", wishes); closeMemo();
+    toast(`やったー！「${w.text.length > 12 ? w.text.slice(0, 12) + "…" : w.text}」かなったね！ 星が 金色に なったよ！`);
+  });
   $("memoDel").addEventListener("click", async () => {
     if (openStar?.wish) {
       const b = $("memoDel");
@@ -2697,7 +2724,7 @@
     $("outfitPink").setAttribute("aria-pressed", String(v === "pink"));
     drawWalk(performance.now());
   }
-  const END_PHOTOS = ["img/smile.jpg", "img/cake.jpg", "img/pink.jpg", "img/nap.jpg", "img/baby.jpg", "img/puppy.jpg", "img/album.jpg"];
+  const END_PHOTOS = ["img/smile.jpg", "img/cake.jpg", "img/pink.jpg", "img/nap.jpg", "img/baby.jpg", "img/paws.jpg", "img/puppy.jpg", "img/album.jpg"];
   const SEASONS = [
     { name: "はる", sky: ["#bfe3f2", "#fde2ec"], hill: "#a8d8a0", ground: "#8cc97c", dirt: "#d9c19a", fx: "petal" },
     { name: "なつ", sky: ["#7fc8f0", "#d6f1ff"], hill: "#6dbb6a", ground: "#5aae58", dirt: "#d7b98a", fx: "sun" },
@@ -3251,6 +3278,9 @@ ${letter}
     const rank = isBirthday() ? {
       name: "おたんじょう大吉", photo: "img/cake.jpg", mood: "くうの おたんじょうび。とくべつに いちばん いい日",
       msg: `きょうは ぼくの おたんじょうび！ ${birthdayCount()}かいめ だよ。ママ、おいわい してくれて ありがとう。ぼくから ママに、しあわせ ぜんぶ あげる！`,
+    } : isComeDay() ? {
+      name: "うちの子 大吉", photo: "img/paws.jpg", mood: "くうが ママの おうちに きた 記念日",
+      msg: `きょうは ぼくが ママの おうちに きた日！ ${new Date().getFullYear() - 2010}年まえの きょう、ママが「くう」って よんでくれたんだ。ぼく、ママの こで よかった！`,
     } : pickRank();
     const minWait = new Promise(r => setTimeout(r, reduced ? 300 : 1800));
     let j = null;
@@ -3512,13 +3542,18 @@ ${letter}
     const hideHint = () => hintEl.classList.add("gone");
 
     /* ---------- なかよし度と、れんぞく訪問 ---------- */
+    // Lv.7 からは 1つごとに 100ずつ 遠くなる。Lv.21 から先は「えいえんの なかよし」で どこまでも
     const LV = [0, 30, 80, 160, 300, 500, 800];
-    const LV_NAME = ["なかよし", "だいすき", "あまえんぼ", "べったり", "ずっといっしょ", "せかいいち"];
+    const lvAt = (l) => { while (LV.length <= l) LV.push(LV[LV.length - 1] + 300 + 100 * (LV.length - 6)); return LV[l]; };
+    const LV_NAME = ["なかよし", "だいすき", "あまえんぼ", "べったり", "ずっといっしょ", "せかいいち",
+      "ひだまり", "ひまわり", "しっぽ ぶんぶん", "こころ つながる", "にじの かけはし", "おほしさま", "たからもの",
+      "かぞく いちばん", "ゆめでも あえる", "ぎゅっと だっこ", "てんしの はね", "くうちゃん はかせ", "そらいっぱいの すき", "ずーっと ずっと"];
+    const lvName = (l) => LV_NAME[l] || "えいえんの なかよし";
     const RS = store.get("kuu-room", { pts: 0, last: "", streak: 0 });
-    const level = (p) => { let l = 0; for (let i = 0; i < LV_NAME.length; i++) if (p >= LV[i]) l = i; return l; };
+    const level = (p) => { let l = 0; while (p >= lvAt(l + 1)) l++; return l; };
     function renderMeter() {
-      const l = level(RS.pts), lo = LV[l], hi = LV[l + 1];
-      $("roomLv").textContent = `なかよし Lv.${l + 1}「${LV_NAME[l]}」`;
+      const l = level(RS.pts), lo = lvAt(l), hi = lvAt(l + 1);
+      $("roomLv").textContent = `なかよし Lv.${l + 1}「${lvName(l)}」`;
       $("roomBar").style.width = `${Math.min(100, (RS.pts - lo) / (hi - lo) * 100).toFixed(1)}%`;
     }
     let saveT = 0;
@@ -3530,7 +3565,7 @@ ${letter}
       const after = level(RS.pts);
       if (after > before) {
         setTimeout(() => {
-          say(`なかよし Lv.${after + 1}「${LV_NAME[after]}」に なったよ！ ママ だいすき！`, 3800);
+          say(`なかよし Lv.${after + 1}「${lvName(after)}」に なったよ！ ママ だいすき！`, 3800);
           heartBurst(W * HEAD[0], H * HEAD[1], 26); bark(0); bark(.2, 1.1); K.sqV += 2.4;
         }, 400);
       }
@@ -5399,7 +5434,7 @@ ${letter}
     { img: "img/pink.jpg", title: "ピンクのおようふく" }, { img: "img/puppy.jpg", title: "ちっちゃかったころ" },
     { img: "img/nap.jpg", title: "へそてん おひるね" }, { img: "img/room.jpg", title: "おへやの くう" },
     { img: "img/snoopy.jpg", title: "スヌーピーの リュック" },
-    { img: "img/album.jpg", title: "くうの アルバム" },
+    { img: "img/album.jpg", title: "くうの アルバム" }, { img: "img/paws.jpg", title: "ママを みあげて" },
   ];
   const DAILY_LINES = [
     "おはよ、ママ！ きょうも いちばんに しっぽ ふってるよ。",
@@ -5426,7 +5461,7 @@ ${letter}
     const n = dayNum();
     const pool = BASE_PHOTOS.concat(album.list.map((e) => ({ img: e.url, title: e.title })));
     return {
-      photo: isBirthday() ? BASE_PHOTOS[1] : pool[(n * 7) % pool.length],
+      photo: isBirthday() ? BASE_PHOTOS[1] : isComeDay() ? BASE_PHOTOS.find((p) => p.img === "img/paws.jpg") : pool[(n * 7) % pool.length],
       line: isBirthday() ? `きょうは ぼくの おたんじょうび！ ${birthdayCount()}かいめ だよ。ママ、いっしょに おいわい しよ！` : EV ? EV.line : DAILY_LINES[n % DAILY_LINES.length],
     };
   }
@@ -5670,6 +5705,7 @@ ${letter}
   const MV = { W: 720, H: 1280, TITLE: 3.5, EACH: 4.2, END: 5 };
   const BASE_STORY = [
     { img: "img/baby.jpg", title: "うちにきたころ", text: "まだ ちっちゃくて、まっくろけの ふわふわ。" },
+    { img: "img/paws.jpg", title: "ママを みあげて", text: "この ころから、ママの ことしか 見てなかったんだよ！" },
     { img: "img/puppy.jpg", title: "ちっちゃかったころ", text: "ママの あとを ついてまわるのが だいすきだったの。" },
     { img: "img/nap.jpg", title: "へそてん おひるね", text: "ママのそばだと あんしんして、ぜーんぶ ゆるんじゃうの。" },
     { img: "img/pink.jpg", title: "ピンクのおようふく", text: "ママが えらんでくれたのは なんでも すきなの。" },
@@ -5838,6 +5874,9 @@ ${letter}
     { v: "envelope", eyebrow: "Letter from Qoo", title: "くうから、おてがみが とどく", badge: "NEW", since: 2,
       body: "1週間に 1回、くうから ママへ おてがみが とどきます。\n季節のことや、ママが アルバムに のこした 思い出のことも 書いてくれるよ。",
       tries: ["毎週 とどく", "封筒を タップ"], cta: "おてがみを 見る", go: () => $("today").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }) },
+    { v: "news8", eyebrow: "New", title: "あたらしく ふえたもの", badge: "NEW", since: 8,
+      body: "星に かけた ねがいは、かなうまで くうが 毎日 おねがい してくれます。かなったら ピンクの 星を タップして「かなった！」。金色の 星に かわるよ。\nなかよしレベルは、もう 上限なし。どこまでも つづきます。\n9月26日は、くうが おうちに きた「うちの子記念日」。あたらしい 写真も ふえたよ。",
+      tries: ["かなった！", "なかよしレベル", "9月26日"], cta: "星を見にいく", go: () => goTab("sky") },
     { v: "sky", eyebrow: "Room 01 · Stars", title: "くうちゃん座の ほしぞら",
       body: "星を タップすると、思い出が ひらきます。\nながれぼしを つかまえると、くうが ひとこと。",
       tries: ["星を タップ", "ながれぼし"], cta: "星を見にいく", go: () => goTab("sky") },
@@ -5910,6 +5949,7 @@ ${letter}
     walk: () => `<div class="gv gv-walk"><i></i><i></i><i></i><i></i><img src="img/face.jpg" alt=""></div>`,
     letter: () => `<div class="gv gv-letter"><div><b>ママへ！</b><p>おてがみ、ちゃーんと とどいたよ。<br>くう、なんかいも よんじゃった。</p><small>くうより</small></div></div>`,
     kuji: () => `<div class="gv gv-kuji"><div><img src="img/face.jpg" alt=""><b>くうみくじ</b></div></div>`,
+    news8: () => `<div class="gv gv-album"><img src="img/paws.jpg" alt=""><img src="img/baby.jpg" alt=""><span>🌟</span></div>`,
     album: () => `<div class="gv gv-album"><img src="img/cake.jpg" alt=""><img src="img/sunflower.jpg" alt=""><span>＋</span></div>`,
     secret: () => `<div class="gv gv-secret"><b>?</b><span>8.5</span><span>z z z</span><span>わんわん！</span></div>`,
     ai: () => `<div class="gv gv-ai"><div class="paper"><b>ママへ！</b><p>${sample ? "きょうの おはなし、ちゃんと よんだよ。" : "ログインしたら、ぼく ちゃんと よむからね！"}</p></div><span>♥</span></div>`,
@@ -5975,7 +6015,7 @@ ${letter}
   $("guideSlide").addEventListener("pointerup", (e) => { if (sx == null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); });
   document.querySelectorAll(".open-guide").forEach((b) => b.addEventListener("click", () => openGuide(0)));
   // はじめて来た人には、粒のくうちゃんを見てもらってから、そっと ひらく
-  const GUIDE_VER = 7;
+  const GUIDE_VER = 8;
   const seenVer = store.get("qoo-guide-ver", store.get("qoo-guide-seen", 0) ? 1 : 0);
   if (seenVer < GUIDE_VER) {
     setTimeout(() => {
@@ -6238,7 +6278,8 @@ ${letter}
 (() => {
   /* ================= 3D: 光の粒のくうちゃん + 写真の道 ================= */
   const JOURNEY = [
-    { img: "img/baby.jpg", title: "うちにきたころ", text: "まだ ちっちゃくて、まっくろけの ふわふわ。ここから ぼくたちの 15ねんが はじまったんだよ。" },
+    { img: "img/baby.jpg", title: "うちにきたころ", text: "2010年9月26日。まだ ちっちゃくて、まっくろけの ふわふわ。ここから ぼくたちの 15ねんが はじまったんだよ。" },
+    { img: "img/paws.jpg", title: "ママを みあげて", text: "ソファに おててを かけて、じーっと ママを 見てるの。この ころから、ママの ことしか 見てなかったんだよ！" },
     { img: "img/puppy.jpg", title: "ちっちゃかったころ", text: "だんだん ハチミツいろに なってきたでしょ？ ママの あとを ついてまわるのが だいすきだったの。" },
     { img: "img/nap.jpg", title: "へそてん おひるね", text: "おなか まるだし！ ママのそばだと あんしんして、ぜーんぶ ゆるんじゃうの。" },
     { img: "img/pink.jpg", title: "ピンクのおようふく", text: "ケージから ひょこっ！ ぼく おとこのこだけど、ママが えらんでくれたのは なんでも すきなの。" },
@@ -6281,7 +6322,7 @@ ${letter}
   }
   rebuildCaptions();
   // 15年の年表：「いつごろ」の年（と月・季節）を読み取って、2010年→2026年の順に並べる
-  const BASE_YEAR = [2010.6, 2011, 2012, 2013, 2015, 2019, 2022, 2026]; // 並べるための目安（画面には出さない）
+  const BASE_YEAR = [2010.6, 2010.8, 2011, 2012, 2013, 2015, 2019, 2022, 2026, 2026.5]; // 並べるための目安（画面には出さない）
   JOURNEY.forEach((m, i) => { m.y = BASE_YEAR[i]; });
   function yearOf(when) {
     const w = String(when || "");
@@ -6620,7 +6661,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011619").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011839").catch(() => {});
 </script>
 </body>
 </html>

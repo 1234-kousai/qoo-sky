@@ -620,7 +620,7 @@
   @keyframes twinkle { 50% { opacity: .3; transform: scale(.7); } }
   @keyframes shoot { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 60%, 100% { opacity: 0; translate: 160px 70px; } }
   .gv-house { background: linear-gradient(#f6ead6 0 70%, #dea267 70%); }
-  .gv-house canvas { position: absolute; left: 50%; bottom: 8%; width: 62%; transform: translateX(-50%); }
+  .gv-house img { position: absolute; left: 50%; bottom: 6%; height: 80%; transform: translateX(-50%); }
   .gv-house q { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); quotes: none; padding: 6px 14px; border-radius: 16px; background: var(--paper); color: var(--ink); font-family: var(--f-hand); font-size: 14px; white-space: nowrap; }
   .gv-room img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; }
   .gv-room span { position: absolute; color: #f2708c; font-size: 22px; bottom: 30%; animation: heartUp 2.6s ease-out infinite; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
@@ -3049,264 +3049,156 @@ ${letter}
     return { enter, addPts, snd: { yip, bark, crunch, hmph, whine } };
   })();
 
-  // くうの 全身（2Dで 描く。写真の 毛色と 顔つきに よせた、ふちどりの ある やさしい 絵）
-  // KuuDog.draw(c, P, s)：足もとの まんなかが 原点、右むき（左むきは 呼ぶ側で scale(-1,1)）。s は 背の高さ 1 の ピクセル数
-  const KuuDog = (() => {
-    const C = {
-      base: "#dc8f43", light: "#f3c27d", shade: "#c0732f", deep: "#9c5524", cream: "#fbecd2", white: "#fffaf0",
-      line: "#6e3a1c", nose: "#231813", eye: "#24160f", tongue: "#f08394", mouth: "#6b2c26",
-      band: "#7aa6de", bandD: "#5583c0", far: "#c27634",
-    };
-    const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-    let LW = 2;
-    function ink(c, fill) { c.fillStyle = fill; c.fill(); c.lineWidth = LW; c.strokeStyle = C.line; c.lineJoin = "round"; c.stroke(); }
-    function gradV(c, x, y, r, a, b) { const g = c.createRadialGradient(x - r * .3, y - r * .45, r * .05, x, y, r * 1.2); g.addColorStop(0, a); g.addColorStop(1, b); return g; }
-
-    // 毛の ある だ円：from〜to の 角度だけ、毛先が とがる
-    function furEllipse(c, cx, cy, rx, ry, rot, tufts = [], seed = 1) {
-      const N = 64;
-      c.save(); c.translate(cx, cy); c.rotate(rot);
-      c.beginPath();
-      const inFur = (a) => tufts.find(([f, t]) => { let x = a; while (x < f) x += Math.PI * 2; return x <= t; });
-      let first = true;
-      for (let i = 0; i <= N; i++) {
-        const a = i / N * Math.PI * 2;
-        const tf = inFur(a);
-        const px = Math.cos(a) * rx, py = Math.sin(a) * ry;
-        if (first) { c.moveTo(px, py); first = false; continue; }
-        if (tf && i % 2 === 0) {
-          const amp = tf[2] || .14, k = 1 + amp * (.6 + .4 * rnd(seed + i));
-          const am = a - Math.PI / N * .6;
-          c.quadraticCurveTo(Math.cos(am) * rx * .97, Math.sin(am) * ry * .97, Math.cos(a) * rx * k, Math.sin(a) * ry * k);
-        } else if (tf) {
-          c.lineTo(px * .97, py * .97);
-        } else c.lineTo(px, py);
+  /* ================= おうちの くう（本物の 写真を 切りぬいて、骨を いれて 動かす） ================= */
+  // 写真 1まい（img/kuu-body.png）を GPUで ゆがませて、歩く・ふせる・ねる・たべる・まばたき・なでなで を つくる。
+  // 描いた 結果は 小さな キャンバスに でき、おうちの 絵の 中に そのまま はりつける
+  const KuuPhoto = (() => {
+    const SRC = "img/kuu-body.png", AR = 512 / 818;
+    // 余白（あたまを かたむけたり、足を あげても はみださないように）
+    const PAD = [.22, .1];
+    const img = new Image();
+    let ready = false, gl = null, U = {}, tex = null;
+    const cv = document.createElement("canvas");
+    img.onload = () => { ready = true; upload(); };
+    const load = () => { if (!img.src) img.src = SRC; };
+    const VS = "attribute vec2 p; varying vec2 v; void main() { v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }";
+    // 写真の 中の 目・鼻・口・足の 位置（0〜1。写真の 方眼で はかった）
+    const FS = `
+      precision highp float;
+      varying vec2 v;
+      uniform sampler2D tex;
+      uniform float uT, uLie, uWalk, uPh, uTilt, uDown, uTurn, uBlink, uHappy, uMouth, uSway, uPress, uClose;
+      uniform vec2 uTouch, uStroke;
+      const float A = ${AR.toFixed(4)};
+      const vec2 PAD = vec2(${PAD[0]}, ${PAD[1]});
+      const vec2 NECK = vec2(0.50, 0.50);
+      const vec2 HEAD = vec2(0.52, 0.25);
+      const vec2 EYE_L = vec2(0.40, 0.18);
+      const vec2 EYE_R = vec2(0.68, 0.20);
+      const vec2 EYE_S = vec2(0.055, 0.022);
+      const vec2 MOUTH = vec2(0.50, 0.41);
+      const float GROUND = 0.95;
+      float dA(vec2 a, vec2 b) { vec2 d = a - b; d.x *= A; return length(d); }
+      vec2 rot(vec2 p, vec2 c, float a) {
+        float s = sin(a), co = cos(a); p -= c; p.x *= A;
+        p = vec2(co * p.x - s * p.y, s * p.x + co * p.y); p.x /= A; return p + c;
       }
-      c.closePath();
-      c.restore();
-    }
-    function strand(c, x0, y0, x1, y1, bend, col, w) {
-      c.strokeStyle = col; c.lineWidth = w; c.lineCap = "round";
-      c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo((x0 + x1) / 2 + bend, (y0 + y1) / 2, x1, y1); c.stroke();
-    }
-
-    // みじかい 足（白い 足先）
-    function leg(c, x, top, h, w, lift, swing, col) {
-      const fx = x + swing, fy = -lift;
-      c.beginPath();
-      c.moveTo(x - w / 2, top);
-      c.lineTo(fx - w / 2, fy - w * .35);
-      c.quadraticCurveTo(fx - w / 2, fy, fx, fy);
-      c.lineTo(fx + w * .2, fy);
-      c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4);
-      c.lineTo(x + w / 2, top);
-      c.closePath();
-      ink(c, col);
-      // 白い 足先
-      c.save(); c.beginPath(); c.rect(fx - w, fy - w * .55, w * 2.2, w); c.clip();
-      c.beginPath(); c.moveTo(fx - w / 2, fy - w * .35); c.quadraticCurveTo(fx - w / 2, fy, fx, fy); c.lineTo(fx + w * .2, fy);
-      c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4); c.lineTo(fx - w / 2, fy - w * .55); c.closePath();
-      c.fillStyle = C.white; c.fill(); c.restore();
-      c.lineWidth = LW; c.strokeStyle = C.line;
-      c.beginPath(); c.moveTo(fx - w / 2, fy - w * .35); c.quadraticCurveTo(fx - w / 2, fy, fx, fy); c.lineTo(fx + w * .2, fy); c.quadraticCurveTo(fx + w * .75, fy, fx + w * .65, fy - w * .4); c.stroke();
-      c.lineWidth = LW * .6;
-      c.beginPath(); c.moveTo(fx + w * .08, fy - w * .02); c.lineTo(fx + w * .1, fy - w * .25); c.stroke();
-    }
-
-    // ふさふさの しっぽ（上に まいている）
-    function tail(c, x, y, ang, s) {
-      c.save(); c.translate(x, y); c.rotate(ang);
-      c.beginPath();
-      c.moveTo(0, .04 * s);
-      c.bezierCurveTo(-.12 * s, .02 * s, -.2 * s, -.1 * s, -.16 * s, -.24 * s);
-      // 毛先
-      const tip = [[-.2, -.3], [-.13, -.33], [-.06, -.36], [.0, -.31], [.04, -.25]];
-      let px = -.16, py = -.24;
-      for (const [tx, ty] of tip) { c.quadraticCurveTo((px + tx) / 2 * s - .02 * s, (py + ty) / 2 * s - .03 * s, tx * s, ty * s); px = tx; py = ty; }
-      c.bezierCurveTo(.0 * s, -.18 * s, -.06 * s, -.08 * s, .03 * s, -.03 * s);
-      c.closePath();
-      ink(c, gradV(c, -.08 * s, -.2 * s, .2 * s, C.light, C.base));
-      strand(c, -.1 * s, -.22 * s, -.03 * s, -.06 * s, -.02 * s, "rgba(255,240,215,.75)", LW * .8);
-      strand(c, -.04 * s, -.27 * s, .0, -.12 * s, -.015 * s, "rgba(255,240,215,.6)", LW * .7);
-      c.restore();
-    }
-
-    function eye(c, x, y, r, P) {
-      const shut = Math.max(P.blink || 0, P.sleep || 0);
-      c.strokeStyle = C.eye; c.lineCap = "round"; c.lineWidth = LW * 1.15;
-      if (P.sleep > .5 || shut > .7) { c.beginPath(); c.arc(x, y - r * .2, r * .8, Math.PI * .15, Math.PI * .85); c.stroke(); return; }
-      if (P.happy > .55) { c.beginPath(); c.arc(x, y + r * .45, r * .85, Math.PI * 1.15, Math.PI * 1.85); c.stroke(); return; }
-      c.fillStyle = C.eye;
-      c.beginPath(); c.ellipse(x, y, r * .9, r * (1.05 - shut), 0, 0, Math.PI * 2); c.fill();
-      c.fillStyle = "#fff";
-      c.beginPath(); c.arc(x + r * .3, y - r * .38, r * .36, 0, Math.PI * 2); c.fill();
-      c.globalAlpha = .7; c.beginPath(); c.arc(x - r * .3, y + r * .35, r * .16, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-    }
-
-    // あたま（f：顔が 右へ 向く ぐあい 0=しょうめん 1=ななめ）
-    function head(c, P, s, f) {
-      const r = .25 * s, sh = f * .32 * r;
-      // みみ：どちらも あたまの うしろ。ななめの ときは、むこうの みみが かくれて、てまえの みみが 大きく 見える
-      const ear = (sd) => {
-        const vis = sd > 0 ? 1 - f * .55 : 1;
-        const ex = sd * r * (.84 - (sd > 0 ? f * .3 : 0)) + (sd < 0 ? -f * r * .06 : 0), ey = -r * .3;
-        c.save(); c.translate(ex, ey); c.rotate(sd * (.14 + (P.earSwing || 0)) - sd * (P.earUp || 0) * .6); c.scale(vis * 1.12, 1.18);
-        c.beginPath();
-        c.moveTo(-sd * r * .08, -r * .1);
-        c.bezierCurveTo(sd * r * .38, -r * .12, sd * r * .42, r * .5, sd * r * .3, r * .78);
-        c.quadraticCurveTo(sd * r * .25, r * .9, sd * r * .15, r * .82);
-        c.quadraticCurveTo(sd * r * .08, r * .95, -sd * r * .02, r * .8);
-        c.quadraticCurveTo(-sd * r * .1, r * .9, -sd * r * .16, r * .74);
-        c.bezierCurveTo(-sd * r * .22, r * .4, -sd * r * .25, r * .05, -sd * r * .08, -r * .1);
-        c.closePath();
-        ink(c, gradV(c, 0, r * .3, r * .6, C.base, C.deep));
-        strand(c, sd * r * .05, r * .2, sd * r * .1, r * .7, sd * r * .04, "rgba(90,40,15,.35)", LW * .7);
-        c.restore();
-      };
-      ear(1); ear(-1);
-      // あたま（ほっぺが ふさふさ）
-      furEllipse(c, 0, 0, r, r * .93, 0, [[Math.PI * .2, Math.PI * .8, .09], [Math.PI * 1.3, Math.PI * 1.5, .07]], 3);
-      ink(c, gradV(c, 0, 0, r, C.light, C.base));
-      // 白い かお（まんなか。あたまから はみださない）
-      c.save();
-      furEllipse(c, 0, 0, r * .985, r * .915, 0, [], 3); c.clip();
-      c.translate(sh, 0);
-      c.beginPath();
-      c.moveTo(0, -r * .82);
-      c.bezierCurveTo(r * .2, -r * .62, r * .16, -r * .3, r * .48, r * .02);
-      c.bezierCurveTo(r * .78, r * .32, r * .6, r * .86, 0, r * .9);
-      c.bezierCurveTo(-r * .6, r * .86, -r * .78, r * .32, -r * .48, r * .02);
-      c.bezierCurveTo(-r * .16, -r * .3, -r * .2, -r * .62, 0, -r * .82);
-      c.fillStyle = gradV(c, 0, r * .25, r * .8, C.white, C.cream); c.fill();
-      // まゆげの 白い 毛
-      c.fillStyle = "rgba(255,250,238,.9)";
-      for (const sd of [-1, 1]) { c.beginPath(); c.ellipse(sd * r * .4, -r * .36, r * .13, r * .065, sd * .3, 0, Math.PI * 2); c.fill(); }
-      // め
-      eye(c, -r * .38 + f * r * .04, -r * .1, r * .15, P);
-      eye(c, r * .38 + f * r * .02, -r * .1, r * .15, P);
-      // ほっぺの ピンク
-      c.fillStyle = "rgba(242,130,140,.22)";
-      for (const sd of [-1, 1]) { c.beginPath(); c.ellipse(sd * r * .56, r * .18, r * .13, r * .08, 0, 0, Math.PI * 2); c.fill(); }
-      // くち
-      const m = Math.max(P.mouth || 0, (P.happy || 0) * .55);
-      c.lineWidth = LW; c.strokeStyle = C.line; c.lineCap = "round";
-      if (m > .08) {
-        c.beginPath(); c.moveTo(-r * .26, r * .4); c.quadraticCurveTo(0, r * (.52 + m * .5), r * .26, r * .4); c.quadraticCurveTo(0, r * .5, -r * .26, r * .4);
-        c.fillStyle = C.mouth; c.fill();
-        c.save(); c.clip();
-        c.fillStyle = C.tongue; c.beginPath(); c.ellipse(0, r * (.6 + m * .32), r * .16, r * (.12 + m * .2), 0, 0, Math.PI * 2); c.fill();
-        c.restore();
-        c.fillStyle = C.tongue; c.beginPath(); c.ellipse(0, r * (.62 + m * .28), r * .13, r * (.06 + m * .16), 0, 0, Math.PI); c.fill();
+      float lidCurve(float ex) { return 0.85 - uHappy * 0.75 * (1.0 - ex * ex); }
+      vec2 closeEye(vec2 s, vec2 E, float b) {
+        vec2 e = (s - E) / EYE_S;
+        float hx = 1.0 - smoothstep(0.55, 1.3, abs(e.x));
+        float drop = EYE_S.y * 2.1 * b * hx;
+        float yl = lidCurve(clamp(e.x, -1.0, 1.0));
+        float top = smoothstep(-3.6, -0.9, e.y);
+        float bottom = 1.0 - smoothstep(yl - 0.15, yl + 0.3, e.y);
+        return vec2(s.x, s.y - drop * top * bottom);
       }
-      c.beginPath(); c.moveTo(0, r * .3); c.lineTo(0, r * .42);
-      c.moveTo(-r * .27, r * .38); c.quadraticCurveTo(-r * .13, r * .5, 0, r * .42); c.quadraticCurveTo(r * .13, r * .5, r * .27, r * .38); c.stroke();
-      // はな
-      c.fillStyle = C.nose;
-      c.beginPath(); c.moveTo(-r * .15, r * .15); c.quadraticCurveTo(0, r * .07, r * .15, r * .15); c.quadraticCurveTo(r * .13, r * .31, 0, r * .33); c.quadraticCurveTo(-r * .13, r * .31, -r * .15, r * .15); c.fill();
-      c.fillStyle = "rgba(255,255,255,.55)"; c.beginPath(); c.ellipse(-r * .04, r * .15, r * .05, r * .025, 0, 0, Math.PI * 2); c.fill();
-      c.restore();
-      // ふちどりを もういちど（白い かおの 上から）
-      furEllipse(c, 0, 0, r, r * .93, 0, [[Math.PI * .2, Math.PI * .8, .09], [Math.PI * 1.3, Math.PI * 1.5, .07]], 3);
-      c.lineWidth = LW; c.strokeStyle = C.line; c.stroke();
-      // あたまの てっぺんの ふさ毛
-      strand(c, -r * .1, -r * .78, r * .05, -r * .98, r * .04, C.line, LW * .9);
-      strand(c, r * .05, -r * .8, r * .2, -r * .95, r * .03, C.line, LW * .9);
-    }
-
-    function bandana(c, x, y, ang, s) {
-      c.save(); c.translate(x, y); c.rotate(ang);
-      const w = .13 * s;
-      c.beginPath(); c.moveTo(-w, -w * .2); c.quadraticCurveTo(0, w * .15, w, -w * .2); c.lineTo(w * .05, w * .85); c.closePath();
-      ink(c, C.band);
-      c.save(); c.clip(); c.strokeStyle = "rgba(255,255,255,.55)"; c.lineWidth = LW * .8;
-      for (let i = -3; i <= 3; i++) { c.beginPath(); c.moveTo(i * w * .3, -w * .3); c.lineTo(i * w * .3 + w * .2, w); c.stroke(); c.beginPath(); c.moveTo(-w, i * w * .3); c.lineTo(w, i * w * .3 + w * .1); c.stroke(); }
-      c.restore();
-      c.restore();
-    }
-
-    // ねている くう（まるくなる）
-    function curled(c, P, s) {
-      const br = 1 + Math.sin(P.t * 1.5) * .02;
-      c.save(); c.scale(1, br);
-      // からだ
-      furEllipse(c, -.02 * s, -.17 * s, .36 * s, .17 * s, 0, [[Math.PI * 1.1, Math.PI * 1.9, .07]], 9);
-      ink(c, gradV(c, 0, -.2 * s, .36 * s, C.light, C.base));
-      strand(c, -.2 * s, -.25 * s, -.05 * s, -.29 * s, -.01 * s, "rgba(255,240,215,.7)", LW * .8);
-      // しっぽ（まえに まわす）
-      c.beginPath(); c.moveTo(-.3 * s, -.08 * s);
-      c.bezierCurveTo(-.2 * s, .02 * s, .1 * s, .02 * s, .16 * s, -.04 * s);
-      c.quadraticCurveTo(.08 * s, -.1 * s, -.05 * s, -.08 * s);
-      c.quadraticCurveTo(-.2 * s, -.07 * s, -.3 * s, -.08 * s);
-      ink(c, gradV(c, 0, -.04 * s, .2 * s, C.light, C.base));
-      c.restore();
-      // あたま（まえあしに のせて）
-      c.save(); c.translate(.26 * s, -.17 * s); c.rotate(.12); c.scale(.82, .82);
-      head(c, { ...P, sleep: 1, mouth: 0, happy: 0 }, s, .2);
-      c.restore();
-      // まえあし
-      c.fillStyle = C.white; c.lineWidth = LW; c.strokeStyle = C.line;
-      for (const dx of [.33, .44]) { c.beginPath(); c.ellipse(dx * s, -.03 * s, .065 * s, .035 * s, 0, 0, Math.PI * 2); c.fill(); c.stroke(); }
-    }
-
-    /* P = { t, walk, ph, sit, lie, down, look(1=しょうめん), wag(0-1), tailUp, blink, sleep, happy, mouth, squat, curl, earUp, hop, tilt } */
-    function draw(c, P, s) {
-      LW = Math.max(1.4, s * .012);
-      if (P.curl > .5) { curled(c, P, s); return; }
-      const sit = P.sit || 0, lie = P.lie || 0, sq = P.squat || 0, walk = P.walk || 0, ph = P.ph || 0, down = P.down || 0;
-      const bob = -walk * Math.abs(Math.sin(ph)) * .025 * s - (P.hop || 0) * s;
-      const S = (v) => v * s;
-      c.save(); c.translate(0, bob);
-      const bx = 0, by = S(-.27 + lie * .1 + sq * .04);
-      const bodyRot = -sit * .75 + sq * -.18;
-      const legH = .16, legW = S(.1);
-      const swing = (o) => Math.sin(ph + o) * .055 * walk * s;
-      const lift = (o) => Math.max(0, -Math.cos(ph + o)) * .045 * walk * s;
-      // おくの 足
-      if (sit < .5 && lie < .5) {
-        leg(c, S(.17), by + S(.06), 0, legW * .95, lift(Math.PI), swing(Math.PI), C.far);
-        leg(c, S(-.18 + sq * .04), by + S(.06), 0, legW * .95, lift(0), swing(0), C.far);
+      float lid(vec2 s, vec2 E, float b) {
+        vec2 e = (s - E) / EYE_S;
+        float hx = 1.0 - smoothstep(0.45, 1.0, abs(e.x));
+        float dy = (e.y - lidCurve(clamp(e.x, -1.0, 1.0)) + 0.05) / 0.22;
+        return b * hx * exp(-dy * dy);
       }
-      // しっぽ
-      const wag = Math.sin(P.t * (5 + (P.wag || 0) * 12)) * (.1 + (P.wag || 0) * .35);
-      const tx = sit > .5 ? S(-.17) : S(-.27), ty = sit > .5 ? S(-.06) : by - S(.06);
-      tail(c, tx, ty, -.2 + wag - (P.tailUp || 0) * .35 + lie * .5 + sit * .35, s);
-      // からだ
-      c.save(); c.translate(bx + (sit > .5 ? S(-.03) : 0), by + (sit > .5 ? S(.02) : 0)); c.rotate(bodyRot);
-      const rx = S(.34 - sit * .08), ry = S(.19 + sit * .02 + Math.sin(P.t * 2) * .004);
-      furEllipse(c, 0, 0, rx, ry, 0, [[Math.PI * .2, Math.PI * .8, .12], [Math.PI * 1.15, Math.PI * 1.45, .06]], 5);
-      ink(c, gradV(c, 0, 0, rx, C.light, C.base));
-      strand(c, -rx * .5, -ry * .55, -rx * .1, -ry * .75, -ry * .05, "rgba(255,240,215,.7)", LW * .8);
-      strand(c, -rx * .7, -ry * .1, -rx * .45, -ry * .55, 0, "rgba(255,240,215,.55)", LW * .7);
-      c.restore();
-      // てまえの 足
-      if (lie >= .5) {
-        for (const dx of [.3, .41]) { c.fillStyle = C.white; c.lineWidth = LW; c.strokeStyle = C.line; c.beginPath(); c.ellipse(S(dx), S(-.035), S(.07), S(.038), 0, 0, Math.PI * 2); c.fill(); c.stroke(); }
-        c.beginPath(); c.ellipse(S(-.2), S(-.06), S(.12), S(.07), 0, 0, Math.PI * 2); ink(c, C.base);
-      } else if (sit >= .5) {
-        // おしり と うしろあし
-        furEllipse(c, S(-.1), S(-.12), S(.15), S(.12), 0, [[Math.PI * .1, Math.PI * .9, .08]], 13);
-        ink(c, gradV(c, S(-.1), S(-.14), S(.15), C.light, C.base));
-        c.beginPath(); c.ellipse(S(.02), S(-.03), S(.075), S(.04), 0, 0, Math.PI * 2); ink(c, C.white);
-        leg(c, S(.12), S(-.3), 0, legW, 0, 0, C.base);
-        leg(c, S(.2), S(-.3), 0, legW, 0, 0, C.base);
+      void main() {
+        // 出力の 位置 → 写真の どこを 見るか（逆に たどる）
+        vec2 o = vec2(v.x, 1.0 - v.y) * (1.0 + 2.0 * PAD) - PAD;
+        vec2 s = o;
+        // からだ全体：歩くと ゆれる、しっぽを ふると おしりが ゆれる
+        s = rot(s, vec2(0.5, GROUND), -uSway);
+        // ふせる：上の からだが さがって、足が たたまれる（足先は 床の まま）
+        float d = 0.2 * uLie, K = 0.70;
+        if (s.y < K + d) s.y -= d;
+        else if (s.y < GROUND) s.y = K + (s.y - K - d) * (GROUND - K) / (GROUND - K - d);
+        // 歩く：前足を こうごに あげる
+        float lL = max(0.0, sin(uPh)) * uWalk, lR = max(0.0, -sin(uPh)) * uWalk;
+        float wL = (1.0 - smoothstep(0.08, 0.2, abs(s.x - 0.24))) * smoothstep(0.74, 0.86, s.y);
+        float wR = (1.0 - smoothstep(0.08, 0.2, abs(s.x - 0.66))) * smoothstep(0.72, 0.84, s.y);
+        s.y += (lL * wL + lR * wR) * 0.055;
+        // 呼吸：むねが ふくらむ
+        float wChest = 1.0 - smoothstep(0.08, 0.3, dA(s, vec2(0.5, 0.68)));
+        float br = sin(uT * (uLie > 0.6 ? 1.4 : 2.2));
+        s.x = 0.5 + (s.x - 0.5) * (1.0 - br * 0.008 * wChest);
+        s.y += br * 0.004 * wChest;
+        // あたま：かしげる・うなずく（ごはんの ときは したへ）・すこし むきを かえる
+        float wHead = 1.0 - smoothstep(0.2, 0.36, dA(s, HEAD));
+        s = mix(s, rot(s, NECK, -uTilt), wHead);
+        s.y -= uDown * 0.07 * wHead;
+        s.x -= uTurn * 0.035 * wHead;
+        // なでなで：毛並みが 指に ついてくる
+        vec2 dt = s - uTouch; dt.x *= A;
+        float g = exp(-dot(dt, dt) / 0.006) * uPress;
+        s -= uStroke * g;
+        // くち：もぐもぐ
+        vec2 m = (s - MOUTH) / vec2(0.16, 0.08);
+        float wm = (1.0 - smoothstep(0.6, 1.2, dot(m, m))) * smoothstep(0.37, 0.41, s.y);
+        s.y -= uMouth * 0.03 * wm;
+        // ねるときは くちを とじる（あごの 毛で したを かくす）
+        vec2 mc = (s - vec2(0.50, 0.43)) / vec2(0.15, 0.075);
+        float wc = (1.0 - smoothstep(0.5, 1.15, dot(mc, mc))) * smoothstep(0.35, 0.39, s.y);
+        s.y += uClose * 0.065 * wc;
+        // め
+        vec2 pre = s;
+        s = closeEye(s, EYE_L, uBlink);
+        s = closeEye(s, EYE_R, uBlink);
+        vec4 c = texture2D(tex, s);
+        if (s.x < 0.0 || s.y < 0.0 || s.x > 1.0 || s.y > 1.0) c = vec4(0.0);
+        float lids = max(lid(pre, EYE_L, uBlink), lid(pre, EYE_R, uBlink));
+        c.rgb = mix(c.rgb, vec3(0.22, 0.13, 0.08) * c.a, lids * 0.55);
+        gl_FragColor = c;
+      }`;
+    function init() {
+      try {
+        gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, preserveDrawingBuffer: true });
+        if (!gl) return;
+        const sh = (t, src) => { const x = gl.createShader(t); gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(x); return x; };
+        const pr = gl.createProgram();
+        gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+        gl.linkProgram(pr); gl.useProgram(pr);
+        const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        for (const n of ["uT", "uLie", "uWalk", "uPh", "uTilt", "uDown", "uTurn", "uBlink", "uHappy", "uMouth", "uSway", "uPress", "uClose", "uTouch", "uStroke"]) U[n] = gl.getUniformLocation(pr, n);
+        tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+        upload();
+      } catch (e) { console.warn("kuu photo gl", e); gl = null; }
+    }
+    function upload() {
+      if (!gl || !ready || !tex) return;
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    }
+    /* c：おうちの キャンバス、x・ground：足もとの 位置、h：くうの 背の 高さ（px）、dir：むき、P：ポーズ */
+    function draw(c, x, ground, h, dir, P, dpr) {
+      load();
+      if (!ready) return;
+      const w = h * AR, ow = w * (1 + 2 * PAD[0]), oh = h * (1 + 2 * PAD[1]);
+      const bob = (P.bob || 0) * h;
+      if (!gl && !draw.tried) { draw.tried = true; init(); }
+      c.save(); c.translate(x, ground - bob); c.scale(dir, 1);
+      if (gl) {
+        const pw = Math.round(Math.min(900, ow * dpr)), ph = Math.round(Math.min(900 / (ow / oh), oh * dpr));
+        if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+        gl.viewport(0, 0, pw, ph);
+        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        for (const k of ["uT", "uLie", "uWalk", "uPh", "uTilt", "uDown", "uTurn", "uBlink", "uHappy", "uMouth", "uSway", "uPress", "uClose"]) gl.uniform1f(U[k], P[k] || 0);
+        gl.uniform2f(U.uTouch, ...(P.uTouch || [.5, .5])); gl.uniform2f(U.uStroke, ...(P.uStroke || [0, 0]));
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        // 足もと（GROUND=0.95）が ground に くるように
+        c.drawImage(cv, -ow / 2, -(PAD[1] + .95) * h, ow, oh);
       } else {
-        leg(c, S(-.2 + sq * .05), by + S(.06), 0, legW, lift(Math.PI), swing(Math.PI) - S(sq * .02), C.base);
-        leg(c, S(.2), by + S(.06), 0, legW, lift(0), swing(0), C.base);
+        // GPUが つかえない ときは、写真を そのまま（ふせると すこし ちぢむ）
+        const sq = 1 - (P.uLie || 0) * .18;
+        c.scale(1, sq); c.rotate(-(P.uSway || 0));
+        c.drawImage(img, -w / 2, -.95 * h, w, h);
       }
-      // むねの もふもふ
-      const hx0 = sit > .5 ? S(.1) : S(.24), hy0 = sit > .5 ? S(-.42) : by - S(.06);
-      furEllipse(c, hx0 - S(.02), hy0 + S(.06), S(.12), S(.12), 0, [[Math.PI * .1, Math.PI * .9, .2]], 21);
-      ink(c, gradV(c, hx0, hy0 + S(.05), S(.12), C.white, C.cream));
-      bandana(c, hx0 + S(.0), hy0 + S(.0), -.05, s);
-      // あたま
-      const look = P.look || 0;
-      const hx = hx0 + S(.04 + down * .1), hy = hy0 - S(.2) + S(down * .2) - S(lie * .02);
-      c.save(); c.translate(hx, hy); c.rotate((P.tilt || 0) + down * .25);
-      head(c, P, s, 1 - look);
-      c.restore();
       c.restore();
     }
-    return { draw, C };
+    return { draw, load, get ready() { return ready; }, get gl() { return !!gl; }, cv, AR };
   })();
 
   /* ================= くうの おうち（お庭・リビング・キッチン・しんしつを、くうが 自分で 歩いて くらす） ================= */
@@ -3515,10 +3407,6 @@ ${letter}
       box(c, sx + W * .03, sy + Hh * .15, sw - W * .06, Hh * .1, 10, "#e3b4ae");
       box(c, sx + W * .07, sy + Hh * .06, W * .1, Hh * .1, 10, "#f3e3c9");
       c.fillStyle = "#8a5a35"; c.fillRect(sx + W * .02, FY - Hh * .05, 6, Hh * .05); c.fillRect(sx + sw - W * .03, FY - Hh * .05, 6, Hh * .05);
-      // かんようしょくぶつ
-      box(c, x + W * .465, FY - Hh * .1, W * .05, Hh * .1, 4, "#c98a5a");
-      c.fillStyle = "#6aa35a";
-      for (const [dx, dy, r] of [[.49, .2, .035], [.47, .25, .03], [.51, .26, .03], [.49, .15, .025]]) { c.beginPath(); c.ellipse(x + W * dx, FY - Hh * dy + Hh * .05, W * r, Hh * .04, dx * 5, 0, Math.PI * 2); c.fill(); }
       woodFloor(c, x, W);
       // ラグ
       c.fillStyle = "#c2d3ea"; c.beginPath(); c.ellipse(x + W * .42, FY + (Hh - FY) * .5, W * .23, (Hh - FY) * .3, 0, 0, Math.PI * 2); c.fill();
@@ -3620,9 +3508,25 @@ ${letter}
     const D = {
       u: H.u, dir: 1, act: "idle", until: 0, tu: 0, then: null, fast: false, ph: 0, holding: false,
       P: { t: 0, walk: 0, ph: 0, sit: 0, lie: 0, down: 0, look: 0, wag: .3, tailUp: 0, blink: 0, sleep: 0, happy: 0, mouth: 0, squat: 0, curl: 0, earUp: 0, hop: 0, tilt: 0 },
-      T: {}, wakeUntil: 0, nextBlink: 2, blinkT: 0, chew: 0, happyUntil: 0, hopV: 0, lastSay: 0,
+      T: {}, touch: [.5, .5], stroke: [0, 0], press: 0, wakeUntil: 0, nextBlink: 2, blinkT: 0, chew: 0, happyUntil: 0, hopV: 0, lastSay: 0,
     };
     const roomOf = (u) => clamp(Math.floor(u), 0, 3);
+    // ポーズ → 写真を ゆがませる りょう
+    function photoPose() {
+      const P = D.P, t = P.t, chew = D.act === "eat" || D.act === "drink" || D.act === "eat2";
+      const idle = 1 - P.walk;
+      return {
+        uT: t, uLie: lieAmt(), uWalk: P.walk, uPh: P.ph,
+        uTilt: P.tilt + P.curl * .22 + Math.sin(t * .5) * .03 * idle,
+        uDown: Math.max(P.down, P.curl * .6),
+        uTurn: P.walk * .9 + (1 - P.look) * idle * .35,
+        uBlink: Math.max(P.blink, P.sleep, P.curl), uHappy: P.happy * (1 - P.curl),
+        uMouth: chew ? Math.abs(Math.sin(t * 9)) * .7 : 0, uClose: Math.max(P.curl, P.sleep),
+        uSway: Math.sin(P.ph) * .045 * P.walk + (P.wag > .5 ? Math.sin(t * 11) * .018 * idle : 0) + (D.act === "poop" ? Math.sin(t * 30) * .006 : 0),
+        bob: Math.abs(Math.sin(P.ph)) * .025 * P.walk + (P.hop || 0) * .8,
+        uPress: D.press, uTouch: D.touch, uStroke: D.stroke,
+      };
+    }
     function pose(p) { D.T = { walk: 0, sit: 0, lie: 0, down: 0, look: 0, squat: 0, curl: 0, tailUp: 0, ...p }; }
     function setAct(a, dur, p = {}) { D.act = a; D.until = performance.now() + dur * 1000; pose(p); }
     function goTo(u, then, fast = false) {
@@ -3723,8 +3627,13 @@ ${letter}
 
     /* ---------- タッチ ---------- */
     const toWorld = (e) => { const r = cv.getBoundingClientRect(); const px = e.clientX - r.left, py = e.clientY - r.top; return { px, py, u: camX + px / W, y: py / Hh }; };
-    const dogScreen = () => ({ x: (D.u - camX) * W, y: FY - S * (D.P.curl > .5 ? .2 : D.P.sit > .5 ? .5 : .42) });
-    function onDog(p) { const d = dogScreen(); return Math.abs(p.px - d.x) < S * .5 && Math.abs(p.py - d.y) < S * .45; }
+    // 写真の くうの 大きさ（背の 高さ）と、足もとの 高さ
+    const DH = () => S * .98, DY = () => FY + (Hh - FY) * .32;
+    const lieAmt = () => Math.max(D.P.lie, D.P.curl, D.P.sit * .15, D.P.squat * .45);
+    const dogScreen = () => ({ x: (D.u - camX) * W, y: DY() - DH() * (.5 - lieAmt() * .1), top: DY() - DH() * (.95 - lieAmt() * .2) });
+    function onDog(p) { const d = dogScreen(); return Math.abs(p.px - d.x) < DH() * KuuPhoto.AR * .5 && Math.abs(p.py - d.y) < DH() * .48; }
+    // なでなで：指の 位置を 写真の 中の 位置に なおす
+    const touchOnPhoto = (p) => { const h = DH(); return [.5 + (p.px - (D.u - camX) * W) / (h * KuuPhoto.AR) * D.dir, (p.py - (DY() - .95 * h)) / h]; };
     let down = null, petAcc = 0, lastTapDog = 0;
     cv.addEventListener("pointerdown", (e) => {
       const p = toWorld(e);
@@ -3739,6 +3648,10 @@ ${letter}
       down.moved += d; down.lx = p.px; down.ly = p.py;
       if (down.dog && onDog(p) && d > 1) {
         petAcc += d;
+        const tp = touchOnPhoto(p), h = DH();
+        D.touch = tp; D.press = 1;
+        D.stroke = [clamp(D.stroke[0] + (p.px - (down.px2 ?? p.px)) / h * .25 * D.dir, -.03, .03), clamp(D.stroke[1] + (p.py - (down.py2 ?? p.py)) / h * .25, -.03, .03)];
+        down.px2 = p.px; down.py2 = p.py;
         if (D.act === "sleep") { if (petAcc > 120) wakeUp(); return; }
         if (D.act !== "pet") { setAct("pet", 1.5, { sit: 1, look: 1 }); }
         D.until = performance.now() + 1500;
@@ -3866,6 +3779,8 @@ ${letter}
       P.happy += ((happy ? 1 : 0) - P.happy) * ease(8);
       P.wag = D.act === "sleep" ? 0 : happy || D.act === "walk" || D.act === "wait" ? 1 : .3;
       D.chew = Math.max(0, D.chew - dt);
+      if (!down || !down.dog) D.press = Math.max(0, D.press - dt * 3);
+      D.stroke[0] *= Math.exp(-dt * 6); D.stroke[1] *= Math.exp(-dt * 6);
       P.mouth = D.act === "eat" || D.act === "drink" ? Math.abs(Math.sin(t / 110)) * .6 : happy ? .7 : D.act === "wait" ? .45 + Math.sin(t / 90) * .15 : 0;
       P.down = D.act === "sniff" ? .5 + Math.sin(t / 240) * .25 : P.down;
       P.earUp = D.act === "look" || D.act === "wait" ? .25 : 0;
@@ -3952,17 +3867,16 @@ ${letter}
       {
         const dx = X(D.u), dy = FY + (Hh - FY) * .32;
         if (dx > -S && dx < W + S) {
-          c.fillStyle = "rgba(60,30,10,.16)"; c.beginPath(); c.ellipse(dx, dy, S * (D.P.curl > .5 ? .42 : .34), S * .05, 0, 0, Math.PI * 2); c.fill();
-          c.save(); c.translate(dx, dy); c.scale(D.dir, 1);
-          KuuDog.draw(c, D.P, S);
-          c.restore();
+          const h = DH(), la = lieAmt();
+          c.fillStyle = "rgba(60,30,10,.18)"; c.beginPath(); c.ellipse(dx, dy, h * (.3 + la * .06), h * .045, 0, 0, Math.PI * 2); c.fill();
+          KuuPhoto.draw(c, dx, dy, h, D.dir, photoPose(), dpr);
           if (D.holding) {
-            const r = Math.max(8, W * .02), bx = dx + D.dir * S * .3, by = dy - S * .5;
+            const r = Math.max(8, W * .02), bx = dx, by = dy - (.54 - la * .2) * h;
             c.fillStyle = "#e35d5d"; c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill(); c.strokeStyle = OL; c.lineWidth = 1.5; c.stroke();
           }
           if (D.act === "sleep") {
             c.fillStyle = "rgba(90,110,170,.75)"; c.font = `600 ${Math.round(S * .1)}px "Klee One", sans-serif`; c.textAlign = "left";
-            for (let i = 0; i < 3; i++) { const k = (tt * .5 + i / 3) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText("z", dx + D.dir * S * .25 + k * S * .2, dy - S * .35 - k * S * .4); }
+            for (let i = 0; i < 3; i++) { const k = (tt * .5 + i / 3) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText("z", dx + D.dir * h * .25 + k * S * .2, dy - h * .7 - k * S * .4); }
             c.globalAlpha = 1;
           }
         }
@@ -4010,7 +3924,7 @@ ${letter}
         bubbleEl.style.visibility = show ? "visible" : "hidden";
         const bw = bubbleEl.offsetWidth / 2 + 6;
         bubbleEl.style.left = `${clamp(d.x, bw, Math.max(bw, W - bw))}px`;
-        bubbleEl.style.top = `${Math.max(8, d.y - S * .62)}px`;
+        bubbleEl.style.top = `${Math.max(8, d.top - 6)}px`;
       }
     }
 
@@ -4052,6 +3966,7 @@ ${letter}
       catchUp();
       size();
       ["img/smile.jpg", "img/pink.jpg", "img/nap.jpg"].forEach(photo);
+      KuuPhoto.load();
       if (!running) { running = true; requestAnimationFrame(loop); }
       // ひらいた ときの くうの 場所（時間と きもちに あわせる）
       if (!entered) {
@@ -4081,7 +3996,7 @@ ${letter}
       const fl = { icon: tr.icon, x0: clamp(b.left + b.width / 2 - r.left, 10, W - 10), y0: Math.min(b.top - r.top, Hh), t0: performance.now() };
       const tick = () => {
         const k = clamp((performance.now() - fl.t0) / 650);
-        flyEl.style.left = `${fl.x0 + (d.x - fl.x0) * k}px`; flyEl.style.top = `${fl.y0 + (d.y - S * .2 - fl.y0) * k - Math.sin(k * Math.PI) * 60}px`;
+        flyEl.style.left = `${fl.x0 + (d.x - fl.x0) * k}px`; flyEl.style.top = `${fl.y0 + (DY() - DH() * .54 - fl.y0) * k - Math.sin(k * Math.PI) * 60}px`;
         if (k < 1) return requestAnimationFrame(tick);
         flyEl.hidden = true;
         if (tr.bad) { snd("hmph"); D.dir = -D.dir; setAct("sit", 2.5, { sit: 1 }); say(tr.say, 4200); done(false); return; }
@@ -4093,7 +4008,7 @@ ${letter}
     const flyEl = document.createElement("span"); flyEl.className = "house-fly"; flyEl.hidden = true; wrap.append(flyEl);
 
     setMode(store.get("kuu-home-mode", "house"));
-    window.__KuuDog = KuuDog;
+    window.__KuuPhoto = KuuPhoto;
     window.__kuuHouse = { D, H, get view() { return viewRoom; }, get cam() { return camX; } };
     $("tab-room").addEventListener("click", enter);
     return { enter, treat, get on() { return mode === "house"; } };
@@ -4629,21 +4544,12 @@ ${letter}
       tries: [], cta: "はじめる", go: () => {}, share: !IN_APP },
   ];
 
-  // ガイド用：おうちの くう（絵。画像に しないで、その場で 描く）
-  function drawKuuPic(c) {
-    try {
-      c.width = 420; c.height = 360;
-      // 小さな 絵は CPUで 描く（一部の 端末の GPUで 色が くずれることがある）
-      const x = c.getContext("2d", { willReadFrequently: true }); x.translate(215, 330);
-      KuuDog.draw(x, { t: 0, walk: 0, ph: 0, sit: 1, lie: 0, down: 0, look: 1, wag: 0, tailUp: 0, blink: 0, sleep: 0, happy: 1, mouth: .7, squat: 0, curl: 0, earUp: .2, hop: 0, tilt: .08 }, 300);
-    } catch {}
-  }
   const GV = {
     face: () => `<div class="gv gv-face"><i></i><img src="img/face.jpg" alt=""></div>`,
     dots: () => `<div class="gv gv-dots"><img src="img/face.jpg" alt=""></div>`,
     path: () => `<div class="gv gv-path"><img src="img/baby.jpg" alt=""><img src="img/cake.jpg" alt=""><img src="img/smile.jpg" alt=""></div>`,
     sky: () => `<div class="gv gv-sky"><img src="img/face.jpg" alt=""><b style="left:18%;top:62%"></b><b style="left:46%;top:74%"></b><b style="left:78%;top:58%"></b><b style="left:70%;top:24%"></b><em></em></div>`,
-    house: () => `<div class="gv gv-house"><canvas aria-hidden="true"></canvas><q>ママ、おかえり！</q></div>`,
+    house: () => `<div class="gv gv-house"><img src="img/kuu-body.png" alt=""><q>ママ、おかえり！</q></div>`,
     room: () => `<div class="gv gv-room"><img src="img/room.jpg" alt=""><span>♥</span><span>♥</span><span>♥</span><q>くぅ〜ん</q></div>`,
     walk: () => `<div class="gv gv-walk"><i></i><i></i><i></i><i></i><img src="img/face.jpg" alt=""></div>`,
     letter: () => `<div class="gv gv-letter"><div><b>ママへ！</b><p>おてがみ、ちゃーんと とどいたよ。<br>くう、なんかいも よんじゃった。</p><small>くうより</small></div></div>`,
@@ -4665,7 +4571,6 @@ ${letter}
   function renderGuide(dir = 1) {
     const s = GUIDE[gi];
     $("guideVisual").innerHTML = GV[s.v]();
-    $("guideVisual").querySelectorAll(".gv-house canvas").forEach(drawKuuPic);
     $("guideEyebrow").textContent = s.eyebrow;
     $("guideStep").textContent = `${String(gi + 1).padStart(2, "0")} / ${String(GUIDE.length).padStart(2, "0")}`;
     $("guideTitle").textContent = s.title;
@@ -5285,7 +5190,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011329").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011347").catch(() => {});
 </script>
 </body>
 </html>

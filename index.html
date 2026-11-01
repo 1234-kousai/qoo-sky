@@ -898,6 +898,68 @@
     nav[role="tablist"]::after { transition: none; }
   }
 
+  /* ---------- くうの せかい（フル画面） ---------- */
+  .world-door {
+    position: relative; isolation: isolate; width: 100%; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 16px; text-align: left;
+    padding: 16px 18px; border-radius: 18px; border: 1px solid rgba(214,181,122,.55); background: linear-gradient(135deg, rgba(214,181,122,.16), rgba(7,8,13,.6)); color: var(--cream); font: inherit; cursor: pointer;
+    box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  }
+  .world-door img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(214,181,122,.6); }
+  .world-door .door-text { display: grid; gap: 4px; min-width: 0; }
+  .world-door b { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: .12em; }
+  .world-door small { font-size: 12px; color: var(--mist); letter-spacing: .04em; }
+  .world-door .door-arrow { font-size: 14px; color: var(--honey); padding: 10px 14px; border: 1px solid rgba(214,181,122,.5); border-radius: 999px; }
+  .world-door .door-glow { position: absolute; inset: -14px; z-index: -1; border-radius: 24px; background: radial-gradient(closest-side, rgba(214,181,122,.35), transparent); opacity: .35; animation: breathe 3.6s ease-in-out infinite; }
+  .world-door:active { transform: scale(.985); }
+  .world-hint { margin: -16px 0 0; text-align: center; font-size: 12px; color: var(--mist); }
+  @media (max-width: 420px) { .world-door { grid-template-columns: 52px 1fr auto; gap: 12px; padding: 14px; } .world-door img { width: 52px; height: 52px; } .world-door b { font-size: 17px; } .world-door .door-arrow { padding: 8px 11px; } }
+
+  .world {
+    position: fixed; inset: 0; z-index: 40; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden;
+    color: var(--cream); background: var(--wbg, #07080d); transition: background 1s;
+  }
+  .world[hidden] { display: none; }
+  .world[data-room="sky"] { --wbg: radial-gradient(120% 70% at 50% 0%, #15203f 0%, #090b16 60%, #07080d 100%); }
+  .world[data-room="room"] { --wbg: radial-gradient(120% 70% at 50% 0%, #2a2114 0%, #120f0c 60%, #07080d 100%); }
+  .world[data-room="walk"] { --wbg: radial-gradient(120% 70% at 50% 0%, #163045 0%, #0b1420 60%, #07080d 100%); }
+  .world[data-room="letter"] { --wbg: radial-gradient(120% 70% at 50% 0%, #2c2518 0%, #15110d 60%, #07080d 100%); }
+  .world[data-room="kuji"] { --wbg: radial-gradient(120% 70% at 50% 0%, #3a1a1a 0%, #170d0d 60%, #07080d 100%); }
+  .world.opening { animation: worldOpen .6s cubic-bezier(.2,.8,.2,1); }
+  @keyframes worldOpen { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: none; } }
+  .world-hud {
+    display: grid; grid-template-columns: 40px 1fr auto auto 40px; align-items: center; gap: 8px;
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 8px; background: rgba(7,8,13,.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(214,181,122,.18);
+  }
+  .hud-back, .hud-sound { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(214,181,122,.35); background: rgba(255,255,255,.05); color: var(--cream); font: inherit; font-size: 24px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+  .hud-sound { font-size: 17px; }
+  .hud-sound[aria-pressed="false"] { opacity: .5; }
+  .hud-title { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: 16px; letter-spacing: .14em; color: var(--honey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hud-pill { font-size: 12px; color: var(--cream); white-space: nowrap; padding: 4px 9px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(214,181,122,.25); }
+  .hud-pill.pop { animation: pillPop .5s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes pillPop { 50% { transform: scale(1.18); background: rgba(214,181,122,.3); } }
+  .world-stage { position: relative; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 14px var(--gutter-r, 16px) 28px var(--gutter-l, 16px); }
+  .world-stage > section[role="tabpanel"] { max-width: 880px; margin: 0 auto; }
+  .world-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; display: none; }
+  .world-fx.on { display: block; }
+  /* 下の メニュー（ゲームの HUD） */
+  #world nav[role="tablist"] {
+    position: static; z-index: auto; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0;
+    padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 8px); border: 0; border-top: 1px solid rgba(214,181,122,.18);
+    background: rgba(7,8,13,.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  #world nav[role="tablist"]::after { display: none; }
+  #world nav[role="tablist"] button {
+    display: grid; justify-items: center; gap: 2px; padding: 8px 2px 6px; border-radius: 14px; border: 0; background: transparent;
+    color: var(--mist); font-family: var(--f-display); font-weight: 500; font-size: 11px; letter-spacing: .04em; cursor: pointer; transition: color .25s, background-color .25s, transform .14s;
+  }
+  #world nav[role="tablist"] button i { font-style: normal; font-size: 24px; line-height: 1.15; filter: grayscale(.6) brightness(.85); transition: filter .25s, transform .25s; }
+  #world nav[role="tablist"] button[aria-selected="true"] { color: var(--honey); background: rgba(214,181,122,.12); }
+  #world nav[role="tablist"] button[aria-selected="true"] i { filter: none; transform: translateY(-2px) scale(1.12); }
+  #world nav[role="tablist"] button:active { transform: scale(.92); }
+  html.in-world, html.in-world body { overflow: hidden; height: 100%; }
+  @media (prefers-reduced-motion: reduce) { .world.opening { animation: none; } .world-door .door-glow { animation: none; } }
+
   /* ---------- ちいさな 動きと かざり ---------- */
   .today-photo { overflow: hidden; }
   .today-photo img { animation: kenburns 14s ease-in-out infinite alternate; transform-origin: 50% 40%; }
@@ -1065,16 +1127,28 @@
     </div>
   </section>
 
-  <nav role="tablist" aria-label="へや">
-    <button role="tab" id="tab-sky" aria-controls="sky" aria-selected="true">ほしぞら<small>Stars</small></button>
-    <button role="tab" id="tab-room" aria-controls="room" aria-selected="false">おへや<small>Room</small></button>
-    <button role="tab" id="tab-walk" aria-controls="walk" aria-selected="false">おさんぽ<small>Walk</small></button>
-    <button role="tab" id="tab-letter" aria-controls="letter" aria-selected="false">おてがみ<small>Letter</small></button>
-    <button role="tab" id="tab-kuji" aria-controls="kuji" aria-selected="false">おみくじ<small>Fortune</small></button>
-  </nav>
+  <!-- くうの せかいへの 入口（おして フル画面に） -->
+  <button class="world-door" id="worldDoor" type="button" data-sfx="open">
+    <span class="door-glow" aria-hidden="true"></span>
+    <img src="img/face.jpg" alt="">
+    <span class="door-text"><b>くうの せかいへ</b><small>ほしぞら・おうち・おさんぽ・おてがみ・おみくじ</small></span>
+    <span class="door-arrow" aria-hidden="true">▶</span>
+  </button>
+  <p class="world-hint" id="worldLast" hidden></p>
+
+  <!-- フル画面の せかい -->
+  <div class="world" id="world" data-room="sky" hidden aria-label="くうの せかい">
+    <header class="world-hud">
+      <button class="hud-back" id="worldClose" type="button" data-sfx="close" aria-label="ページに もどる">‹</button>
+      <h2 class="hud-title" id="hudTitle">ほしぞら</h2>
+      <span class="hud-pill" id="hudWish" title="きょうの おねがい">🐾 0/3</span>
+      <span class="hud-pill" id="hudBones" title="ためた ほね">🦴 0</span>
+      <button class="hud-sound" id="hudSound" type="button" data-sfx="none" aria-pressed="true" aria-label="音の オン・オフ">🔊</button>
+    </header>
+    <div class="world-stage" id="worldStage">
 
   <!-- ほしぞら -->
-  <section role="tabpanel" id="sky" aria-labelledby="tab-sky">
+      <section role="tabpanel" id="sky" aria-labelledby="tab-sky">
     <div class="sky-box">
       <canvas id="skyCanvas" aria-label="くうちゃんの思い出の星空。星をタップすると写真が見られます"></canvas>
       <div class="toast" id="skyToast" aria-live="polite"></div>
@@ -1096,7 +1170,7 @@
   </section>
 
   <!-- おへや -->
-  <section role="tabpanel" id="room" aria-labelledby="tab-room" hidden>
+      <section role="tabpanel" id="room" aria-labelledby="tab-room" hidden>
     <div class="home-switch" role="group" aria-label="くうと すごす ばしょ">
       <button type="button" id="modeHouse" aria-pressed="true"><i aria-hidden="true">🏡</i><span>おうち<small>くうが くらす</small></span></button>
       <button type="button" id="modeDakko" aria-pressed="false"><img src="img/face.jpg" alt=""><span>写真の くう<small>なでなで</small></span></button>
@@ -1147,7 +1221,7 @@
   </section>
 
   <!-- おさんぽ -->
-  <section role="tabpanel" id="walk" aria-labelledby="tab-walk" hidden>
+      <section role="tabpanel" id="walk" aria-labelledby="tab-walk" hidden>
     <div class="game-box">
       <canvas id="walkCanvas" width="800" height="400" aria-label="くうちゃんのおさんぽゲーム。タップでジャンプ"></canvas>
       <div class="game-ui" id="walkStart">
@@ -1177,7 +1251,7 @@
   </section>
 
   <!-- おてがみ -->
-  <section role="tabpanel" id="letter" aria-labelledby="tab-letter" hidden>
+      <section role="tabpanel" id="letter" aria-labelledby="tab-letter" hidden>
     <form class="letter" id="letterForm">
       <label for="letterText">くうちゃんへ</label>
       <textarea id="letterText" maxlength="1200" placeholder="きょうね、くうの好きだったおやつを見かけたよ。&#10;いまでも ただいまって言っちゃう。&#10;15年、いっしょにいてくれてありがとう。"></textarea>
@@ -1199,7 +1273,7 @@
   </section>
 
   <!-- くうみくじ -->
-  <section role="tabpanel" id="kuji" aria-labelledby="tab-kuji" hidden>
+      <section role="tabpanel" id="kuji" aria-labelledby="tab-kuji" hidden>
     <div class="kuji-stage">
       <p class="kuji-date" id="kujiDate"></p>
       <div class="kuji-wrap" id="kujiWrap" aria-hidden="true">
@@ -1225,6 +1299,17 @@
       <p class="note" id="kujiNote"></p>
     </article>
   </section>
+
+    </div>
+    <canvas class="world-fx" id="worldFx" aria-hidden="true"></canvas>
+    <nav role="tablist" aria-label="へや" class="world-nav">
+      <button role="tab" id="tab-sky" aria-controls="sky" aria-selected="true" data-sfx="none"><i aria-hidden="true">✨</i>ほしぞら</button>
+      <button role="tab" id="tab-room" aria-controls="room" aria-selected="false" data-sfx="none"><i aria-hidden="true">🏡</i>おへや</button>
+      <button role="tab" id="tab-walk" aria-controls="walk" aria-selected="false" data-sfx="none"><i aria-hidden="true">🐾</i>おさんぽ</button>
+      <button role="tab" id="tab-letter" aria-controls="letter" aria-selected="false" data-sfx="none"><i aria-hidden="true">💌</i>おてがみ</button>
+      <button role="tab" id="tab-kuji" aria-controls="kuji" aria-selected="false" data-sfx="none"><i aria-hidden="true">🎴</i>おみくじ</button>
+    </nav>
+  </div>
 
   <button class="guide-link records-link" type="button" data-goto="numbers">くうとの きろくを 見る</button>
   <footer>For Tomomi &amp; Qoo — from Kousai</footer>
@@ -1427,6 +1512,61 @@
     set(k, v) { if (window.__qooFreeze) return false; try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
   };
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ================= 効果音（音のファイルなし。その場で つくる。ボタンを おすたびに 鳴る） ================= */
+  const sfx = (() => {
+    let ac = null, out = null;
+    const on = () => { if (!ac) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); out = ac.createGain(); out.gain.value = .5; out.connect(ac.destination); } if (ac.state !== "running") ac.resume(); return ac; };
+    const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+    // オルゴールの「チーン」
+    const tine = (m, at, vel = .2, dk = 1) => {
+      const f = hz(m);
+      for (const [mu, am, d] of [[1, 1, 1.4], [2.01, .2, .5], [4.2, .05, .2]]) {
+        const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine"; o.frequency.value = f * mu;
+        g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(vel * am, at + .004); g.gain.exponentialRampToValueAtTime(.0001, at + d * dk);
+        o.connect(g); g.connect(out); o.start(at); o.stop(at + d * dk + .05);
+      }
+    };
+    // やわらかい「ぽん」
+    const pop = (f0, f1, dur, vel, type = "sine") => {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = type;
+      const t = ac.currentTime; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + dur + .02);
+    };
+    const thump = (vel) => {
+      const n = ac.createBufferSource(), b = ac.createBuffer(1, ac.sampleRate * .12, ac.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+      n.buffer = b; const f = ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 500; const g = ac.createGain(); g.gain.value = vel;
+      n.connect(f); f.connect(g); g.connect(out); n.start();
+    };
+    const SOUNDS = {
+      tap: () => pop(720, 520, .08, .18),
+      pick: () => { pop(420, 760, .1, .2, "triangle"); },
+      close: () => { thump(.35); pop(300, 180, .09, .12); },
+      open: () => { const t = ac.currentTime; [72, 76, 79, 84, 88].forEach((m, i) => tine(m, t + i * .07, .14)); },
+      tab: () => { const t = ac.currentTime; [79, 84, 91].forEach((m, i) => tine(m, t + i * .05, .12, .6)); },
+      bone: () => { const t = ac.currentTime; tine(96, t, .12, .5); tine(103, t + .06, .08, .4); },
+      success: () => { const t = ac.currentTime; [84, 88, 91, 96, 100, 103].forEach((m, i) => tine(m, t + i * .06, .14 - i * .01)); },
+      big: () => { const t = ac.currentTime; [72, 76, 79, 84, 76, 79, 84, 88, 91, 96].forEach((m, i) => tine(m, t + i * .07, .14)); },
+      nope: () => { pop(300, 220, .14, .14, "triangle"); setTimeout(() => pop(260, 190, .16, .14, "triangle"), 130); },
+    };
+    const api = {
+      enabled: store.get("qoo-sound", true),
+      play(name) { if (!api.enabled || !SOUNDS[name]) return; try { if (on()) SOUNDS[name](); } catch {} },
+    };
+    // さいしょの タッチで 音の 準備（ブラウザの きまり）
+    addEventListener("pointerdown", () => on(), { once: true, capture: true });
+    // ボタンを おしたら 音（data-sfx で ことなる 音に。"none" は 鳴らさない）
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("button, [role=tab], a.btn, .treat, .trick, .shop-item, .cal-day, .mood-btn");
+      if (!el || el.disabled) return;
+      const k = el.dataset.sfx || (el.matches(".album-x, .guide-x, .hud-back") ? "close" : el.matches(".treat") ? "pick" : "tap");
+      if (k !== "none") api.play(k);
+    }, true);
+    return api;
+  })();
+  window.QooSfx = sfx;
   // くうの おたんじょうび：2010年8月5日
   const isBirthday = (d = new Date()) => d.getMonth() === 7 && d.getDate() === 5;
   const birthdayCount = (d = new Date()) => d.getFullYear() - 2010;
@@ -1946,7 +2086,86 @@
     current = name;
   }
   let current = "sky";
-  for (const t of tabs) $("tab-" + t).addEventListener("click", () => { show(t); try { history.replaceState(null, "", "#" + t); } catch {} });
+  const ROOM_NAMES = { sky: "ほしぞら", room: "おへや", walk: "おさんぽ", letter: "おてがみ", kuji: "おみくじ" };
+
+  /* ---------- くうの せかい（フル画面）：ひらく・とじる・へやの きりかえ（金色の 粒が よこぎる） ---------- */
+  const worldEl = $("world"), fxEl = $("worldFx"), stageEl = $("worldStage");
+  let worldOpen = false, fxRun = 0;
+  function sweep(ms, mid) {
+    // 金色の 粒の 帯が 左から 右へ。まんなかで へやを いれかえる
+    const c = fxEl.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1);
+    const W = worldEl.clientWidth, H = worldEl.clientHeight;
+    fxEl.width = W * dpr; fxEl.height = H * dpr; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    fxEl.classList.add("on");
+    const N = 160, ps = [];
+    for (let i = 0; i < N; i++) ps.push({ y: Math.random() * H, o: (Math.random() - .5) * .34, r: 1.2 + Math.random() * 2.6, a: .5 + Math.random() * .5, s: .6 + Math.random() * .8 });
+    const t0 = performance.now(), id = ++fxRun; let swapped = false;
+    const frame = (now) => {
+      if (id !== fxRun) return;
+      const k = Math.min(1, (now - t0) / ms);
+      c.clearRect(0, 0, W, H);
+      const x0 = -W * .35 + (W * 1.7) * k;
+      const g = c.createLinearGradient(x0 - W * .3, 0, x0 + W * .3, 0);
+      g.addColorStop(0, "rgba(214,181,122,0)"); g.addColorStop(.5, "rgba(244,228,193,.22)"); g.addColorStop(1, "rgba(214,181,122,0)");
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      for (const p of ps) {
+        const px = x0 + p.o * W + Math.sin(now / 90 + p.y) * 6, py = p.y + (k - .5) * 30 * p.s;
+        const al = p.a * Math.sin(k * Math.PI);
+        c.fillStyle = `rgba(244,228,193,${al})`; c.beginPath(); c.arc(px, py, p.r, 0, Math.PI * 2); c.fill();
+      }
+      if (!swapped && k >= .45) { swapped = true; mid(); }
+      if (k < 1) requestAnimationFrame(frame); else { c.clearRect(0, 0, W, H); fxEl.classList.remove("on"); }
+    };
+    if (reduced) { mid(); fxEl.classList.remove("on"); return; }
+    requestAnimationFrame(frame);
+  }
+  function setRoom(name) {
+    show(name);
+    worldEl.dataset.room = name;
+    $("hudTitle").textContent = ROOM_NAMES[name];
+    stageEl.scrollTo({ top: 0 });
+    try { history.replaceState(null, "", "#" + name); } catch {}
+    store.set("qoo-last-room", name);
+  }
+  function transitionTo(name) {
+    if (!tabs.includes(name)) return;
+    if (!worldOpen) { openWorld(name); return; }
+    if (name === current) { stageEl.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); return; }
+    sfx.play("tab");
+    sweep(520, () => setRoom(name));
+  }
+  function openWorld(name = store.get("qoo-last-room", "sky"), instant = false) {
+    if (!tabs.includes(name)) name = "sky";
+    worldEl.hidden = false; worldOpen = true;
+    document.documentElement.classList.add("in-world");
+    if (!instant) { worldEl.classList.remove("opening"); void worldEl.offsetWidth; worldEl.classList.add("opening"); sfx.play("open"); }
+    setRoom(name);
+    // きりかえた あと、キャンバスの 大きさを あわせる
+    requestAnimationFrame(() => { sizeSky(); try { fitGame(); drawWalk(performance.now()); } catch {} });
+    if (name === "walk") startWalkLoop();
+    if (name === "room") { room.enter(); house.enter(); }
+    $("worldLast").hidden = true;
+  }
+  function closeWorld() {
+    if (!worldOpen) return;
+    worldOpen = false; fxRun++;
+    worldEl.hidden = true; worldEl.classList.remove("opening"); fxEl.classList.remove("on");
+    document.documentElement.classList.remove("in-world");
+    pauseWalk();
+    try { history.replaceState(null, "", location.pathname + location.search); } catch {}
+    const last = $("worldLast"); last.textContent = `さっきまで：${ROOM_NAMES[current]}`; last.hidden = false;
+    $("worldDoor").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+  }
+  $("worldDoor").addEventListener("click", () => openWorld());
+  $("worldClose").addEventListener("click", closeWorld);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && worldOpen && !document.querySelector(".overlay:not([hidden]), #guide:not([hidden])")) closeWorld(); });
+  window.QooWorld = { open: openWorld, close: closeWorld, go: transitionTo, get isOpen() { return worldOpen; } };
+  for (const t of tabs) $("tab-" + t).addEventListener("click", () => transitionTo(t));
+  // 音の オン・オフ
+  const soundBtn = $("hudSound");
+  const applySound = () => { const on = sfx.enabled; soundBtn.setAttribute("aria-pressed", String(on)); soundBtn.textContent = on ? "🔊" : "🔇"; try { window.QooMusic.mute(!on); } catch {} };
+  soundBtn.addEventListener("click", () => { sfx.enabled = !sfx.enabled; store.set("qoo-sound", sfx.enabled); applySound(); if (sfx.enabled) sfx.play("tap"); });
+  applySound();
 
   /* ================= ほしぞら ================= */
   const KUU_SAYS = [
@@ -2559,7 +2778,7 @@
       } else if (Math.hypot(cx - kx, cy - ky) < 42 * KS()) {
         it.got = true;
         if (it.k === "bone") { G.bones++; if (Math.random() < .35) floatText(SAY_BONE[Math.floor(Math.random() * SAY_BONE.length)], kx, ky - 60, "#8a5a1f"); }
-        else if (it.k === "find") { G.found.push(it.id); const def = life.item(it.id); floatText(def.say, kx, ky - 60, "#6a4a8a"); life.find(it.id); }
+        else if (it.k === "find") { sfx.play("pick"); G.found.push(it.id); const def = life.item(it.id); floatText(def.say, kx, ky - 60, "#6a4a8a"); life.find(it.id); }
         else { G.hearts++; floatText("だいすき！", kx, ky - 60, "#d44a6a"); }
         for (let i = 0; i < 8; i++) G.parts.push({ x: cx, y: cy, vx: (Math.random() - .5) * 200, vy: (Math.random() - .5) * 200, life: .5, c: it.k === "bone" ? "#f2b866" : "#f394a4", r: 2.5 });
       }
@@ -4880,6 +5099,9 @@ ${letter}
         return li;
       }));
       const left = d.wishes.filter((w) => !w.done).length;
+      const hw = $("hudWish"), hb = $("hudBones");
+      if (hw) { const txt = `🐾 ${d.wishes.length - left}/${d.wishes.length}`; if (hw.textContent !== txt) { hw.textContent = txt; hw.classList.remove("pop"); void hw.offsetWidth; hw.classList.add("pop"); } }
+      if (hb) { const txt = `🦴 ${life.L.bones}`; if (hb.textContent !== txt) { hb.textContent = txt; hb.classList.remove("pop"); void hb.offsetWidth; hb.classList.add("pop"); } }
       noteEl.textContent = d.all ? "きょうの おねがいは ぜんぶ かなえてくれた！ また あしたね。" : `あと ${left}こ。ぜんぶ かなえると スタンプと ほね +5`;
     }
     life.on(renderWishes);
@@ -4899,6 +5121,7 @@ ${letter}
       setTimeout(() => { toast.hidden = true; showing = false; next(); }, 2600);
     }
     life.onToast((e) => {
+      sfx.play(e.kind === "all" || e.kind === "mile" || e.kind === "place" ? "big" : "success");
       if (e.kind === "wish") queue.push(`<b>おねがい かなえた！</b><span>${e.def.icon} ${e.def.text}　🦴+${e.def.bones}</span>`);
       else if (e.kind === "all") queue.push(`<b>🐾 スタンプ ゲット！</b><span>きょうの おねがい ぜんぶ！　🦴+5</span>`);
       else if (e.kind === "mile") queue.push(`<b>🎁 ${e.mile.msg}</b><span>ほね +${e.mile.b}</span>`);
@@ -5044,6 +5267,7 @@ ${letter}
           if (owned && !d.stack) { play.toggle(d.id); msg("shopMsg", play.on(d.id) ? `${d.name} を つかったよ。` : `${d.name} を はずしたよ。`); }
           else {
             const r = play.buy(d.id);
+            sfx.play(r.ok ? "bone" : "nope");
             msg("shopMsg", r.ok ? (d.stack ? "たねを かったよ。おにわの はたけを タップして まいてね。" : `${d.name} を かったよ！ くう、よろこんでる！`) : `ほねが あと ${r.need}本 たりないよ。おねがいや おさんぽで ためてね。`);
           }
           renderShop();
@@ -5087,6 +5311,7 @@ ${letter}
     $("cookGo").addEventListener("click", () => {
       const [a, b] = pick;
       const r = play.cook(a, b);
+      sfx.play(r.kind === "ok" ? (r.isNew ? "success" : "bone") : "nope");
       if (r.kind === "bad") { msg("cookMsg", `🐶「まって、ママ！ ${r.ing.bad}」`); pick = pick.filter((x) => x !== r.ing.id); }
       else if (r.kind === "ok") {
         msg("cookMsg", `${r.r.icon} ${r.r.name} が できた！${r.isNew ? "　あたらしい レシピ！" : ""}　おやつばこに いれたよ。`);
@@ -5587,7 +5812,7 @@ ${letter}
     $("inappClose").addEventListener("click", () => { bar.hidden = true; });
   }
 
-  const goTab = (name) => { $("tab-" + name).click(); $("rooms").scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); };
+  const goTab = (name) => { openWorld(name); };
   const homeTip = isIOS
     ? "Safariの 共有ボタン（□に↑）→「ホーム画面に追加」で、アプリみたいに ワンタップで 会えます。"
     : isAndroid
@@ -5795,15 +6020,7 @@ ${letter}
     navEl.style.setProperty("--ux", `${b.offsetLeft + b.offsetWidth * .22}px`);
     navEl.style.setProperty("--uw", `${b.offsetWidth * .56}px`);
   }
-  for (const t of tabs) $("tab-" + t).addEventListener("click", () => {
-    moveUnderline();
-    const panel = $(t);
-    panel.classList.remove("panel-in"); void panel.offsetWidth; panel.classList.add("panel-in");
-    const navH = navEl.getBoundingClientRect().height, pTop = panel.getBoundingClientRect().top;
-    if (pTop < navH) scrollTo({ top: scrollY + pTop - navH - 10, behavior: reduced ? "auto" : "smooth" });
-  });
-  addEventListener("resize", moveUnderline);
-  requestAnimationFrame(moveUnderline);
+  addEventListener("resize", () => { if (worldOpen) { sizeSky(); try { fitGame(); } catch {} } });
   // 画面（アルバム・ガイドなど）を ひらいている あいだは、うしろの ページが うごかないように
   const lockables = [...document.querySelectorAll(".overlay, #guide")];
   const syncLock = () => document.documentElement.classList.toggle("modal-open", lockables.some((el) => !el.hidden));
@@ -5826,11 +6043,10 @@ ${letter}
   });
   fitGame(); setOutfit(outfit);
   const startHash = (location.hash || "").slice(1);
-  show(tabs.includes(startHash) ? startHash : "sky");
-  if (current === "walk") startWalkLoop();
-  if (current === "room") { room.enter(); house.enter(); }
+  show("sky");
   sizeSky(); requestAnimationFrame(skyLoop);
   drawWalk(0);
+  if (tabs.includes(startHash)) openWorld(startHash, true);
 })();
 </script>
 <script>
@@ -6005,7 +6221,7 @@ ${letter}
   });
 
   $("toRooms").addEventListener("click", () => $("rooms").scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
-  if (["sky", "room", "walk", "letter", "kuji"].includes(location.hash.slice(1))) setTimeout(() => $("rooms").scrollIntoView(), 80);
+
 
   const noGL = () => document.documentElement.classList.add("no-gl");
   if (!window.THREE) { noGL(); return; }
@@ -6320,7 +6536,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011538").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011610").catch(() => {});
 </script>
 </body>
 </html>

@@ -1423,7 +1423,8 @@
   const $ = (id) => document.getElementById(id);
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+    // バックアップから もどした あとは、よみこみなおすまで 書かない（いまの 画面の ふるい きろくで 上書きしないように）
+    set(k, v) { if (window.__qooFreeze) return false; try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
   };
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   // くうの おたんじょうび：2010年8月5日
@@ -2395,7 +2396,11 @@
     try { downloads = await window.claude?.use?.("downloads"); } catch { downloads = null; }
     $("albumExport").hidden = !downloads && !STANDALONE;
   })();
-  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits", "kuu-house", "kuu-home-mode", "kuu-life"];
+  const BACKUP_KEYS = ["kuu-letters", "qoo-kuu-letters", "qoo-mood", "kuu-chat", "kuu-room", "kuu-kuji", "kuu-walk-best", "kuu-outfit", "qoo-wishes", "qoo-stats", "qoo-visits", "kuu-house", "kuu-home-mode", "kuu-life", "qoo-notify", "qoo-guide-ver"];
+  const PROGRESS = {
+    "kuu-life": (v) => Object.keys(v.days || {}).length * 100 + (v.bones || 0) + Object.keys(v.found || {}).length * 10 + (v.owned || []).length * 10 + (v.step?.total || 0) / 100 + (v.recipes || []).length * 10,
+    "kuu-house": (v) => (v.fed || 0) + (v.cleaned || 0),
+  };
   function backupData() { const o = {}; for (const k of BACKUP_KEYS) { const v = store.get(k, null); if (v != null) o[k] = v; } return o; }
   // もどすときは、いまの データと まぜる（同じものは 2重に しない、数字は 大きいほう）
   function mergeData(src) {
@@ -2404,7 +2409,12 @@
       if (!(k in src)) continue;
       const cur = store.get(k, null), inc = src[k];
       let next;
-      if (Array.isArray(inc)) {
+      // ゲームの きろく（くらし・おうち）は、まぜずに「すすんでいる ほう」を まるごと つかう
+      if (PROGRESS[k] && inc && typeof inc === "object") {
+        next = cur && typeof cur === "object" && PROGRESS[k](cur) > PROGRESS[k](inc) ? cur : inc;
+        // 歩数計の 値は スマホごとに ちがうので、もどしたら 数えなおす
+        if (k === "kuu-life" && next === inc && next.step) next = { ...next, step: { ...next.step, raw: null, boot: 0, granted: false } };
+      } else if (Array.isArray(inc)) {
         const seen = new Set((Array.isArray(cur) ? cur : []).map((x) => JSON.stringify(x)));
         next = (Array.isArray(cur) ? cur : []).concat(inc.filter((x) => !seen.has(JSON.stringify(x))));
       } else if (typeof inc === "number") next = Math.max(Number(cur) || 0, inc);
@@ -2416,6 +2426,8 @@
     }
     return changed;
   }
+  // アプリの じどう バックアップ用（native.js が つかう）
+  window.QooBackup = async () => album.exportBlob(backupData());
   $("albumExport").addEventListener("click", async () => {
     try {
       const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
@@ -2435,7 +2447,7 @@
       if (!n && !changed) $("albumBackupMsg").textContent = "あたらしく もどす ものは ありませんでした。";
       else {
         $("albumBackupMsg").textContent = `もどしました（写真 ${n}まい${changed ? "・手紙や きろくも" : ""}）。ページを よみこみなおします…`;
-        if (changed) setTimeout(() => location.reload(), 1400);
+        if (changed) { window.__qooFreeze = true; setTimeout(() => location.reload(), 1400); }
       }
     } catch {
       $("albumBackupMsg").textContent = "このファイルは よみこめませんでした。「ファイルに 保存」で作った ファイルを えらんでね。";
@@ -6308,7 +6320,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011511").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011527").catch(() => {});
 </script>
 </body>
 </html>

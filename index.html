@@ -2186,6 +2186,28 @@
     "へそてんで おひるねしてたら、ママの ゆめ見たよ！",
     "ピンクのふく、ぼく にあってたでしょ？ おとこのこだけどね！",
   ];
+  // 友美さんが あとから くれた 思い出の写真（2026-11-02）。y は 思い出の道に ならべる 年の目安
+  const MORE_PHOTOS = window.QOO_MORE = [
+    { id: "m-card", y: 2010.66, fx: .08, fy: .18, title: "ちっちゃな くうちゃん", text: "きいろの バンダナで、ちょこん。まだ 毛が グレーっぽいでしょ？ ここから ハチミツいろに なっていくんだ。" },
+    { id: "m-sofa", y: 2010.72, fx: .3, fy: .1, title: "おててを ちょこん", text: "ソファに おててを のせて、ママ まだかなって まってたの。" },
+    { id: "m-cage", y: 2010.78, fx: .2, fy: .24, title: "ケージで すやすや", text: "きいろの おもちゃと いっしょに おひるね。ふかふかの ベッド、だいすきだった。" },
+    { id: "m-tail", y: 2010.85, fx: .38, fy: .3, title: "しっぽ ぴーん", text: "しっぽを ぴーんって たてて、ママの ほうを 見てるの。あそぼって いってるんだよ！" },
+    { id: "m-peek", y: 2010.95, fx: .05, fy: .5, title: "もぐって かくれんぼ", text: "もうふに もぐって、すきまから ママを のぞいてたの。みつかっちゃった？" },
+    { id: "m-floor", y: 2011.5, fx: .74, fy: .12, title: "ママを おでむかえ", text: "フローリングで にっこり。ママの あしもとが、ぼくの いちばんの ばしょ。" },
+    { id: "m-look", y: 2012.5, fx: .92, fy: .26, title: "じーっと みつめて", text: "おすわりして、じーっと。ママ、なにか くれるの？ くれないの？" },
+    { id: "m-close", y: 2013.5, fx: .63, fy: .4, title: "ちかすぎ ショット", text: "ママ、ちかいよ〜！ でも ぼくの おはな、かわいいでしょ。" },
+    { id: "m-tongue", y: 2014, fx: .95, fy: .5, title: "べろ ぺろっ", text: "ねむくて、べろが ちょっと でちゃった。ないしょだよ。" },
+    { id: "m-sleep", y: 2014.5, fx: .67, fy: .53, title: "ぐっすり おやすみ", text: "ママの おふとんで、ぐーぐー。ゆめの なかでも ママと いっしょ。" },
+    { id: "m-lap", y: 2016, fx: .38, fy: .58, title: "ママに くっついて", text: "ほっぺを ぴったり くっつけて ねるの。ママの においが、いちばん あんしんする。" },
+    { id: "m-cozy", y: 2017, fx: .07, fy: .76, title: "ぬくぬく おひるね", text: "ふわふわに くるまって、ぬくぬく。しあわせの かおでしょ？" },
+    { id: "m-newyear", y: 2018.01, fx: .34, fy: .74, title: "いぬどしの おしょうがつ", text: "がしょう！ いぬどしは ぼくの としだよ。きものの えり、にあう？" },
+    { id: "m-music", y: 2018.62, fx: .6, fy: .76, title: "おんぷに かこまれて", text: "2018年8月13日。おんぷに かこまれて、おすまし。ぼく、うたも とくいなんだよ。…わんわん！" },
+    { id: "m-autumn", y: 2018.76, fx: .9, fy: .74, title: "あきの にっこり", text: "2018年10月4日。まつぼっくりの あき。わらってる かお、いちばん とくい！" },
+    { id: "m-tulip", y: 2019.12, fx: .42, fy: .87, title: "チューリップと べろ", text: "2019年2月15日。チューリップと おにぎり。おいしそうで、つい べろ ぺろり。" },
+    { id: "m-summer", y: 2019.5, fx: .86, fy: .88, title: "ちょうネクタイの なつ", text: "2019年7月2日。すいかと 青い ちょうネクタイ。なつの ぼく、かっこいいでしょ？" },
+    { id: "m-bath", y: 2020, fx: .56, fy: .88, title: "あわあわ おふろ", text: "あわあわで ぬれいぬ！ おふろの あとは、ママに ふいてもらうのが すきだったな。" },
+    { id: "m-heart", y: 2025.16, fx: .13, fy: .9, title: "14さいの にっこり", text: "14さいでも、えがおは かわらないよ。ハートに かこまれて、ぼく しあわせ！" },
+  ].map((m) => ({ ...m, img: `img/${m.id}.jpg` }));
   // くうちゃん座: 星をむかしから順につなぐと、くうの15年の道になる
   const BASE_STARS = [
     { id: "kuu", fx: .5, fy: .17, size: 1.9, img: "img/face.jpg", title: "くうちゃんの星",
@@ -2212,6 +2234,8 @@
       text: "わらってる ぼくが いっぱい！ ひまわりも かざってくれて ありがと、ママ。どの ぼくも、ぜんぶ ママのことが だいすきな かお してるでしょ？" },
     { id: "kousai", fx: .92, fy: .1, size: .55, img: null, title: "ちいさな星",
       text: "友美へ。くうちゃんのこと、これからも たくさん聞かせてね。いつでも となりで聞くから。\n— こうさい" },
+    // 思い出の写真は、名前を出さない ちいさな 星（星座の 線には つながない）
+    ...MORE_PHOTOS.map((m) => ({ id: m.id, fx: m.fx, fy: m.fy, size: .6, mini: true, img: m.img, title: m.title, text: m.text })),
   ];
   let userStars = [];
   album.on((list) => {
@@ -2296,7 +2320,7 @@
 
     // くうちゃん座（星をつなぐ線）
     const stars = allStars();
-    const pts = stars.filter(s => s.id !== "kousai").map(s => [s.fx * SW, s.fy * SH]);
+    const pts = stars.filter(s => s.id !== "kousai" && !s.mini).map(s => [s.fx * SW, s.fy * SH]);
     sctx.save();
     sctx.strokeStyle = "rgba(214,181,122,.28)"; sctx.lineWidth = 1; sctx.setLineDash([3, 6]);
     sctx.beginPath();
@@ -2330,7 +2354,7 @@
         drawSparkle(x, y, r, 1, s.id === "kousai" ? "rgba(190,210,255,.9)" : "rgba(255,226,170,.95)");
         s._r = Math.max(22, r * 3);
       }
-      if (s.id !== "kousai") {
+      if (s.id !== "kousai" && !s.mini) {
         sctx.font = `500 ${s.id === "kuu" ? 14 : SW < 480 ? 11 : 12}px "Zen Kaku Gothic New", sans-serif`;
         sctx.textAlign = "center"; sctx.fillStyle = "rgba(251,240,222,.8)";
         const half = sctx.measureText(s.title).width / 2 + 6;
@@ -5435,6 +5459,7 @@ ${letter}
     { img: "img/nap.jpg", title: "へそてん おひるね" }, { img: "img/room.jpg", title: "おへやの くう" },
     { img: "img/snoopy.jpg", title: "スヌーピーの リュック" },
     { img: "img/album.jpg", title: "くうの アルバム" }, { img: "img/paws.jpg", title: "ママを みあげて" },
+    ...MORE_PHOTOS.map((m) => ({ img: m.img, title: m.title })),
   ];
   const DAILY_LINES = [
     "おはよ、ママ！ きょうも いちばんに しっぽ ふってるよ。",
@@ -5717,7 +5742,8 @@ ${letter}
   ];
   function movieItems() {
     const mama = (window.QooTimeline ? window.QooTimeline() : BASE_STORY).map((m) => ({ ...m }));
-    return mama.slice(0, 16);
+    if (mama.length <= 16) return mama;
+    return Array.from({ length: 16 }, (_, i) => mama[Math.round(i * (mama.length - 1) / 15)]);
   }
   function updateMovieInfo() {
     const n = movieItems().length, sec = Math.round(MV.TITLE + n * MV.EACH + MV.END);
@@ -6293,6 +6319,7 @@ ${letter}
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const pad = (n) => String(n).padStart(2, "0");
+  for (const m of window.QOO_MORE || []) JOURNEY.push({ img: m.img, title: m.title, text: m.text, y: m.y });
   let N = JOURNEY.length, albumItems = [], caps = [], syncPlanes = null;
 
   // キャプション（WebGLがなくても写真つきで読めるように、ここで作る）。ママのアルバムの分は、道のさいごに足していく
@@ -6323,7 +6350,7 @@ ${letter}
   rebuildCaptions();
   // 15年の年表：「いつごろ」の年（と月・季節）を読み取って、2010年→2026年の順に並べる
   const BASE_YEAR = [2010.6, 2010.8, 2011, 2012, 2013, 2015, 2019, 2022, 2026, 2026.5]; // 並べるための目安（画面には出さない）
-  JOURNEY.forEach((m, i) => { m.y = BASE_YEAR[i]; });
+  JOURNEY.forEach((m, i) => { if (m.y == null) m.y = BASE_YEAR[i]; });
   function yearOf(when) {
     const w = String(when || "");
     const y = w.match(/(19|20)\d{2}/);
@@ -6661,7 +6688,7 @@ ${letter}
 </script>
 
 <script>
-if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611011839").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js?v=202611022139").catch(() => {});
 </script>
 </body>
 </html>
